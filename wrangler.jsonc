@@ -1,9 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sb-website",
+  "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2025-12-01",
-"assets": {
-    "directory": "./dist/client"
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
   },
   "observability": {
     "enabled": true
