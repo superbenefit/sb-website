@@ -1,0 +1,627 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    excerpt?: string;
+    publishedAt: Date;
+    tags: string[];
+    coverImage?: string;
+  };
+}
+
+interface Props {
+  theme: 'green' | 'orange' | 'red';
+  bgImage: ImageMetadata;
+  label: string;
+  heading: string;
+  body: string;
+  posts: Post[];
+  variant?: 'default' | 'compact';
+  basePath?: string;
+}
+
+const { theme, bgImage, label, heading, body, posts, variant = 'default', basePath = '/blog' } = Astro.props;
+const isCompact = variant === 'compact';
+---
+
+<section class="story-card" data-theme={theme}>
+  <Image
+    src={bgImage}
+    alt=""
+    class="story-card-bg"
+    widths={[400, 800, 1440]}
+    sizes="(max-width: 768px) 400px, (max-width: 1280px) 800px, 1440px"
+    loading="lazy"
+    data-parallax
+  />
+  <div class="story-card-overlay"></div>
+  <div class="story-card-grain"></div>
+
+  {/* Beat 1: Intro — heading + paragraph left, right side varies by variant */}
+  <div class="story-intro">
+    <div class="container story-intro-grid">
+      <div class="story-intro-text" data-animate="fade-up">
+        <span class="story-intro-label">{label}</span>
+        <h2>{heading}</h2>
+        <p class="story-intro-body">{body}</p>
+      </div>
+
+      {/* Default: featured card on right */}
+      {!isCompact && posts.length > 0 && (
+        <div class="story-intro-card-wrap" data-animate="fade-left">
+          <a href={`${basePath}/${posts[0].id}`} class="story-featured-card">
+            {posts[0].data.coverImage && (
+              <div class="story-featured-thumb">
+                <img src={posts[0].data.coverImage} alt={posts[0].data.title} loading="lazy" decoding="async" />
+              </div>
+            )}
+            <div class="story-featured-body">
+              <time datetime={posts[0].data.publishedAt.toISOString()}>
+                {posts[0].data.publishedAt.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </time>
+              <h3>{posts[0].data.title}</h3>
+              {posts[0].data.excerpt && <p>{posts[0].data.excerpt}</p>}
+            </div>
+          </a>
+        </div>
+      )}
+
+      {/* Compact: CTA slot on right */}
+      {isCompact && (
+        <div class="story-cta story-cta--intro" data-animate="fade-left">
+          <slot />
+        </div>
+      )}
+    </div>
+  </div>
+
+  {/* Beat 2: Cards grid */}
+  {posts.length > 0 && (
+    <div class="story-content">
+      <div class="container">
+        <div class:list={['story-grid', { 'story-grid--fluid': isCompact }]}>
+          {(isCompact ? posts : posts.slice(0, 2)).map((post, i) => (
+            <a
+              href={`${basePath}/${post.id}`}
+              class="story-grid-card"
+              data-animate="fade-up"
+              style={`--stagger: ${i * 80}ms`}
+            >
+              {post.data.coverImage && (
+                <div class="story-grid-thumb">
+                  <img src={post.data.coverImage} alt={post.data.title} loading="lazy" decoding="async" />
+                </div>
+              )}
+              <div class="story-grid-body">
+                <time datetime={post.data.publishedAt.toISOString()}>
+                  {post.data.publishedAt.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </time>
+                <h3>{post.data.title}</h3>
+                {post.data.excerpt && <p>{post.data.excerpt}</p>}
+              </div>
+            </a>
+          ))}
+
+          {/* Default: CTA slot in 3rd grid column */}
+          {!isCompact && (
+            <div class="story-cta" data-animate="fade-up">
+              <slot />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  /* ==========================================================================
+     ELEVATED CARD — section as a floating card
+     ========================================================================== */
+
+  .story-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.4),
+      0 12px 48px rgba(0, 0, 0, 0.25);
+  }
+
+  /* 3px accent stripe at top */
+  .story-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 10;
+    border-radius: 20px 20px 0 0;
+  }
+
+  [data-theme="green"].story-card::before { background: var(--color-green); }
+  [data-theme="orange"].story-card::before { background: var(--color-orange); }
+  [data-theme="red"].story-card::before { background: var(--color-red); }
+
+  /* Background image — extends 30px beyond parent to buffer parallax translate range */
+  .story-card-bg {
+    position: absolute;
+    inset: -30px 0;
+    z-index: 0;
+    border-radius: 20px;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Dark overlay: opaque top → reveals image → opaque bottom */
+  .story-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(26, 26, 26, 0.95) 0%,
+      rgba(26, 26, 26, 0.85) 15%,
+      rgba(26, 26, 26, 0.55) 40%,
+      rgba(26, 26, 26, 0.25) 60%,
+      rgba(26, 26, 26, 0.55) 78%,
+      rgba(26, 26, 26, 0.90) 92%,
+      rgba(26, 26, 26, 1) 100%
+    );
+    z-index: 1;
+    border-radius: 20px;
+  }
+
+  /* Warm ambient glow — accent-tinted */
+  .story-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 20px;
+  }
+
+  [data-theme="green"].story-card::after {
+    background:
+      radial-gradient(ellipse at 35% 25%, rgba(122, 154, 78, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 70%, rgba(141, 173, 92, 0.06) 0%, transparent 50%);
+  }
+
+  [data-theme="orange"].story-card::after {
+    background:
+      radial-gradient(ellipse at 35% 25%, rgba(245, 135, 44, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 70%, rgba(212, 168, 67, 0.06) 0%, transparent 50%);
+  }
+
+  [data-theme="red"].story-card::after {
+    background:
+      radial-gradient(ellipse at 35% 25%, rgba(196, 64, 26, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 70%, rgba(168, 50, 21, 0.06) 0%, transparent 50%);
+  }
+
+  /* Grain texture */
+  .story-card-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 20px;
+  }
+
+  /* ==========================================================================
+     BEAT 1: INTRO
+     ========================================================================== */
+
+  .story-intro {
+    position: relative;
+    z-index: 3;
+    padding-block: calc(40px + var(--space-lg)) var(--space-xl);
+  }
+
+  .story-intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .story-intro-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-block-end: var(--space-sm);
+  }
+
+  [data-theme="green"] .story-intro-label { color: var(--color-green-sage); }
+  [data-theme="orange"] .story-intro-label { color: var(--color-orange); }
+  [data-theme="red"] .story-intro-label { color: var(--color-red); }
+
+  .story-intro-text h2 {
+    color: var(--color-cream);
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-md);
+  }
+
+  .story-intro-body {
+    color: var(--color-cream);
+    opacity: 0.75;
+    font-size: var(--text-lg);
+    line-height: 1.75;
+  }
+
+  /* Featured card — warm glass style */
+  .story-featured-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(30, 25, 20, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition:
+      background var(--transition-medium),
+      border-color var(--transition-medium),
+      transform var(--transition-medium),
+      box-shadow var(--transition-medium);
+  }
+
+  [data-theme="green"] .story-featured-card { border-color: rgba(122, 154, 78, 0.12); }
+  [data-theme="orange"] .story-featured-card { border-color: rgba(245, 135, 44, 0.12); }
+  [data-theme="red"] .story-featured-card { border-color: rgba(196, 64, 26, 0.12); }
+
+  .story-featured-card:hover {
+    background: rgba(30, 25, 20, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="green"] .story-featured-card:hover { border-color: rgba(122, 154, 78, 0.30); }
+  [data-theme="orange"] .story-featured-card:hover { border-color: rgba(245, 135, 44, 0.30); }
+  [data-theme="red"] .story-featured-card:hover { border-color: rgba(196, 64, 26, 0.30); }
+
+  .story-featured-thumb {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .story-featured-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .story-featured-card:hover .story-featured-thumb img {
+    transform: scale(1.05);
+  }
+
+  .story-featured-body {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+  }
+
+  .story-featured-body time {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block-end: var(--space-xs);
+  }
+
+  [data-theme="green"] .story-featured-body time { color: var(--color-green-sage); }
+  [data-theme="orange"] .story-featured-body time { color: var(--color-orange); }
+  [data-theme="red"] .story-featured-body time { color: var(--color-red); }
+
+  .story-featured-body h3 {
+    color: var(--color-cream);
+    font-size: var(--text-base);
+    line-height: 1.35;
+    margin-block-end: var(--space-xs);
+  }
+
+  .story-featured-body p {
+    color: var(--color-cream);
+    opacity: 0.7;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ==========================================================================
+     BEAT 2: CARDS GRID + CTA
+     ========================================================================== */
+
+  .story-content {
+    position: relative;
+    z-index: 3;
+    padding-block: var(--space-lg) var(--space-2xl);
+  }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  /* Grid card — warm glass */
+  .story-grid-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(30, 25, 20, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition:
+      background var(--transition-medium),
+      border-color var(--transition-medium),
+      transform var(--transition-medium),
+      box-shadow var(--transition-medium);
+    animation-delay: var(--stagger);
+  }
+
+  [data-theme="green"] .story-grid-card { border-color: rgba(122, 154, 78, 0.12); }
+  [data-theme="orange"] .story-grid-card { border-color: rgba(245, 135, 44, 0.12); }
+  [data-theme="red"] .story-grid-card { border-color: rgba(196, 64, 26, 0.12); }
+
+  .story-grid-card:hover {
+    background: rgba(30, 25, 20, 0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="green"] .story-grid-card:hover { border-color: rgba(122, 154, 78, 0.30); }
+  [data-theme="orange"] .story-grid-card:hover { border-color: rgba(245, 135, 44, 0.30); }
+  [data-theme="red"] .story-grid-card:hover { border-color: rgba(196, 64, 26, 0.30); }
+
+  .story-grid-thumb {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .story-grid-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .story-grid-card:hover .story-grid-thumb img {
+    transform: scale(1.05);
+  }
+
+  .story-grid-body {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    flex: 1;
+  }
+
+  .story-grid-body time {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block-end: var(--space-xs);
+  }
+
+  [data-theme="green"] .story-grid-body time { color: var(--color-green-sage); }
+  [data-theme="orange"] .story-grid-body time { color: var(--color-orange); }
+  [data-theme="red"] .story-grid-body time { color: var(--color-red); }
+
+  .story-grid-body h3 {
+    color: var(--color-cream);
+    font-size: var(--text-base);
+    line-height: 1.35;
+    margin-block-end: var(--space-xs);
+  }
+
+  .story-grid-body p {
+    color: var(--color-cream);
+    opacity: 0.7;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Fluid grid — even rows: 4 cols desktop, 2 cols tablet, 1 col mobile */
+  .story-grid--fluid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* ==========================================================================
+     CTA SLOT
+     ========================================================================== */
+
+  .story-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: var(--space-md);
+    padding-inline-start: var(--space-lg);
+  }
+
+  /* CTA in intro area (compact variant) */
+  .story-cta--intro {
+    padding-inline-start: 0;
+  }
+
+  /* Shared styles for slotted CTA elements */
+  .story-cta :global(.story-cta-blurb) {
+    color: var(--color-cream);
+    opacity: 0.85;
+    font-size: var(--text-base);
+    line-height: 1.7;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    text-align: right;
+  }
+
+  .story-cta :global(.story-btn) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    border-radius: 50px;
+    color: var(--color-cream);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    transition:
+      background var(--transition-medium),
+      border-color var(--transition-medium),
+      transform var(--transition-fast),
+      box-shadow var(--transition-medium);
+  }
+
+  .story-cta :global(.story-btn--primary) {
+    font-size: var(--text-base);
+    padding: 0.85em 2em;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="green"] .story-cta :global(.story-btn--primary) {
+    background: rgba(122, 154, 78, 0.18);
+    border: 1px solid var(--color-green);
+  }
+  [data-theme="orange"] .story-cta :global(.story-btn--primary) {
+    background: rgba(245, 135, 44, 0.18);
+    border: 1px solid var(--color-orange);
+  }
+  [data-theme="red"] .story-cta :global(.story-btn--primary) {
+    background: rgba(196, 64, 26, 0.18);
+    border: 1px solid var(--color-red);
+  }
+
+  .story-cta :global(.story-btn--primary:hover) {
+    transform: translateY(-2px);
+  }
+
+  [data-theme="green"] .story-cta :global(.story-btn--primary:hover) {
+    background: rgba(122, 154, 78, 0.30);
+    box-shadow: 0 4px 20px rgba(122, 154, 78, 0.25);
+  }
+  [data-theme="orange"] .story-cta :global(.story-btn--primary:hover) {
+    background: rgba(245, 135, 44, 0.30);
+    box-shadow: 0 4px 20px rgba(245, 135, 44, 0.25);
+  }
+  [data-theme="red"] .story-cta :global(.story-btn--primary:hover) {
+    background: rgba(196, 64, 26, 0.30);
+    box-shadow: 0 4px 20px rgba(196, 64, 26, 0.25);
+  }
+
+  .story-cta :global(.story-btn--ghost) {
+    background: none;
+    border: 1px solid rgba(237, 221, 200, 0.2);
+    color: var(--color-cream);
+    opacity: 0.7;
+    font-weight: 500;
+    font-size: var(--text-sm);
+    padding: 0.7em 1.6em;
+  }
+
+  .story-cta :global(.story-btn--ghost:hover) {
+    opacity: 1;
+    border-color: rgba(237, 221, 200, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+  }
+
+  .story-cta :global(.btn-icon) {
+    flex-shrink: 0;
+  }
+
+  /* ==========================================================================
+     RESPONSIVE
+     ========================================================================== */
+
+  @media (max-width: 1024px) {
+    .story-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .story-grid--fluid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .story-cta:not(.story-cta--intro) {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      padding-inline-start: 0;
+    }
+
+    .story-cta:not(.story-cta--intro) :global(.story-cta-blurb) {
+      width: 100%;
+      text-align: right;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .story-card {
+      border-radius: 14px;
+    }
+
+    .story-card::before {
+      border-radius: 14px 14px 0 0;
+    }
+
+    .story-card-bg,
+    .story-card-overlay,
+    .story-card-grain {
+      border-radius: 14px;
+    }
+
+    .story-intro {
+      padding-block: calc(30px + var(--space-md)) var(--space-lg);
+    }
+
+    .story-intro-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .story-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Disable decorative animations for reduced motion users */
+  @media (prefers-reduced-motion: reduce) {
+    .story-card::after {
+      display: none;
+    }
+  }
+</style>

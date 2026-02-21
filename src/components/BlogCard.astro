@@ -1,0 +1,130 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  excerpt?: string;
+  publishedAt: Date;
+  tags: string[];
+  coverImage?: string;
+}
+
+const { id, title, excerpt, publishedAt, tags, coverImage } = Astro.props;
+
+const formattedDate = publishedAt.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="blog-card" transition:name={`blog-${id}`}>
+  <a href={`/blog/${id}`} class="card-link">
+    {coverImage && (
+      <div class="card-image">
+        <img src={coverImage} alt={title} loading="lazy" />
+      </div>
+    )}
+    <div class="card-body">
+      <time datetime={publishedAt.toISOString()}>{formattedDate}</time>
+      <h3>{title}</h3>
+      {excerpt && <p class="card-excerpt">{excerpt}</p>}
+      {tags.length > 0 && (
+        <div class="card-tags">
+          {tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+  .blog-card {
+    background: var(--color-cream-light);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--transition-medium),
+      box-shadow var(--transition-medium);
+    border-left: 3px solid transparent;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-left-color: var(--color-orange);
+  }
+
+  .card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card-image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .blog-card:hover .card-image img {
+    transform: scale(1.04);
+  }
+
+  .card-body {
+    padding: var(--space-lg);
+  }
+
+  .card-body time {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--color-orange);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block-end: var(--space-xs);
+  }
+
+  .card-body h3 {
+    font-size: var(--text-lg);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-sm);
+    line-height: 1.3;
+  }
+
+  .card-excerpt {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-md);
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: var(--text-xs);
+    padding: 0.2em 0.7em;
+    background: rgba(122, 154, 78, 0.15);
+    color: var(--color-green);
+    border-radius: 50px;
+    font-weight: 500;
+  }
+</style>

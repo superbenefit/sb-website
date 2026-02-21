@@ -1,0 +1,46 @@
+[
+  {
+    "id": "governance-playbook",
+    "slug": "governance-playbook",
+    "title": "Governance Playbook",
+    "excerpt": "An open-source field guide to governance patterns for DAOs — modular primitives that teams can mix, match, and adapt.",
+    "content": "<p>Placeholder project content.</p>",
+    "publishedAt": "2026-02-01T10:00:00Z",
+    "author": { "name": "SuperBenefit" },
+    "tags": ["governance", "DAOs", "playbook"],
+    "draft": false
+  },
+  {
+    "id": "energy-label-nfts",
+    "slug": "energy-label-nfts",
+    "title": "Energy Label NFTs",
+    "excerpt": "Transparent, verifiable energy consumption labels for consumer products — powered by on-chain attestations.",
+    "content": "<p>Placeholder project content.</p>",
+    "publishedAt": "2026-01-15T14:00:00Z",
+    "author": { "name": "SuperBenefit" },
+    "tags": ["NFTs", "sustainability", "experiments"],
+    "draft": false
+  },
+  {
+    "id": "regen-commons",
+    "slug": "regen-commons",
+    "title": "Regen Commons",
+    "excerpt": "A shared treasury and coordination layer for regenerative projects — pooling resources across local and global initiatives.",
+    "content": "<p>Placeholder project content.</p>",
+    "publishedAt": "2025-12-10T09:00:00Z",
+    "author": { "name": "SuperBenefit" },
+    "tags": ["DeFi", "regeneration", "commons"],
+    "draft": false
+  },
+  {
+    "id": "mycelial-coordination",
+    "slug": "mycelial-coordination",
+    "title": "Mycelial Coordination Protocol",
+    "excerpt": "Designing decentralized coordination tools inspired by fungal networks — enabling small autonomous teams to share context at scale.",
+    "content": "<p>Placeholder project content.</p>",
+    "publishedAt": "2025-11-20T11:00:00Z",
+    "author": { "name": "SuperBenefit" },
+    "tags": ["coordination", "systems-thinking", "web3"],
+    "draft": false
+  }
+]

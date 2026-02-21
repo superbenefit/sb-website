@@ -1,0 +1,125 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogList from '../../components/BlogList.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const sortedPosts = allPosts.sort(
+    (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()
+  );
+  return paginate(sortedPosts, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<BaseLayout
+  title={page.currentPage === 1 ? 'Blog — SuperBenefit' : `Blog — Page ${page.currentPage} — SuperBenefit`}
+  description="Thoughts on governance, DAOs, web3, and building a better world through systems innovation."
+>
+  <section class="blog-hero">
+    <div class="blog-hero-stars" aria-hidden="true"></div>
+    <div class="container blog-hero-content">
+      <h1>Blog</h1>
+      <p>Exploring governance, DAOs, and the frontiers of systems innovation</p>
+    </div>
+  </section>
+
+  <section class="blog-content">
+    <div class="container">
+      <BlogList posts={page.data} />
+
+      {page.lastPage > 1 && (
+        <nav class="pagination" aria-label="Blog pagination">
+          {page.url.prev && (
+            <a href={page.url.prev} class="pagination-btn">← Newer</a>
+          )}
+          <span class="pagination-info">Page {page.currentPage} of {page.lastPage}</span>
+          {page.url.next && (
+            <a href={page.url.next} class="pagination-btn">Older →</a>
+          )}
+        </nav>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-hero {
+    position: relative;
+    background: var(--color-black);
+    padding-block-start: calc(var(--header-height) + var(--space-2xl));
+    padding-block-end: var(--space-2xl);
+    overflow: hidden;
+  }
+
+  .blog-hero-stars {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1px 1px at 10% 30%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 30% 70%, rgba(245,135,44,0.6), transparent),
+      radial-gradient(1px 1px at 50% 20%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 70% 60%, rgba(212,168,67,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 90% 40%, rgba(255,255,255,0.6), transparent);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .blog-hero-content {
+    position: relative;
+    text-align: center;
+  }
+
+  .blog-hero h1 {
+    color: var(--color-cream);
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-sm);
+  }
+
+  .blog-hero p {
+    color: var(--color-cream);
+    opacity: 0.7;
+    font-size: var(--text-lg);
+    margin-inline: auto;
+  }
+
+  .blog-content {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-lg);
+    padding-block-start: var(--space-xl);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-block-start: var(--space-xl);
+  }
+
+  .pagination-btn {
+    display: inline-block;
+    padding: 0.6em 1.4em;
+    background: var(--color-black);
+    color: var(--color-cream);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .pagination-btn:hover { opacity: 0.8; }
+
+  .pagination-info {
+    font-size: var(--text-sm);
+    color: var(--color-black);
+    opacity: 0.6;
+  }
+</style>

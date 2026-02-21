@@ -1,0 +1,48 @@
+---
+interface Props {
+  from: 'cream' | 'charcoal' | 'green' | 'orange' | 'black';
+  to: 'cream' | 'charcoal' | 'green' | 'orange' | 'black';
+}
+
+const colorMap: Record<string, string> = {
+  cream: 'var(--color-cream)',
+  charcoal: 'var(--color-charcoal)',
+  green: 'var(--color-green-sage)',
+  orange: 'var(--color-orange)',
+  black: 'var(--color-black)',
+};
+
+const { from, to } = Astro.props;
+const fromColor = colorMap[from];
+const toColor = colorMap[to];
+---
+
+<div
+  class="section-divider"
+  style={`--from: ${fromColor}; --to: ${toColor};`}
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,0 C360,80 1080,0 1440,60 L1440,80 L0,80 Z" fill="var(--to)" />
+  </svg>
+</div>
+
+<style>
+  .section-divider {
+    background: var(--from);
+    line-height: 0;
+    overflow: hidden;
+  }
+
+  .section-divider svg {
+    width: 100%;
+    height: 60px;
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    .section-divider svg {
+      height: 80px;
+    }
+  }
+</style>

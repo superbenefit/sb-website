@@ -1,0 +1,67 @@
+---
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    excerpt?: string;
+    publishedAt: Date;
+    tags: string[];
+    coverImage?: string;
+  };
+}
+
+interface Props {
+  posts: Post[];
+}
+
+import BlogCard from './BlogCard.astro';
+
+const { posts } = Astro.props;
+---
+
+{posts.length > 0 ? (
+  <div class="blog-grid">
+    {posts.map((post) => (
+      <BlogCard
+        id={post.id}
+        title={post.data.title}
+        excerpt={post.data.excerpt}
+        publishedAt={post.data.publishedAt}
+        tags={post.data.tags}
+        coverImage={post.data.coverImage}
+      />
+    ))}
+  </div>
+) : (
+  <div class="blog-empty">
+    <p>No posts yet. Check back soon for insights on governance, DAOs, and systems innovation.</p>
+  </div>
+)}
+
+<style>
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 640px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .blog-empty {
+    text-align: center;
+    padding-block: var(--space-2xl);
+    color: var(--color-charcoal);
+    opacity: 0.6;
+    font-size: var(--text-lg);
+  }
+</style>

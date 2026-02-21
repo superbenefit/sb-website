@@ -1,0 +1,109 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+];
+---
+
+<nav class="site-nav" aria-label="Main navigation">
+  <ul>
+    {links.map(({ href, label }) => {
+      const isActive = href === '/'
+        ? currentPath === '/'
+        : currentPath.startsWith(href);
+      return (
+        <li>
+          <a href={href} class:list={['nav-link', { active: isActive }]}>
+            {label}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .site-nav ul {
+    display: flex;
+    gap: var(--space-lg);
+    list-style: none;
+  }
+
+  .nav-link {
+    color: var(--color-cream);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding-block: var(--space-xs);
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-orange);
+    transform: scaleX(0);
+    transition: transform var(--transition-medium);
+    transform-origin: left;
+  }
+
+  .nav-link:hover {
+    color: var(--color-orange);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    transform: scaleX(1);
+  }
+
+  .nav-link.active {
+    color: var(--color-orange);
+  }
+
+  @media (max-width: 768px) {
+    .site-nav {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(26, 26, 26, 0.97);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition-medium), visibility var(--transition-medium);
+    }
+
+    .site-nav.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .site-nav ul {
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+
+    .nav-link {
+      font-size: var(--text-xl);
+    }
+  }
+</style>

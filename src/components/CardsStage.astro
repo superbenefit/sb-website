@@ -1,0 +1,83 @@
+---
+/**
+ * CardsStage — dark charcoal wrapper for elevated story cards.
+ *
+ * Handles:
+ * - Charcoal background with grain texture
+ * - 48px gaps between child cards
+ * - Overlap transition: first card extends 60px UP into the section above,
+ *   last card extends 60px DOWN into the section below.
+ *   A ::before pseudo covers only the area between those overlaps.
+ */
+---
+
+<div class="cards-stage">
+  <slot />
+</div>
+
+<style>
+  .cards-stage {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-inline: 48px;
+  }
+
+  /* Dark charcoal background — inset 60px from top/bottom so it doesn't
+     bleed into the cream/orange sections the cards overlap into */
+  .cards-stage::before {
+    content: '';
+    position: absolute;
+    top: 60px;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    background: var(--color-charcoal);
+    z-index: -2;
+  }
+
+  /* Grain texture over the charcoal background */
+  .cards-stage::after {
+    content: '';
+    position: absolute;
+    top: 60px;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* First card overlaps UP into the section above */
+  .cards-stage > :global(:first-child) {
+    margin-top: -60px;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* Last card overlaps DOWN into the section below */
+  .cards-stage > :global(:last-child) {
+    margin-bottom: -60px;
+    position: relative;
+    z-index: 3;
+  }
+
+  @media (max-width: 768px) {
+    .cards-stage {
+      gap: 32px;
+      padding-inline: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cards-stage {
+      padding-inline: 12px;
+    }
+  }
+</style>

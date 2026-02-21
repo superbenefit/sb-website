@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@styles/*": ["src/styles/*"],
+      "@loaders/*": ["src/loaders/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.astro"],
+  "exclude": ["node_modules", "dist"]
+}

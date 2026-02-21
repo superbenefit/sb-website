@@ -1,0 +1,95 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page Not Found — SuperBenefit" description="The page you were looking for doesn't exist.">
+  <div class="error-page">
+    <div class="container error-container">
+      <p class="error-code">404</p>
+      <h1>Page not found</h1>
+      <p class="error-message">
+        The page you were looking for has moved, been removed, or never existed.
+      </p>
+      <div class="error-actions">
+        <a href="/" class="btn-primary">Go home</a>
+        <a href="/blog" class="btn-secondary">Browse the blog</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .error-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-black);
+    padding-block: var(--space-2xl);
+  }
+
+  .error-container {
+    text-align: center;
+    max-width: 480px;
+  }
+
+  .error-code {
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 20vw, 10rem);
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-gold), var(--color-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-block-end: var(--space-md);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    color: var(--color-cream);
+    margin-block-end: var(--space-md);
+  }
+
+  .error-message {
+    color: var(--color-cream);
+    opacity: 0.6;
+    line-height: 1.6;
+    margin-block-end: var(--space-xl);
+  }
+
+  .error-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.7em 1.6em;
+    background: var(--color-orange);
+    color: var(--color-black);
+    font-weight: 700;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 0.7em 1.6em;
+    border: 1px solid rgba(237, 221, 200, 0.3);
+    color: var(--color-cream);
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color var(--transition-fast);
+  }
+
+  .btn-secondary:hover { border-color: var(--color-cream); }
+</style>

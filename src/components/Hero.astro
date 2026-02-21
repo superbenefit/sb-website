@@ -1,0 +1,201 @@
+---
+
+---
+
+<section class="hero">
+  <div class="starfield" aria-hidden="true">
+    <div class="stars stars-sm"></div>
+    <div class="stars stars-md"></div>
+    <div class="stars stars-lg"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-icon-wrap">
+      <div class="icon-glow" aria-hidden="true"></div>
+      <img
+        src="/images/sb-icon.jpg"
+        alt="SuperBenefit"
+        class="hero-icon"
+        width="160"
+        height="160"
+        fetchpriority="high"
+        loading="eager"
+      />
+    </div>
+
+    <p class="hero-tagline">Lorem Ipsum Dolor</p>
+    <p class="hero-subtitle">
+      Sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.
+    </p>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <span class="scroll-arrow">&#8595;</span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-black);
+    overflow: hidden;
+    padding-block: var(--space-2xl);
+  }
+
+  /* ===== Starfield ===== */
+  .starfield {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+  }
+
+  .stars-sm {
+    background:
+      radial-gradient(1px 1px at 5% 15%, #fff, transparent),
+      radial-gradient(1px 1px at 12% 42%, #fff, transparent),
+      radial-gradient(1px 1px at 18% 78%, #fff, transparent),
+      radial-gradient(1px 1px at 25% 8%, #fff, transparent),
+      radial-gradient(1px 1px at 32% 55%, #fff, transparent),
+      radial-gradient(1px 1px at 38% 92%, #fff, transparent),
+      radial-gradient(1px 1px at 45% 25%, #fff, transparent),
+      radial-gradient(1px 1px at 52% 68%, #fff, transparent),
+      radial-gradient(1px 1px at 58% 3%, #fff, transparent),
+      radial-gradient(1px 1px at 65% 48%, #fff, transparent),
+      radial-gradient(1px 1px at 72% 82%, #fff, transparent),
+      radial-gradient(1px 1px at 78% 18%, #fff, transparent),
+      radial-gradient(1px 1px at 85% 62%, #fff, transparent),
+      radial-gradient(1px 1px at 92% 35%, #fff, transparent),
+      radial-gradient(1px 1px at 97% 88%, #fff, transparent);
+    opacity: 0.5;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+
+  .stars-md {
+    background:
+      radial-gradient(1.5px 1.5px at 8% 35%, rgba(245,135,44,0.8), transparent),
+      radial-gradient(1.5px 1.5px at 22% 65%, rgba(212,168,67,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 42% 12%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1.5px 1.5px at 55% 85%, rgba(122,154,78,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68% 30%, rgba(245,135,44,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 82% 72%, rgba(212,168,67,0.8), transparent),
+      radial-gradient(1.5px 1.5px at 95% 50%, rgba(196,64,26,0.6), transparent);
+    opacity: 0.7;
+    animation: twinkle 6s ease-in-out infinite 1s;
+  }
+
+  .stars-lg {
+    background:
+      radial-gradient(2px 2px at 15% 50%, rgba(212,168,67,0.9), transparent),
+      radial-gradient(2.5px 2.5px at 48% 40%, rgba(245,135,44,0.8), transparent),
+      radial-gradient(2px 2px at 75% 65%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(2px 2px at 88% 20%, rgba(122,154,78,0.7), transparent);
+    opacity: 0.8;
+    animation: twinkle 8s ease-in-out infinite 2s;
+  }
+
+  /* ===== Content ===== */
+  .hero-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    text-align: center;
+    z-index: 1;
+  }
+
+  /* ===== Brain Icon with Rainbow Glow ===== */
+  .hero-icon-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+
+  .icon-glow {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: var(--gradient-rainbow);
+    animation: pulse-glow 3s ease-in-out infinite, spin-slow 20s linear infinite;
+    filter: blur(2px);
+    /* Static shadow paints once; opacity animation is compositor-only */
+    box-shadow: 0 0 30px rgba(245, 135, 44, 0.5), 0 0 70px rgba(212, 168, 67, 0.2);
+    will-change: transform;
+  }
+
+  .hero-icon {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 1;
+    border: 3px solid rgba(26, 26, 26, 0.5);
+  }
+
+  /* ===== Typography ===== */
+  .hero-tagline {
+    font-family: var(--font-serif);
+    font-size: var(--text-hero);
+    font-weight: 900;
+    color: var(--color-cream);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-gold), var(--color-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 10px rgba(212, 168, 67, 0.3));
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-lg);
+    color: var(--color-cream);
+    opacity: 0.7;
+    max-width: 36ch;
+    line-height: 1.5;
+  }
+
+  /* ===== Scroll Hint ===== */
+  .scroll-hint {
+    position: absolute;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .scroll-arrow {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--color-cream);
+    opacity: 0.5;
+    animation: float-gentle 2s ease-in-out infinite;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .hero-icon-wrap {
+      width: 120px;
+      height: 120px;
+    }
+
+    .hero-icon {
+      width: 120px;
+      height: 120px;
+    }
+
+    .icon-glow {
+      inset: -4px;
+    }
+  }
+</style>

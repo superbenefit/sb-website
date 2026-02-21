@@ -1,0 +1,235 @@
+/* ===== DESIGN TOKENS ===== */
+
+:root {
+  /* Brand Colors — from SB_Palette.png */
+  --color-cream: #edddc8;
+  --color-cream-light: #f5ede0;
+  --color-charcoal: #2d2d2d;
+  --color-black: #1a1a1a;
+  --color-orange: #f5872c;
+  --color-orange-dark: #e06b10;
+  --color-red: #c4401a;
+  --color-red-deep: #a83215;
+  --color-green: #7a9a4e;
+  --color-green-sage: #8dad5c;
+  --color-gold: #d4a843;
+
+  /* Gradients */
+  --gradient-rainbow: conic-gradient(
+    from 180deg,
+    var(--color-gold),
+    var(--color-orange),
+    var(--color-red),
+    var(--color-green),
+    var(--color-gold)
+  );
+  --gradient-warm: linear-gradient(135deg, var(--color-orange), var(--color-red), var(--color-gold));
+
+  /* Typography — references Astro experimental fonts CSS variables */
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
+
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.375rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-2xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  --text-3xl: clamp(2.5rem, 1.8rem + 3.5vw, 4.5rem);
+  --text-hero: clamp(3rem, 2rem + 5vw, 6rem);
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+  --space-2xl: 8rem;
+
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 4rem;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-medium: 300ms ease;
+  --transition-slow: 600ms ease-out;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 20px rgba(245, 135, 44, 0.3);
+}
+
+/* ===== RESET ===== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--color-charcoal);
+  background-color: var(--color-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--color-orange);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-red);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ===== TYPOGRAPHY ===== */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-charcoal);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+h4 { font-size: var(--text-lg); }
+
+p {
+  max-width: 70ch;
+}
+
+/* ===== UTILITIES ===== */
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ===== PROSE (for blog post body content) ===== */
+
+.prose {
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--color-charcoal);
+}
+
+.prose h2 {
+  margin-block: var(--space-xl) var(--space-md);
+}
+
+.prose h3 {
+  margin-block: var(--space-lg) var(--space-sm);
+}
+
+.prose p {
+  margin-block-end: var(--space-md);
+  max-width: 70ch;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose blockquote {
+  border-inline-start: 4px solid var(--color-orange);
+  padding-inline-start: var(--space-lg);
+  margin-block: var(--space-lg);
+  font-style: italic;
+  color: var(--color-charcoal);
+  opacity: 0.85;
+}
+
+.prose ul,
+.prose ol {
+  padding-inline-start: var(--space-lg);
+  margin-block-end: var(--space-md);
+}
+
+.prose li {
+  margin-block-end: var(--space-xs);
+}
+
+.prose img {
+  border-radius: 8px;
+  margin-block: var(--space-lg);
+}
+
+.prose code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.prose pre {
+  background: var(--color-charcoal);
+  color: var(--color-cream);
+  padding: var(--space-lg);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-block: var(--space-lg);
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+
+/* ===== REDUCED MOTION ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

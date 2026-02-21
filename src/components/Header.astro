@@ -1,0 +1,134 @@
+---
+import Nav from './Nav.astro';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header" transition:persist>
+  <div class="header-inner">
+    <a href="/" class="logo-link" aria-label="SuperBenefit home">
+      <img src="/images/sb-icon.jpg" alt="" class="logo-icon" width="36" height="36" />
+      <span class="logo-text">SuperBenefit</span>
+    </a>
+    <Nav currentPath={currentPath} />
+    <button class="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span class="hamburger"></span>
+    </button>
+  </div>
+  <div class="header-rainbow"></div>
+</header>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const toggle = document.querySelector('.mobile-toggle');
+    const nav = document.querySelector('.site-nav');
+    if (!toggle || !nav) return;
+
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      nav.classList.toggle('is-open');
+      document.body.classList.toggle('nav-open');
+    });
+  });
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    color: var(--color-cream);
+    background-color: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    /* Scroll-driven animation in animations.css will further solidify this */
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
+  }
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-cream);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    text-decoration: none;
+  }
+
+  .logo-link:hover {
+    color: var(--color-orange);
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .logo-text {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .header-rainbow {
+    height: 2px;
+    background: var(--gradient-rainbow);
+  }
+
+  .mobile-toggle {
+    display: none;
+    width: 36px;
+    height: 36px;
+    position: relative;
+  }
+
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-cream);
+    border-radius: 2px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: var(--transition-fast);
+  }
+
+  .hamburger { top: 50%; transform: translate(-50%, -50%); }
+  .hamburger::before { content: ''; top: -7px; left: 0; transform: none; }
+  .hamburger::after { content: ''; top: 7px; left: 0; transform: none; }
+
+  .mobile-toggle[aria-expanded="true"] .hamburger {
+    background: transparent;
+  }
+  .mobile-toggle[aria-expanded="true"] .hamburger::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+  .mobile-toggle[aria-expanded="true"] .hamburger::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+
+  @media (max-width: 768px) {
+    .mobile-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { Font } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
+import '../styles/global.css';
+import '../styles/animations.css';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  bodyClass?: string;
+  type?: 'website' | 'article';
+  publishedAt?: Date;
+}
+
+const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SEO title={title} description={description} ogImage={ogImage} type={type} publishedAt={publishedAt} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <Font cssVariable="--font-playfair" preload />
+    <Font cssVariable="--font-inter" preload />
+    <ClientRouter />
+  </head>
+  <body class={bodyClass}>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main {
+    min-height: 100vh;
+  }
+</style>
