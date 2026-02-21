@@ -27,3 +27,7 @@ Thumbs.db
 # temp / OS artifacts
 tmp/
 *.stackdump
+
+# Claude Code local config (machine-specific)
+.claude/settings.local.json
+.claude/typecheck.log
