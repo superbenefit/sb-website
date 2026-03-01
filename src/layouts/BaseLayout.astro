@@ -26,6 +26,20 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <SEO title={title} description={description} ogImage={ogImage} type={type} publishedAt={publishedAt} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SuperBenefit",
+      "url": "https://superbenefit.org",
+      "description": "A DAO exploring how web3 technologies can drive systems transformation — developing the social and financial flywheels to accelerate a regenerative future.",
+      "sameAs": [
+        "https://discord.gg/d2EeszTvVm",
+        "https://github.com/superbenefit",
+        "https://twitter.com/SuperBenefitDAO",
+        "https://knowledge.superbenefit.org",
+        "https://paragraph.com/@superbenefit-2"
+      ]
+    })} />
     <Font cssVariable="--font-playfair" preload />
     <Font cssVariable="--font-inter" preload />
     <ClientRouter />
