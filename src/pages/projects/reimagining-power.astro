@@ -1,0 +1,286 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+---
+
+<BaseLayout
+  title="Reimagining Power Project — SuperBenefit"
+  description="Exploring how web3 technologies can redistribute power in philanthropy and social impact."
+>
+  <section class="project-hero">
+    <div class="project-hero-overlay"></div>
+    <div class="container project-hero-content">
+      <span class="project-label">Flagship Project</span>
+      <h1>Reimagining Power Project</h1>
+      <p class="project-subtitle">Exploring how web3 can redistribute power in philanthropy and social impact</p>
+    </div>
+  </section>
+
+  <SectionDivider from="charcoal" to="cream" />
+
+  <section class="project-content">
+    <div class="container" data-animate="fade-up">
+      <div class="content-block">
+        <h2>What is RPP?</h2>
+        <p>
+          The Reimagining Power Project (RPP) explores how decentralized technologies can transform how power flows in social impact — from funding decisions to community governance.
+        </p>
+        <p>
+          What began as technology exploration evolved into fundamental questions about participation, ownership, and collective decision-making. Based on 18 months of real-world experimentation, RPP documents tested patterns for enabling meaningful stakeholder participation without sacrificing operational effectiveness.
+        </p>
+      </div>
+
+      <div class="content-block">
+        <h2>Case Studies</h2>
+        <p>
+          RPP has worked with three organizations transitioning from centralized control to autonomous cells coordinating within shared purpose:
+        </p>
+        <ul class="case-list">
+          <li>
+            <strong>All In For Sport</strong> — Transformed from an NFT project to a "coordi-nation" facilitating connections between Web3 innovation and community sports development
+          </li>
+          <li>
+            <strong>Equality Fund</strong> — Explored using Web3 to transfer funds to partners in developing countries without bureaucracy, delays, and high costs
+          </li>
+          <li>
+            <strong>Institute for Community Sustainability</strong> — Evolved from centralized decision-making to decentralized governance with local community cells
+          </li>
+        </ul>
+      </div>
+
+      <div class="content-block">
+        <h2>The Challenge</h2>
+        <p>
+          Traditional nonprofit governance creates systematic inefficiencies: boards disconnect from constituent needs, operational decisions bottleneck through overloaded executives, and volunteers contribute labor without influencing direction.
+        </p>
+        <p>
+          RPP began with a hypothesis: web3 tools could address these systemic governance failures. The journey revealed both promise and limitations.
+        </p>
+      </div>
+
+      <div class="content-block">
+        <h2>Resources</h2>
+        <div class="resource-links">
+          <a href="https://knowledge.superbenefit.org/artifacts/reimagining-power/rpp-playbook" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">📖</span>
+            <span class="resource-title">RPP Playbook</span>
+            <span class="resource-desc">18 months of learnings in a practical guide</span>
+          </a>
+          <a href="https://knowledge.superbenefit.org/artifacts/reimagining-power/" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">🌱</span>
+            <span class="resource-title">Knowledge Base</span>
+            <span class="resource-desc">Full documentation and case studies</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <section class="project-cta">
+    <div class="container" data-animate="fade-up">
+      <h2>Want to learn more or get involved?</h2>
+      <p>Reach out on Discord or explore the knowledge base.</p>
+      <div class="cta-links">
+        <a href="https://discord.gg/d2EeszTvVm" target="_blank" rel="noopener noreferrer" class="cta-btn">Join Discord</a>
+        <a href="https://knowledge.superbenefit.org/artifacts/reimagining-power/" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--secondary">Explore RPP</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .project-hero {
+    position: relative;
+    background: var(--color-charcoal);
+    background-image: url('/images/brand-showcase.webp');
+    background-size: cover;
+    background-position: center;
+    padding-block-start: calc(var(--header-height) + var(--space-2xl));
+    padding-block-end: var(--space-2xl);
+    min-height: 50vh;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .project-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(76, 175, 80, 0.7) 0%,
+      rgba(56, 139, 115, 0.8) 50%,
+      rgba(45, 45, 45, 0.95) 100%
+    );
+  }
+
+  .project-hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-green-sage);
+    margin-block-end: var(--space-sm);
+  }
+
+  .project-hero h1 {
+    color: var(--color-cream);
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-xs);
+  }
+
+  .project-subtitle {
+    color: var(--color-cream);
+    opacity: 0.9;
+    font-size: var(--text-xl);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  .project-content {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .project-content .container {
+    max-width: 800px;
+  }
+
+  .content-block {
+    margin-block-end: var(--space-xl);
+  }
+
+  .content-block h2 {
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+
+  .content-block p {
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin-block-end: var(--space-md);
+  }
+
+  .case-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .case-list li {
+    padding: var(--space-md);
+    background: var(--color-cream-light);
+    border-radius: 8px;
+    margin-block-end: var(--space-md);
+    border-left: 4px solid var(--color-green-sage);
+  }
+
+  .case-list li strong {
+    color: var(--color-charcoal);
+  }
+
+  .resource-links {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .resource-links {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .resource-link {
+    display: block;
+    padding: var(--space-lg);
+    background: var(--color-cream-light);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .resource-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .resource-icon {
+    display: block;
+    font-size: 1.5rem;
+    margin-block-end: var(--space-xs);
+  }
+
+  .resource-title {
+    display: block;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-xs);
+  }
+
+  .resource-desc {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+  }
+
+  .project-cta {
+    background: var(--color-charcoal);
+    padding-block: var(--space-2xl);
+    text-align: center;
+  }
+
+  .project-cta h2 {
+    color: var(--color-cream);
+    margin-block-end: var(--space-sm);
+  }
+
+  .project-cta p {
+    color: var(--color-cream);
+    opacity: 0.8;
+    margin-block-end: var(--space-xl);
+  }
+
+  .cta-links {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 0.8em 1.8em;
+    background: var(--color-green-sage);
+    color: var(--color-charcoal);
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform var(--transition-fast), background var(--transition-fast);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    background: var(--color-green-light);
+  }
+
+  .cta-btn--secondary {
+    background: transparent;
+    border: 2px solid var(--color-cream);
+    color: var(--color-cream);
+  }
+
+  .cta-btn--secondary:hover {
+    background: var(--color-cream);
+    color: var(--color-charcoal);
+  }
+</style>

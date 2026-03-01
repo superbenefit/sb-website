@@ -1,0 +1,370 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+---
+
+<BaseLayout
+  title="DAO Primitives Framework — SuperBenefit"
+  description="A systematic approach to designing decentralized organizations as purpose-aligned networks of autonomous teams."
+>
+  <section class="project-hero">
+    <div class="project-hero-overlay"></div>
+    <div class="container project-hero-content">
+      <span class="project-label">Framework</span>
+      <h1>DAO Primitives Framework</h1>
+      <p class="project-subtitle">A systematic approach to designing purpose-aligned networks of autonomous teams</p>
+    </div>
+  </section>
+
+  <SectionDivider from="charcoal" to="cream" />
+
+  <section class="project-content">
+    <div class="container" data-animate="fade-up">
+      <div class="content-block">
+        <h2>What is the Framework?</h2>
+        <p>
+          The Primitives Framework helps organizations design coordination systems that balance efficiency with innovation, autonomy with alignment, and flexibility with coherence.
+        </p>
+        <p>
+          It provides organizational patterns (structural building blocks) and dimensional lenses (assessment tools) that can be combined to create governance and operational systems tailored to specific contexts.
+        </p>
+      </div>
+
+      <div class="content-block">
+        <h2>Who Is This For?</h2>
+        <ul class="audience-list">
+          <li><strong>Organization Designers</strong> — working on DAO governance and decentralized coordination structures</li>
+          <li><strong>Facilitators</strong> — helping groups establish or evolve their governance and operational systems</li>
+          <li><strong>Communities</strong> — transitioning from informal coordination to formal organizational structures</li>
+          <li><strong>Developers</strong> — implementing governance systems and coordination infrastructure</li>
+        </ul>
+      </div>
+
+      <div class="content-block">
+        <h2>Core Components</h2>
+        
+        <h3>Dimensional Lenses</h3>
+        <p>Three perspectives for assessing organizational context:</p>
+        <ul>
+          <li><strong>Phase</strong> — Developmental stage (Conversation → Formation → Organization → Iteration → Completion)</li>
+          <li><strong>Scale</strong> — Size and complexity (Collaboration, Coordination, Constituency, Network)</li>
+          <li><strong>State</strong> — Transparent organizational state enabling coordination without centralized control</li>
+        </ul>
+
+        <h3>Organizational Patterns</h3>
+        <p>Four fundamental building blocks:</p>
+        <ul>
+          <li><strong>DAOs</strong> — Purpose-aligned networks of small autonomous teams</li>
+          <li><strong>Cells</strong> — Small autonomous teams with clear boundaries and purposes</li>
+          <li><strong>Roles</strong> — Defined responsibilities that entities can take on</li>
+          <li><strong>Tasks</strong> — Units of work that need coordination</li>
+        </ul>
+      </div>
+
+      <div class="content-block">
+        <h2>The Process</h2>
+        <p>The framework guides you through three phases:</p>
+        
+        <div class="process-steps">
+          <div class="process-step">
+            <span class="step-num">01</span>
+            <h4>Discovery</h4>
+            <p>Assess your group's current phase and scale. Map stakeholders and organizational context.</p>
+          </div>
+          <div class="process-step">
+            <span class="step-num">02</span>
+            <h4>Design</h4>
+            <p>Select appropriate patterns. Choose governance approach. Compose into functional structures.</p>
+          </div>
+          <div class="process-step">
+            <span class="step-num">03</span>
+            <h4>Implementation</h4>
+            <p>Deploy technical infrastructure. Establish operational systems. Iterate based on feedback.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h2>Resources</h2>
+        <div class="resource-links">
+          <a href="https://knowledge.superbenefit.org/artifacts/primitives-framework/concepts/" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">📚</span>
+            <span class="resource-title">Framework Concepts</span>
+            <span class="resource-desc">Core ideas, dimensional lenses, and organizational patterns</span>
+          </a>
+          <a href="https://knowledge.superbenefit.org/artifacts/primitives-framework/implementation/group-facilitation" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">🛠️</span>
+            <span class="resource-title">Facilitation Guide</span>
+            <span class="resource-desc">Complete guide through Discovery → Design → Implementation</span>
+          </a>
+          <a href="https://knowledge.superbenefit.org/artifacts/primitives-framework/rpp-governance-case-study" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">📖</span>
+            <span class="resource-title">Case Study</span>
+            <span class="resource-desc">RPP governance implementation</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <section class="project-cta">
+    <div class="container" data-animate="fade-up">
+      <h2>Want to learn more or get involved?</h2>
+      <p>Reach out on Discord or explore the knowledge base.</p>
+      <div class="cta-links">
+        <a href="https://discord.gg/d2EeszTvVm" target="_blank" rel="noopener noreferrer" class="cta-btn">Join Discord</a>
+        <a href="https://knowledge.superbenefit.org/artifacts/primitives-framework/" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--secondary">Explore Framework</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .project-hero {
+    position: relative;
+    background: var(--color-charcoal);
+    background-image: url('/images/brand-showcase.webp');
+    background-size: cover;
+    background-position: center;
+    padding-block-start: calc(var(--header-height) + var(--space-2xl));
+    padding-block-end: var(--space-2xl);
+    min-height: 50vh;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .project-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(196, 64, 26, 0.7) 0%,
+      rgba(245, 135, 44, 0.6) 50%,
+      rgba(45, 45, 45, 0.95) 100%
+    );
+  }
+
+  .project-hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  .project-hero h1 {
+    color: var(--color-cream);
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-xs);
+  }
+
+  .project-subtitle {
+    color: var(--color-cream);
+    opacity: 0.9;
+    font-size: var(--text-xl);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  .project-content {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .project-content .container {
+    max-width: 800px;
+  }
+
+  .content-block {
+    margin-block-end: var(--space-xl);
+  }
+
+  .content-block h2 {
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+
+  .content-block h3 {
+    color: var(--color-charcoal);
+    margin-block: var(--space-lg) 0 var(--space-sm);
+  }
+
+  .content-block p {
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin-block-end: var(--space-md);
+  }
+
+  .content-block ul {
+    margin-block-start: var(--space-sm);
+    margin-block-end: var(--space-md);
+    padding-inline-start: var(--space-lg);
+  }
+
+  .content-block li {
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin-block-end: var(--space-xs);
+  }
+
+  .audience-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .audience-list li {
+    padding: var(--space-md);
+    background: var(--color-cream-light);
+    border-radius: 8px;
+    margin-block-end: var(--space-sm);
+  }
+
+  .process-steps {
+    display: grid;
+    gap: var(--space-lg);
+    margin-block-start: var(--space-lg);
+  }
+
+  @media (min-width: 768px) {
+    .process-steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .process-step {
+    background: var(--color-cream-light);
+    padding: var(--space-lg);
+    border-radius: 12px;
+  }
+
+  .step-num {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 900;
+    color: var(--color-orange);
+    opacity: 0.3;
+    margin-block-end: var(--space-sm);
+  }
+
+  .process-step h4 {
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-xs);
+  }
+
+  .process-step p {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    margin: 0;
+  }
+
+  .resource-links {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .resource-links {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .resource-link {
+    display: block;
+    padding: var(--space-lg);
+    background: var(--color-cream-light);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .resource-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .resource-icon {
+    display: block;
+    font-size: 1.5rem;
+    margin-block-end: var(--space-xs);
+  }
+
+  .resource-title {
+    display: block;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-xs);
+  }
+
+  .resource-desc {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+  }
+
+  .project-cta {
+    background: var(--color-charcoal);
+    padding-block: var(--space-2xl);
+    text-align: center;
+  }
+
+  .project-cta h2 {
+    color: var(--color-cream);
+    margin-block-end: var(--space-sm);
+  }
+
+  .project-cta p {
+    color: var(--color-cream);
+    opacity: 0.8;
+    margin-block-end: var(--space-xl);
+  }
+
+  .cta-links {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 0.8em 1.8em;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform var(--transition-fast), background var(--transition-fast);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    background: var(--color-gold);
+  }
+
+  .cta-btn--secondary {
+    background: transparent;
+    border: 2px solid var(--color-cream);
+    color: var(--color-cream);
+  }
+
+  .cta-btn--secondary:hover {
+    background: var(--color-cream);
+    color: var(--color-charcoal);
+  }
+</style>

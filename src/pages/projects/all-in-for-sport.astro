@@ -1,0 +1,361 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+---
+
+<BaseLayout
+  title="All In For Sport — SuperBenefit"
+  description="Testing web3-powered governance in community sport organizations."
+>
+  <section class="project-hero">
+    <div class="project-hero-overlay"></div>
+    <div class="container project-hero-content">
+      <span class="project-label">Experiment</span>
+      <h1>All In For Sport</h1>
+      <p class="project-subtitle">Testing web3-powered governance in community sport organizations</p>
+    </div>
+  </section>
+
+  <SectionDivider from="charcoal" to="cream" />
+
+  <section class="project-content">
+    <div class="container" data-animate="fade-up">
+      <div class="content-block">
+        <h2>What is AIFS?</h2>
+        <p>
+          All In For Sport (AIFS) applies the Reimagining Power framework to sport organizations, exploring how DAOs can empower athletes and communities.
+        </p>
+        <p>
+          From an NFT funding project to a "coordi-nation" — AIFS documents how decentralized governance can work in practice.
+        </p>
+      </div>
+
+      <div class="content-block">
+        <h2>The Transformation</h2>
+        <p>
+          AIFS completed its transformation from an NFT-based funding project to a coordi-nation during its participation in the Reimagining Power Project from August 2024 to March 2025.
+        </p>
+        <p>
+          The organization initially attempted to revolutionize grassroots sports funding through blockchain technology but evolved to become infrastructure that facilitates connections between Web3 innovation and community sports development.
+        </p>
+      </div>
+
+      <div class="content-block">
+        <h2>Challenges Addressed</h2>
+        <ul class="challenge-list">
+          <li>
+            <strong>Value Proposition Confusion</strong> — Traditional philanthropists viewed Web3 elements as unnecessary complexity while crypto-native funders saw the shift away from NFTs as abandoning innovation
+          </li>
+          <li>
+            <strong>Resource Constraints</strong> — Complete dependence on volunteer effort created unpredictable capacity and unfulfilled commitments
+          </li>
+          <li>
+            <strong>Knowledge Gaps</strong> — Significant barriers between Web3 developers and grassroots sports organizations prevented meaningful collaboration
+          </li>
+        </ul>
+      </div>
+
+      <div class="content-block">
+        <h2>What They Did</h2>
+        <p>Through RPP, AIFS implemented two parallel interventions:</p>
+        
+        <div class="interventions">
+          <div class="intervention">
+            <span class="intervention-num">01</span>
+            <h4>The Gatherings Series</h4>
+            <p>Brought together 111 participants across six sessions, creating structured spaces for cross-sector relationship building.</p>
+          </div>
+          <div class="intervention">
+            <span class="intervention-num">02</span>
+            <h4>Governance Transformation</h4>
+            <p>Formalized through AIFSIP-04, establishing the organization's evolution into a coordi-nation model with autonomous cells within a networked structure.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h2>Outcomes</h2>
+        <ul class="outcome-list">
+          <li>Clarified identity as coordination infrastructure</li>
+          <li>Developed governance structures enabling partnerships with organizations like Women Win</li>
+          <li>Selected for the IOC Tech365 initiative supporting 25 organizations across 16 countries</li>
+        </ul>
+      </div>
+
+      <div class="content-block">
+        <h2>Resources</h2>
+        <div class="resource-links">
+          <a href="https://knowledge.superbenefit.org/artifacts/reimagining-power/aifs-experiment-case-study" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">📖</span>
+            <span class="resource-title">Case Study</span>
+            <span class="resource-desc">Full transformation documentation</span>
+          </a>
+          <a href="https://knowledge.superbenefit.org/artifacts/reimagining-power/" target="_blank" rel="noopener noreferrer" class="resource-link">
+            <span class="resource-icon">🌱</span>
+            <span class="resource-title">RPP Knowledge Base</span>
+            <span class="resource-desc">More about the broader project</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <section class="project-cta">
+    <div class="container" data-animate="fade-up">
+      <h2>Want to learn more or get involved?</h2>
+      <p>Reach out on Discord or explore the knowledge base.</p>
+      <div class="cta-links">
+        <a href="https://discord.gg/d2EeszTvVm" target="_blank" rel="noopener noreferrer" class="cta-btn">Join Discord</a>
+        <a href="https://knowledge.superbenefit.org/artifacts/reimagining-power/aifs-experiment-case-study" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--secondary">Explore AIFS</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .project-hero {
+    position: relative;
+    background: var(--color-charcoal);
+    background-image: url('/images/brand-showcase.webp');
+    background-size: cover;
+    background-position: center;
+    padding-block-start: calc(var(--header-height) + var(--space-2xl));
+    padding-block-end: var(--space-2xl);
+    min-height: 50vh;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .project-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(76, 175, 80, 0.6) 0%,
+      rgba(56, 139, 115, 0.7) 50%,
+      rgba(45, 45, 45, 0.95) 100%
+    );
+  }
+
+  .project-hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-green-light);
+    margin-block-end: var(--space-sm);
+  }
+
+  .project-hero h1 {
+    color: var(--color-cream);
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-xs);
+  }
+
+  .project-subtitle {
+    color: var(--color-cream);
+    opacity: 0.9;
+    font-size: var(--text-xl);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  .project-content {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .project-content .container {
+    max-width: 800px;
+  }
+
+  .content-block {
+    margin-block-end: var(--space-xl);
+  }
+
+  .content-block h2 {
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+
+  .content-block p {
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin-block-end: var(--space-md);
+  }
+
+  .challenge-list,
+  .outcome-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .challenge-list li,
+  .outcome-list li {
+    padding: var(--space-md);
+    background: var(--color-cream-light);
+    border-radius: 8px;
+    margin-block-end: var(--space-sm);
+    border-left: 4px solid var(--color-green-sage);
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.6;
+  }
+
+  .challenge-list li strong {
+    color: var(--color-charcoal);
+  }
+
+  .outcome-list li::before {
+    content: "✓ ";
+    color: var(--color-green-sage);
+    font-weight: bold;
+  }
+
+  .interventions {
+    display: grid;
+    gap: var(--space-lg);
+    margin-block-start: var(--space-lg);
+  }
+
+  @media (min-width: 768px) {
+    .interventions {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .intervention {
+    background: var(--color-cream-light);
+    padding: var(--space-lg);
+    border-radius: 12px;
+  }
+
+  .intervention-num {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 900;
+    color: var(--color-green-sage);
+    opacity: 0.4;
+    margin-block-end: var(--space-sm);
+  }
+
+  .intervention h4 {
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-xs);
+  }
+
+  .intervention p {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    margin: 0;
+  }
+
+  .resource-links {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .resource-links {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .resource-link {
+    display: block;
+    padding: var(--space-lg);
+    background: var(--color-cream-light);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .resource-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .resource-icon {
+    display: block;
+    font-size: 1.5rem;
+    margin-block-end: var(--space-xs);
+  }
+
+  .resource-title {
+    display: block;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-xs);
+  }
+
+  .resource-desc {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+  }
+
+  .project-cta {
+    background: var(--color-charcoal);
+    padding-block: var(--space-2xl);
+    text-align: center;
+  }
+
+  .project-cta h2 {
+    color: var(--color-cream);
+    margin-block-end: var(--space-sm);
+  }
+
+  .project-cta p {
+    color: var(--color-cream);
+    opacity: 0.8;
+    margin-block-end: var(--space-xl);
+  }
+
+  .cta-links {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 0.8em 1.8em;
+    background: var(--color-green-sage);
+    color: var(--color-charcoal);
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform var(--transition-fast), background var(--transition-fast);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    background: var(--color-green-light);
+  }
+
+  .cta-btn--secondary {
+    background: transparent;
+    border: 2px solid var(--color-cream);
+    color: var(--color-cream);
+  }
+
+  .cta-btn--secondary:hover {
+    background: var(--color-cream);
+    color: var(--color-charcoal);
+  }
+</style>
