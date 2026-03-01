@@ -19,12 +19,12 @@ interface Props {
   label: string;
   heading: string;
   body: string;
-  posts: Post[];
+  posts?: Post[];
   variant?: 'default' | 'compact';
   basePath?: string;
 }
 
-const { theme, bgImage, label, heading, body, posts, variant = 'default', basePath = '/blog' } = Astro.props;
+const { theme, bgImage, label, heading, body, posts = [], variant = 'default', basePath = '/blog' } = Astro.props;
 const isCompact = variant === 'compact';
 ---
 
