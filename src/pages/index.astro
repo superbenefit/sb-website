@@ -5,22 +5,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 import MissionStatement from '../components/MissionStatement.astro';
-import CardsStage from '../components/CardsStage.astro';
-import StorySection from '../components/StorySection.astro';
+// import CardsStage from '../components/CardsStage.astro';
+// import StorySection from '../components/StorySection.astro';
 import CallToAction from '../components/CallToAction.astro';
-import { getCollection } from 'astro:content';
-import salonBg from '../assets/images/salon-bg.webp';
-import playbookBg from '../assets/images/playbook-bg.webp';
-import vaultBg from '../assets/images/vault-bg.webp';
+// import { getCollection } from 'astro:content';
+// import salonBg from '../assets/images/salon-bg.webp';
+// import playbookBg from '../assets/images/playbook-bg.webp';
+// import vaultBg from '../assets/images/vault-bg.webp';
 
-const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-const recentPosts = allPosts
-  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
-  .slice(0, 3);
+// const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+// const recentPosts = allPosts
+//   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+//   .slice(0, 3);
 
-const allProjects = await getCollection('projects', ({ data }) => !data.draft);
-const projects = allProjects
-  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+// const allProjects = await getCollection('projects', ({ data }) => !data.draft);
+// const projects = allProjects
+//   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 ---
 
 <BaseLayout
@@ -31,8 +31,8 @@ const projects = allProjects
   <SectionDivider from="black" to="cream" />
   <MissionStatement />
 
-  <CardsStage>
-    {/* <StorySection
+  <!-- <CardsStage>
+    <StorySection
       theme="green"
       bgImage={salonBg}
       label="Shared Space"
@@ -46,7 +46,7 @@ const projects = allProjects
         View Events
       </a>
       <a href="/gatherings" class="story-btn story-btn--ghost">Browse Gatherings</a>
-    </StorySection> */}
+    </StorySection>
 
     <StorySection
       theme="orange"
@@ -84,7 +84,7 @@ const projects = allProjects
       </a>
       <a href="/about" class="story-btn story-btn--ghost">Learn More</a>
     </StorySection>
-  </CardsStage>
+  </CardsStage> -->
 
   <CallToAction />
 </BaseLayout>

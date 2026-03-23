@@ -6,21 +6,25 @@ interface Props {
 const { currentPath } = Astro.props;
 
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
+  { href: 'https://knowledge.superbenefit.dev', label: 'Knowledge' },
+  { href: 'https://governance.superbenefit.dev', label: 'Governance' },
 ];
 ---
 
 <nav class="site-nav" aria-label="Main navigation">
   <ul>
     {links.map(({ href, label }) => {
-      const isActive = href === '/'
+      const isExternal = href.startsWith('http');
+      const isActive = !isExternal && (href === '/'
         ? currentPath === '/'
-        : currentPath.startsWith(href);
+        : currentPath.startsWith(href));
       return (
         <li>
-          <a href={href} class:list={['nav-link', { active: isActive }]}>
+          <a
+            href={href}
+            class:list={['nav-link', { active: isActive }]}
+            {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
             {label}
           </a>
         </li>
