@@ -16,6 +16,9 @@
       <p class="mission-body">
         Our work includes researching and incubating initiatives that harness emerging technologies and practices for decentralized coordination in pursuit of systems transformation.
       </p>
+      <p class="mission-link">
+        <a href="/about">Read more about our mission &rarr;</a>
+      </p>
     </div>
   </div>
 </section>
@@ -79,6 +82,23 @@
     opacity: 0.7;
     line-height: 1.75;
     margin: 0;
+  }
+
+  .mission-link {
+    margin: 0;
+  }
+
+  .mission-link a {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-orange);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .mission-link a:hover {
+    opacity: 0.8;
   }
 
   @media (max-width: 768px) {

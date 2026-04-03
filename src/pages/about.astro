@@ -3,47 +3,18 @@ export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionDivider from '../components/SectionDivider.astro';
-
-const values = [
-  {
-    icon: '&#9878;',
-    title: 'Decentralization',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.',
-  },
-  {
-    icon: '&#10047;',
-    title: 'Social Impact',
-    description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.',
-  },
-  {
-    icon: '&#9733;',
-    title: 'Innovation',
-    description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.',
-  },
-  {
-    icon: '&#10070;',
-    title: 'Community',
-    description: 'Curabitur ullamcorper facilisis tellus, ac malesuada sapien laoreet vel. Integer blandit semper ligula, eget elementum risus vestibulum non.',
-  },
-];
-
-const steps = [
-  { label: 'Invention', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.' },
-  { label: 'Investment', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' },
-  { label: 'Acceleration', description: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.' },
-];
 ---
 
 <BaseLayout
   title="About — SuperBenefit"
-  description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+  description="A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked."
 >
   <!-- About Hero -->
   <section class="about-hero">
     <div class="about-hero-overlay"></div>
     <div class="container about-hero-content">
       <h1>About SuperBenefit</h1>
-      <p class="about-hero-sub">Lorem ipsum dolor sit amet</p>
+      <p class="about-hero-sub">A node in the regenerative ecosystem</p>
     </div>
   </section>
 
@@ -53,116 +24,34 @@ const steps = [
   <section class="about-mission">
     <div class="container mission-content" data-animate="fade-up">
       <span class="section-label">Our Mission</span>
-      <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod.</h2>
+      <h2>Emerging technologies are a rare opportunity. Not a silver bullet, but the potential to intervene at the deepest levels of how power flows.</h2>
       <div class="mission-columns">
         <div>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae nulla vel sapien
-            dignissim condimentum at eu eros. Vestibulum ante ipsum primis in faucibus orci luctus
-            et ultrices posuere cubilia curae; Sed vehicula metus non justo facilisis, vel cursus
-            libero efficitur.
+            Our current systems of coordination - how we organize, allocate resources, govern ourselves, make collective decisions - clearly aren't working for most people. Value is extracted rather than circulated, power ever more concentrated, our planet and people devastated.
           </p>
           <p>
-            Nunc volutpat turpis quis nunc placerat, in fringilla sem venenatis. Donec pharetra
-            augue at volutpat fermentum, id lacinia lorem congue. Praesent quis dolor vitae urna
-            gravida malesuada.
+            Meanwhile, across the world, there is a hidden mosaic of grassroots initiatives yearning to be woven. Open source, peer-to-peer, built to be forked.
           </p>
         </div>
         <div>
           <p>
-            Curabitur ullamcorper facilisis tellus, ac malesuada sapien laoreet vel. Integer blandit
-            semper ligula, eget elementum risus vestibulum non. Fusce suscipit orci vitae magna
-            tempor rhoncus. Aliquam erat volutpat.
+            SuperBenefit is one part of a much larger regenerative ecosystem. Together, we are building the commons and cultivating the connective tissue between disparate communities, initiatives, technologies, and bioregions.
           </p>
           <p>
-            Nullam vehicula sapien nec tellus dignissim, at convallis magna tincidunt. Morbi vel
-            magna in enim consequat pellentesque vel vel massa. Proin consequat, nulla sed congue
-            commodo, justo nulla aliquet erat.
+            Through projects like the <a href="https://knowledge.superbenefit.dev/docs/" target="_blank" rel="noopener noreferrer">Reimagining Power Project</a> and <a href="https://www.allinforsport.org/" target="_blank" rel="noopener noreferrer">All In For Sport</a>, we work alongside partners across multiple continents, experimenting with decentralized tools to shift ownership and agency to communities that have been excluded from the systems that shape their lives.
           </p>
         </div>
       </div>
       <blockquote class="pull-quote">
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit — ut enim ad minim veniam."
+        "Not just reimagining existing systems, but growing new ones alongside them."
       </blockquote>
-    </div>
-  </section>
-
-  <SectionDivider from="cream" to="green" />
-
-  <!-- Values Section -->
-  <section class="about-values">
-    <div class="container">
-      <div class="values-header" data-animate="fade-up">
-        <span class="section-label">Our Values</span>
-        <h2>What We Believe</h2>
-      </div>
-      <div class="values-grid">
-        {values.map((v, i) => (
-          <article
-            class="value-card"
-            data-animate="scale-in"
-            style={`--stagger: ${i * 80}ms`}
-          >
-            <span class="value-icon" set:html={v.icon} />
-            <h3>{v.title}</h3>
-            <p>{v.description}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <SectionDivider from="green" to="cream" />
-
-  <!-- Theory of Change -->
-  <section class="about-toc">
-    <div class="container" data-animate="fade-up">
-      <span class="section-label">Theory of Change</span>
-      <h2>How We Create Impact</h2>
-      <div class="toc-steps">
-        {steps.map((step, i) => (
-          <div class="toc-step" data-animate="fade-up" style={`--stagger: ${i * 120}ms`}>
-            <div class="step-number">{String(i + 1).padStart(2, '0')}</div>
-            <div class="step-connector" aria-hidden="true"></div>
-            <h3>{step.label}</h3>
-            <p>{step.description}</p>
-          </div>
-        ))}
-      </div>
     </div>
   </section>
 
   <SectionDivider from="cream" to="charcoal" />
 
-  <!-- Community Section -->
-  <section class="about-community">
-    <div class="container community-content" data-animate="fade-up">
-      <h2>Join Our Community</h2>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae nulla vel
-        sapien dignissim condimentum at eu eros. Vestibulum ante ipsum primis in faucibus
-        orci luctus et ultrices posuere cubilia curae.
-      </p>
-      <div class="community-links">
-        <a href="https://discord.gg/superbenefit" target="_blank" rel="noopener noreferrer" class="community-link">
-          <span class="link-icon">&#128172;</span>
-          <span>Discord</span>
-        </a>
-        <a href="https://twitter.com/SuperBenefitDAO" target="_blank" rel="noopener noreferrer" class="community-link">
-          <span class="link-icon">&#128038;</span>
-          <span>Twitter / X</span>
-        </a>
-        <a href="https://github.com/superbenefit" target="_blank" rel="noopener noreferrer" class="community-link">
-          <span class="link-icon">&#128187;</span>
-          <span>GitHub</span>
-        </a>
-        <a href="https://snapshot.org/#/superbenefit.eth" target="_blank" rel="noopener noreferrer" class="community-link">
-          <span class="link-icon">&#9878;</span>
-          <span>Governance</span>
-        </a>
-      </div>
-    </div>
-  </section>
+  {/* Values, Theory of Change, and Community sections hidden until content is properly written */}
 </BaseLayout>
 
 <style>
@@ -254,6 +143,17 @@ const steps = [
     opacity: 0.8;
     line-height: 1.7;
     margin-block-end: var(--space-md);
+  }
+
+  .mission-columns a {
+    color: var(--color-orange);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity var(--transition-fast);
+  }
+
+  .mission-columns a:hover {
+    opacity: 0.7;
   }
 
   .pull-quote {
