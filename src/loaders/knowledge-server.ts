@@ -80,7 +80,7 @@ export function knowledgeServerLoader(options: KnowledgeServerOptions = {}): Loa
             publishedAt: post.publishedAt,
             author: post.author,
             tags: post.tags,
-            coverImage: post.coverImage,
+            coverImage: (post as Record<string, unknown>).coverImage as string | undefined,
             draft: post.draft,
           },
         });

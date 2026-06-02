@@ -46,9 +46,11 @@ StorySection layout variants via `variant` prop:
 - `'compact'` — 4-column fluid grid of all items
 
 ### Styling Approach
-- **Plain CSS** — no Tailwind. Component-scoped `<style>` blocks in `.astro` files plus two global stylesheets.
-- **Design tokens** in `src/styles/global.css` as CSS custom properties (colors, typography, spacing, shadows, transitions).
-- **Fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) via Astro experimental fonts. CSS vars `--font-playfair` and `--font-inter` also available.
+- **Design tokens** in `src/styles/global.css` are the single source of truth — all colors, typography, spacing, shadows, and transitions derive from CSS custom properties in `:root`.
+- **Custom properties** in component-scoped `<style>` blocks remain the preferred pattern for site-layout Astro components where they provide better readability than utility classes.
+- **Tailwind CSS v4** + **shadcn/ui** are supported for interactive components (modals, tabs, forms, dropdowns). Tailwind utilities read from the same `:root` token block via `@theme inline`.
+- **RGB channel variants** (`--color-black-rgb`, `--color-orange-rgb`, etc.) enable alpha compositing: `rgb(var(--color-black-rgb) / 0.8)`. Prefer these over hardcoded `rgba()` values.
+- **fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) via Astro experimental fonts. CSS vars `--font-playfair` and `--font-inter` also available.
 - **Fluid typography**: `clamp()`-based scale from `--text-xs` to `--text-hero`.
 
 ### Animations (src/styles/animations.css)
@@ -71,6 +73,6 @@ All scroll-driven — no JavaScript animation libraries:
 
 ## Code Style
 
-- **Component theming**: Uses `data-theme` attribute selectors (`[data-theme="green"]`), not CSS classes or custom properties, for theme-specific styles.
+- **Component theming**: Uses `data-theme` attribute selectors with the `--theme-accent` custom property pattern. Set `--theme-accent` on `[data-theme="green|orange|red"]` once, then reference `var(--theme-accent)` throughout — avoids repeating ~14 selectors per theme.
 - **Prerender opt-in**: Static pages declare `export const prerender = true` in frontmatter. Without this, pages render on the Worker at request time.
 - **Responsive breakpoints**: 1024px (tablet landscape), 768px (tablet), 480px (mobile) — used consistently across all components.

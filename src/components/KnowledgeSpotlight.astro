@@ -1,0 +1,149 @@
+---
+/**
+ * KnowledgeSpotlight — section showing the 3 most recent blog posts
+ * from the SuperBenefit Knowledge Garden.
+ *
+ * Uses getCollection('blog') from Astro content collections.
+ * Gracefully handles empty state when no posts are available.
+ */
+import { getCollection } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const recentPosts = allPosts
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3);
+---
+
+<section class="knowledge-spotlight">
+  <div class="container">
+    <header class="spotlight-header" data-animate="fade-up">
+      <span class="spotlight-label">Knowledge Garden</span>
+      <h2>Recent Writing</h2>
+      <p>Insights on governance, DAOs, and the frontiers of systems innovation</p>
+    </header>
+
+    {recentPosts.length > 0 ? (
+      <div class="spotlight-grid">
+        {recentPosts.map((post, i) => (
+          <div class="spotlight-card-wrap" data-animate="fade-up" style={`--stagger: ${i * 100}ms`}>
+            <BlogCard
+              id={post.id}
+              title={post.data.title}
+              excerpt={post.data.excerpt}
+              publishedAt={post.data.publishedAt}
+              tags={post.data.tags}
+              coverImage={post.data.coverImage}
+            />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="spotlight-empty" data-animate="fade-up">
+        <p>Coming soon — check back for writing on governance, DAOs, and systems innovation.</p>
+      </div>
+    )}
+
+    <footer class="spotlight-footer" data-animate="fade-up">
+      <a href="/blog" class="spotlight-more">
+        View all posts
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .knowledge-spotlight {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  /* ===== Header ===== */
+  .spotlight-header {
+    text-align: center;
+    margin-block-end: var(--space-2xl);
+  }
+
+  .spotlight-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  .spotlight-header h2 {
+    font-size: var(--text-2xl);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-sm);
+  }
+
+  .spotlight-header p {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.6;
+    margin-inline: auto;
+    max-width: 48ch;
+  }
+
+  /* ===== Cards grid ===== */
+  .spotlight-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 640px) {
+    .spotlight-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .spotlight-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .spotlight-card-wrap {
+    animation-delay: var(--stagger);
+  }
+
+  /* ===== Empty state ===== */
+  .spotlight-empty {
+    text-align: center;
+    padding-block: var(--space-xl);
+    color: var(--color-charcoal);
+    opacity: 0.5;
+    font-size: var(--text-lg);
+    font-style: italic;
+  }
+
+  /* ===== Footer link ===== */
+  .spotlight-footer {
+    text-align: center;
+    margin-block-start: var(--space-xl);
+  }
+
+  .spotlight-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-orange);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .spotlight-more:hover {
+    opacity: 0.7;
+  }
+</style>

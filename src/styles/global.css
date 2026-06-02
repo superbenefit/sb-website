@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* ===== DESIGN TOKENS ===== */
 
 :root {
@@ -13,6 +15,19 @@
   --color-green: #7a9a4e;
   --color-green-sage: #8dad5c;
   --color-gold: #d4a843;
+
+  /* RGB channel variants for alpha compositing via rgb(var(--color-*-rgb) / alpha) */
+  --color-cream-rgb: 237 221 200;
+  --color-cream-light-rgb: 245 237 224;
+  --color-charcoal-rgb: 45 45 45;
+  --color-black-rgb: 26 26 26;
+  --color-orange-rgb: 245 135 44;
+  --color-orange-dark-rgb: 224 107 16;
+  --color-red-rgb: 196 64 26;
+  --color-red-deep-rgb: 168 50 21;
+  --color-green-rgb: 122 154 78;
+  --color-green-sage-rgb: 141 173 92;
+  --color-gold-rgb: 212 168 67;
 
   /* Gradients */
   --gradient-rainbow: conic-gradient(
@@ -232,4 +247,25 @@ p {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ===== TAILWIND v4 TOKEN BRIDGE ===== */
+
+/* Map SuperBenefit design tokens to Tailwind utilities.
+   Enables Tailwind classes like bg-cream, text-charcoal, border-orange.
+   Note: Tailwind opacity modifiers (e.g. bg-orange/50) don't work with
+   CSS variable references. Use arbitrary values instead:
+     bg-[rgb(var(--color-orange-rgb)/0.5)] */
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-cream-light: var(--color-cream-light);
+  --color-charcoal: var(--color-charcoal);
+  --color-black: var(--color-black);
+  --color-orange: var(--color-orange);
+  --color-orange-dark: var(--color-orange-dark);
+  --color-red: var(--color-red);
+  --color-red-deep: var(--color-red-deep);
+  --color-green: var(--color-green);
+  --color-green-sage: var(--color-green-sage);
+  --color-gold: var(--color-gold);
 }

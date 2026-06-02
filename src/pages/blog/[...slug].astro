@@ -90,7 +90,7 @@ const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
   .post-header {
     margin-block-end: var(--space-xl);
     padding-block-end: var(--space-lg);
-    border-block-end: 1px solid rgba(0, 0, 0, 0.08);
+    border-block-end: 1px solid rgb(var(--color-black-rgb) / 0.08);
   }
 
   .post-meta {
@@ -118,7 +118,7 @@ const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
     display: inline-block;
     font-size: var(--text-xs);
     padding: 0.2em 0.7em;
-    background: rgba(122, 154, 78, 0.15);
+    background: rgb(var(--color-green-rgb) / 0.15);
     color: var(--color-green);
     border-radius: 50px;
     font-weight: 500;
@@ -138,7 +138,7 @@ const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
   .post-footer {
     margin-block-start: var(--space-2xl);
     padding-block-start: var(--space-lg);
-    border-block-start: 1px solid rgba(0, 0, 0, 0.08);
+    border-block-start: 1px solid rgb(var(--color-black-rgb) / 0.08);
   }
 
   .back-link {

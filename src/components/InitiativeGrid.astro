@@ -1,0 +1,219 @@
+---
+/**
+ * InitiativeGrid — 3-column responsive grid of glass initiative cards.
+ *
+ * Replaces the old CardsStage + StorySection pattern with simpler,
+ * maintainable components. Each card describes a SuperBenefit initiative
+ * with real copy from the content reference.
+ *
+ * Cards use the --theme-accent custom property via data-theme attributes,
+ * reducing the ~42 selectors in the old StorySection to a single pattern.
+ */
+---
+
+<section class="initiative-grid">
+  <div class="container">
+    <div class="initiative-cards">
+
+      <!-- Gatherings (green) -->
+      <article class="initiative-card" data-theme="green" data-animate="fade-up" style="--stagger: 0ms">
+        <span class="initiative-label">Shared Space</span>
+        <h2 class="initiative-heading">Gatherings</h2>
+        <p class="initiative-body">
+          SuperBenefit hosts community salons and gatherings that bring together
+          builders, researchers, and community leaders from across the regenerative
+          ecosystem. These are spaces for shared learning, deep connection, and
+          the coordination needed to shift systems.
+        </p>
+        <a
+          href="https://discord.gg/q95fFXGu67"
+          class="initiative-cta"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Join the Community
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+      </article>
+
+      <!-- Knowledge Garden (orange) -->
+      <article class="initiative-card" data-theme="orange" data-animate="fade-up" style="--stagger: 100ms">
+        <span class="initiative-label">Shared Knowledge</span>
+        <h2 class="initiative-heading">Knowledge Garden</h2>
+        <p class="initiative-body">
+          Our open-source library cultivates shared knowledge and common
+          understanding around governance, DAOs, systems innovation, and web3.
+          All public knowledge is free to use. Contribution to the garden is
+          welcome via GitHub pull request.
+        </p>
+        <a
+          href="https://knowledge.superbenefit.org"
+          class="initiative-cta"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Explore the Garden
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+      </article>
+
+      <!-- Projects (red) -->
+      <article class="initiative-card" data-theme="red" data-animate="fade-up" style="--stagger: 200ms">
+        <span class="initiative-label">Shared Resources</span>
+        <h2 class="initiative-heading">Projects</h2>
+        <p class="initiative-body">
+          Work at SuperBenefit is carried out by its cells — a purpose-aligned
+          network of small, autonomous teams. We coordinate across cells to share
+          capacity and costs as a collaborative commons. Cells are self-organized
+          as SuperBenefit DAO LLC, a translocal non-profit.
+        </p>
+        <a href="/projects" class="initiative-cta">
+          View All Projects
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ===== Section background ===== */
+  .initiative-grid {
+    background: var(--color-charcoal);
+    padding-block: var(--space-2xl);
+  }
+
+  /* ===== 3-column responsive grid ===== */
+  .initiative-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  /* ===== Theme accent mapping (DRY — 3 lines instead of ~42) ===== */
+  [data-theme="green"]  { --theme-accent: var(--color-green);  --theme-accent-rgb: var(--color-green-rgb); }
+  [data-theme="orange"] { --theme-accent: var(--color-orange); --theme-accent-rgb: var(--color-orange-rgb); }
+  [data-theme="red"]    { --theme-accent: var(--color-red);    --theme-accent-rgb: var(--color-red-rgb); }
+
+  /* ===== Glass card ===== */
+  .initiative-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-xl) var(--space-lg) var(--space-lg);
+background: rgb(var(--color-charcoal-rgb) / 0.35);
+    border: 1px solid rgb(var(--color-cream-rgb) / 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    transition:
+      transform var(--transition-medium),
+      box-shadow var(--transition-medium),
+      border-color var(--transition-medium);
+  }
+
+  .initiative-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgb(var(--color-black-rgb) / 0.35);
+    border-color: rgb(var(--theme-accent-rgb) / 0.25);
+  }
+
+  /* 3px accent stripe along the top */
+  .initiative-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--theme-accent);
+  }
+
+  /* ===== Label ===== */
+  .initiative-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--theme-accent);
+  }
+
+  /* ===== Heading ===== */
+  .initiative-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-cream);
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  /* ===== Body ===== */
+  .initiative-body {
+    font-size: var(--text-sm);
+    color: var(--color-cream);
+    opacity: 0.75;
+    line-height: 1.7;
+    margin: 0;
+    flex: 1;
+  }
+
+  /* ===== CTA button ===== */
+  .initiative-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    align-self: flex-start;
+    margin-block-start: auto;
+    padding: 0.7em 1.4em;
+    border: 1px solid var(--theme-accent);
+    border-radius: 50px;
+    color: var(--color-cream);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    background: rgb(var(--theme-accent-rgb) / 0.18);
+    transition:
+      background var(--transition-fast),
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .initiative-cta:hover {
+    background: rgb(var(--theme-accent-rgb) / 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgb(var(--theme-accent-rgb) / 0.2);
+  }
+
+  .initiative-cta svg {
+    flex-shrink: 0;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .initiative-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .initiative-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ===== Reduced motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .initiative-card {
+      transition: none;
+    }
+  }
+</style>
