@@ -2,14 +2,38 @@
 ---
 
 <div class="footer-fade" aria-hidden="true">
-  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-deep">
-    <path d="M0,25 C240,105 720,115 1440,95 L1440,0 L0,0 Z" />
-  </svg>
-  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-mid">
-    <path d="M0,15 C480,70 960,85 1440,55 L1440,0 L0,0 Z" />
-  </svg>
+  <!-- Shallow: 8 oscillations, dense coverage near the top -->
   <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-shallow">
-    <path d="M0,5 C300,40 720,50 1440,30 L1440,0 L0,0 Z" />
+    <path d="M0,15
+      Q45,-5 90,15 Q135,35 180,15
+      Q225,-5 270,15 Q315,35 360,15
+      Q405,-5 450,15 Q495,35 540,15
+      Q585,-5 630,15 Q675,35 720,15
+      Q765,-5 810,15 Q855,35 900,15
+      Q945,-5 990,15 Q1035,35 1080,15
+      Q1125,-5 1170,15 Q1215,35 1260,15
+      Q1305,-5 1350,15 Q1395,35 1440,20
+      L1440,0 L0,0 Z" />
+  </svg>
+
+  <!-- Mid: 5 oscillations, medium coverage -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-mid">
+    <path d="M0,50
+      Q72,20 144,50 Q216,80 288,50
+      Q360,20 432,50 Q504,80 576,50
+      Q648,20 720,50 Q792,80 864,50
+      Q936,20 1008,50 Q1080,80 1152,50
+      Q1224,20 1296,50 Q1368,80 1440,58
+      L1440,0 L0,0 Z" />
+  </svg>
+
+  <!-- Deep: 3 oscillations, faint reach toward the bottom -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-deep">
+    <path d="M0,85
+      Q120,55 240,85 Q360,115 480,85
+      Q600,55 720,85 Q840,115 960,85
+      Q1080,55 1200,85 Q1320,115 1440,90
+      L1440,0 L0,0 Z" />
   </svg>
 </div>
 
@@ -20,6 +44,7 @@
     margin-top: -120px;
     background: var(--color-black);
     line-height: 0;
+    overflow: hidden;
   }
 
   .fade-wave {
@@ -29,22 +54,19 @@
     height: 100%;
   }
 
-  /* Deepest — reaches furthest down, lightest opacity */
   .fade-deep path {
     fill: var(--color-charcoal);
-    opacity: 0.28;
+    opacity: 0.25;
   }
 
-  /* Middle — moderate reach and opacity */
   .fade-mid path {
     fill: var(--color-charcoal);
-    opacity: 0.48;
+    opacity: 0.45;
   }
 
-  /* Shallow — stays near the top, highest opacity for density */
   .fade-shallow path {
     fill: var(--color-charcoal);
-    opacity: 0.75;
+    opacity: 0.7;
   }
 
   @media (max-width: 768px) {
