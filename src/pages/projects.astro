@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 
 /**
@@ -45,20 +46,24 @@ const projects = [
     link: 'https://governance.superbenefit.org',
   },
 ];
+
+const hero = {
+  title: 'Projects & Initiatives',
+  subtitle: "SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams. We coordinate across cells to share capacity and costs as a collaborative commons.",
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-red) 40%, transparent) 0%,
+    color-mix(in srgb, var(--color-red-deep) 60%, transparent) 50%,
+    color-mix(in srgb, var(--color-charcoal) 95%, transparent) 100%
+  )`,
+};
 ---
 
 <BaseLayout
   title="Projects — SuperBenefit"
   description="SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams building the commons."
 >
-  {/* Projects Hero */}
-  <section class="projects-hero">
-    <div class="projects-hero-overlay" aria-hidden="true"></div>
-    <div class="container projects-hero-content">
-      <h1>Projects &amp; Initiatives</h1>
-      <p>SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams. We coordinate across cells to share capacity and costs as a collaborative commons.</p>
-    </div>
-  </section>
+  <PageHero {...hero} />
 
   <SectionDivider from="black" to="cream" />
 
@@ -95,52 +100,6 @@ const projects = [
 </BaseLayout>
 
 <style>
-  /* ===== Hero ===== */
-  .projects-hero {
-    position: relative;
-    background: var(--color-black);
-    background-image: url('/images/brand-showcase.webp');
-    background-size: cover;
-    background-position: center;
-    padding-block-start: calc(var(--header-height) + var(--space-2xl));
-    padding-block-end: var(--space-2xl);
-    min-height: 40vh;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-  }
-
-  .projects-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-red) 40%, transparent) 0%,
-      color-mix(in srgb, var(--color-red-deep) 60%, transparent) 50%,
-      color-mix(in srgb, var(--color-charcoal) 95%, transparent) 100%
-    );
-    pointer-events: none;
-  }
-
-  .projects-hero-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .projects-hero h1 {
-    color: var(--color-cream);
-    font-size: var(--text-3xl);
-    margin-block-end: var(--space-md);
-  }
-
-  .projects-hero p {
-    color: var(--color-cream);
-    opacity: 0.75;
-    font-size: var(--text-lg);
-    line-height: 1.7;
-    max-width: 56ch;
-  }
-
   /* ===== Grid ===== */
   .projects-grid-section {
     background: var(--color-cream);

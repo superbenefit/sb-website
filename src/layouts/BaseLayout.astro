@@ -50,6 +50,18 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
       <slot />
     </main>
     <Footer />
+    <script>
+      function updateNavActive() {
+        const path = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach((link) => {
+          const href = link.getAttribute('href');
+          if (!href || href.startsWith('http')) return;
+          const isActive = href === '/' ? path === '/' : path.startsWith(href);
+          link.classList.toggle('active', isActive);
+        });
+      }
+      document.addEventListener('astro:page-load', updateNavActive);
+    </script>
   </body>
 </html>
 
