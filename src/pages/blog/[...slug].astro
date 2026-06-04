@@ -2,6 +2,8 @@
 export const prerender = true;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
 import { getCollection } from 'astro:content';
 import { sanitizeHtml } from '../../utils/sanitize';
 
@@ -63,6 +65,10 @@ const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
       </footer>
     </div>
   </article>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <CallToAction />
 </BaseLayout>
 
 <style>

@@ -4,6 +4,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
+import CallToAction from '../components/CallToAction.astro';
 
 /**
  * Projects data — loaded from mock projects at build time.
@@ -97,6 +98,10 @@ const hero = {
       </div>
     </div>
   </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <CallToAction />
 </BaseLayout>
 
 <style>

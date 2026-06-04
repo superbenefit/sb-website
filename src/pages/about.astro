@@ -4,6 +4,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
+import CallToAction from '../components/CallToAction.astro';
 
 const hero = {
   title: 'About SuperBenefit',
@@ -130,46 +131,7 @@ const hero = {
 
   <SectionDivider from="cream" to="charcoal" />
 
-  {/* Community */}
-  <section class="about-community">
-    <div class="container community-content" data-animate="fade-up">
-      <h2>Pull Up a Chair</h2>
-      <p>
-        If our work resonates, we warmly invite you to connect. SuperBenefit
-        is an open community — whether you're a builder, researcher, funder,
-        or simply curious, there's a place for you here.
-      </p>
-      <div class="community-links">
-        <a
-          href="https://discord.gg/q95fFXGu67"
-          class="community-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="link-icon" aria-hidden="true">&#9679;</span>
-          Discord
-        </a>
-        <a
-          href="https://github.com/superbenefit"
-          class="community-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="link-icon" aria-hidden="true">&#9900;</span>
-          GitHub
-        </a>
-        <a
-          href="https://knowledge.superbenefit.org"
-          class="community-link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="link-icon" aria-hidden="true">&#9733;</span>
-          Knowledge Garden
-        </a>
-      </div>
-    </div>
-  </section>
+  <CallToAction />
 </BaseLayout>
 
 <style>
@@ -364,64 +326,4 @@ const hero = {
     line-height: 1.7;
   }
 
-  /* ===== Community ===== */
-  .about-community {
-    background: var(--color-charcoal);
-    padding-block: var(--space-2xl);
-  }
-
-  .community-content {
-    text-align: center;
-    max-width: 640px;
-  }
-
-  .community-content h2 {
-    color: var(--color-cream);
-    margin-block-end: var(--space-md);
-  }
-
-  .community-content > p {
-    color: var(--color-cream);
-    opacity: 0.8;
-    font-size: var(--text-lg);
-    line-height: 1.7;
-    margin-block-end: var(--space-xl);
-    margin-inline: auto;
-  }
-
-  .community-links {
-    display: flex;
-    gap: var(--space-md);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .community-link {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: 0.7em 1.5em;
-    border: 1px solid rgb(var(--color-cream-rgb) / 0.2);
-    border-radius: 50px;
-    color: var(--color-cream);
-    font-weight: 500;
-    font-size: var(--text-sm);
-    transition:
-      background var(--transition-fast),
-      border-color var(--transition-fast),
-      transform var(--transition-fast),
-      color var(--transition-fast);
-    text-decoration: none;
-  }
-
-  .community-link:hover {
-    background: var(--color-orange);
-    border-color: var(--color-orange);
-    color: var(--color-cream);
-    transform: translateY(-2px);
-  }
-
-  .link-icon {
-    font-size: 1.2em;
-  }
 </style>

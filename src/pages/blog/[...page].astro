@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogList from '../../components/BlogList.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
 import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
@@ -56,6 +57,10 @@ const hero = {
       )}
     </div>
   </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <CallToAction />
 </BaseLayout>
 
 <style>

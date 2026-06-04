@@ -1,19 +1,41 @@
 ---
-
 ---
 
 <section class="cta">
   <div class="container cta-inner" data-animate="fade-up">
     <h2>Pull Up a Chair</h2>
     <p>
-      If our work resonates, we warmly invite you to connect.
+      If our work resonates, we warmly invite you to connect. SuperBenefit
+      is an open community &mdash; whether you&rsquo;re a builder, researcher,
+      funder, or simply curious, there&rsquo;s a place for you here.
     </p>
-    <div class="cta-buttons">
-      <a href="https://discord.gg/q95fFXGu67" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-        Join Discord
+    <div class="cta-links">
+      <a
+        href="https://discord.gg/q95fFXGu67"
+        class="cta-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="cta-link-icon" aria-hidden="true">&#9679;</span>
+        Discord
       </a>
-      <a href="https://knowledge.superbenefit.dev" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-        Explore the Knowledge Garden
+      <a
+        href="https://github.com/superbenefit"
+        class="cta-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="cta-link-icon" aria-hidden="true">&#9900;</span>
+        GitHub
+      </a>
+      <a
+        href="https://knowledge.superbenefit.org"
+        class="cta-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="cta-link-icon" aria-hidden="true">&#9733;</span>
+        Knowledge Garden
       </a>
     </div>
   </div>
@@ -21,86 +43,62 @@
 
 <style>
   .cta {
-    background: var(--color-orange);
-    padding-block: 140px var(--space-2xl);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 20% 50%, rgba(196, 64, 26, 0.3), transparent 60%),
-      radial-gradient(ellipse at 80% 30%, rgba(212, 168, 67, 0.2), transparent 50%);
-    pointer-events: none;
+    background: var(--color-charcoal);
+    padding-block: var(--space-2xl);
   }
 
   .cta-inner {
-    position: relative;
     text-align: center;
     max-width: 640px;
   }
 
   .cta h2 {
     color: var(--color-cream);
-    font-size: var(--text-3xl);
     margin-block-end: var(--space-md);
   }
 
   .cta p {
     color: var(--color-cream);
-    opacity: 0.9;
+    opacity: 0.8;
     font-size: var(--text-lg);
     line-height: 1.7;
     margin-block-end: var(--space-xl);
     margin-inline: auto;
   }
 
-  .cta-buttons {
+  .cta-links {
     display: flex;
     gap: var(--space-md);
     justify-content: center;
     flex-wrap: wrap;
   }
 
-  .btn {
-    display: inline-flex;
+  .cta-link {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0.9em 2em;
+    gap: var(--space-sm);
+    padding: 0.7em 1.5em;
+    border: 1px solid rgb(var(--color-cream-rgb) / 0.2);
     border-radius: 50px;
-    font-weight: 600;
-    font-size: var(--text-base);
-    letter-spacing: 0.02em;
+    color: var(--color-cream);
+    font-weight: 500;
+    font-size: var(--text-sm);
     transition:
+      background var(--transition-fast),
+      border-color var(--transition-fast),
       transform var(--transition-fast),
-      box-shadow var(--transition-fast),
-      background-color var(--transition-fast);
+      color var(--transition-fast);
     text-decoration: none;
   }
 
-  .btn-primary {
-    background: var(--color-charcoal);
+  .cta-link:hover {
+    background: var(--color-orange);
+    border-color: var(--color-orange);
     color: var(--color-cream);
-  }
-
-  .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgb(var(--color-black-rgb) / 0.3);
-    color: var(--color-cream);
   }
 
-  .btn-ghost {
-    background: transparent;
-    color: var(--color-cream);
-    border: 2px solid var(--color-cream);
-  }
-
-  .btn-ghost:hover {
-    background: var(--color-cream);
-    color: var(--color-orange);
-    transform: translateY(-2px);
+  .cta-link-icon {
+    font-size: 1.2em;
   }
 </style>
