@@ -3,7 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import { Font } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import SectionDivider from '../components/SectionDivider.astro';
+import FooterFade from '../components/FooterFade.astro';
 import SEO from '../components/SEO.astro';
 import '../styles/global.css';
 import '../styles/animations.css';
@@ -50,7 +50,7 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
     <main>
       <slot />
     </main>
-    <SectionDivider from="charcoal" to="black" />
+    <FooterFade />
     <Footer />
     <script>
       function updateNavActive() {

@@ -1,0 +1,56 @@
+---
+---
+
+<div class="footer-fade" aria-hidden="true">
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-deep">
+    <path d="M0,0 C240,110 720,120 1440,100 L1440,0 Z" />
+  </svg>
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-mid">
+    <path d="M0,0 C480,75 960,85 1440,55 L1440,0 Z" />
+  </svg>
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-shallow">
+    <path d="M0,0 C300,45 720,50 1200,40 L1440,40 L1440,0 Z" />
+  </svg>
+</div>
+
+<style>
+  .footer-fade {
+    position: relative;
+    height: 120px;
+    margin-top: -120px;
+    background: var(--color-black);
+    line-height: 0;
+  }
+
+  .fade-wave {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Deepest — reaches furthest down, lightest opacity */
+  .fade-deep path {
+    fill: var(--color-charcoal);
+    opacity: 0.28;
+  }
+
+  /* Middle — moderate reach and opacity */
+  .fade-mid path {
+    fill: var(--color-charcoal);
+    opacity: 0.48;
+  }
+
+  /* Shallow — stays near the top, highest opacity for density */
+  .fade-shallow path {
+    fill: var(--color-charcoal);
+    opacity: 0.75;
+  }
+
+  @media (max-width: 768px) {
+    .footer-fade {
+      height: 80px;
+      margin-top: -80px;
+    }
+  }
+</style>
