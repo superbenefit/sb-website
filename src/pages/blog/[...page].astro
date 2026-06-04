@@ -3,6 +3,7 @@ export const prerender = true;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogList from '../../components/BlogList.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
 import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
@@ -22,12 +23,15 @@ const { page } = Astro.props;
   description="Thoughts on governance, DAOs, web3, and building a better world through systems innovation."
 >
   <section class="blog-hero">
+    <div class="blog-hero-overlay" aria-hidden="true"></div>
     <div class="blog-hero-stars" aria-hidden="true"></div>
     <div class="container blog-hero-content">
       <h1>Blog</h1>
       <p>Exploring governance, DAOs, and the frontiers of systems innovation</p>
     </div>
   </section>
+
+  <SectionDivider from="black" to="cream" />
 
   <section class="blog-content">
     <div class="container">
@@ -52,12 +56,32 @@ const { page } = Astro.props;
   .blog-hero {
     position: relative;
     background: var(--color-black);
+    background-image: url('/images/brand-showcase.webp');
+    background-size: cover;
+    background-position: center;
     padding-block-start: calc(var(--header-height) + var(--space-2xl));
     padding-block-end: var(--space-2xl);
+    min-height: 40vh;
+    display: flex;
+    align-items: flex-end;
     overflow: hidden;
   }
 
+  .blog-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
+      color-mix(in srgb, var(--color-charcoal) 60%, transparent) 50%,
+      color-mix(in srgb, var(--color-charcoal) 95%, transparent) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .blog-hero-stars {
+    z-index: 1;
     position: absolute;
     inset: 0;
     background:
@@ -72,7 +96,7 @@ const { page } = Astro.props;
 
   .blog-hero-content {
     position: relative;
-    text-align: center;
+    z-index: 2;
   }
 
   .blog-hero h1 {
@@ -83,9 +107,10 @@ const { page } = Astro.props;
 
   .blog-hero p {
     color: var(--color-cream);
-    opacity: 0.7;
+    opacity: 0.75;
     font-size: var(--text-lg);
-    margin-inline: auto;
+    line-height: 1.7;
+    max-width: 56ch;
   }
 
   .blog-content {

@@ -55,7 +55,6 @@ const projects = [
   <section class="projects-hero">
     <div class="projects-hero-overlay" aria-hidden="true"></div>
     <div class="container projects-hero-content">
-      <span class="projects-label">Our Work</span>
       <h1>Projects &amp; Initiatives</h1>
       <p>SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams. We coordinate across cells to share capacity and costs as a collaborative commons.</p>
     </div>
@@ -100,6 +99,9 @@ const projects = [
   .projects-hero {
     position: relative;
     background: var(--color-black);
+    background-image: url('/images/brand-showcase.webp');
+    background-size: cover;
+    background-position: center;
     padding-block-start: calc(var(--header-height) + var(--space-2xl));
     padding-block-end: var(--space-2xl);
     min-height: 40vh;
@@ -123,16 +125,6 @@ const projects = [
   .projects-hero-content {
     position: relative;
     z-index: 1;
-  }
-
-  .projects-label {
-    display: inline-block;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-orange);
-    margin-block-end: var(--space-sm);
   }
 
   .projects-hero h1 {
