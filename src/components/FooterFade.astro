@@ -2,38 +2,27 @@
 ---
 
 <div class="footer-fade" aria-hidden="true">
-  <!-- Shallow: 8 oscillations, dense coverage near the top -->
-  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-shallow">
-    <path d="M0,15
-      Q45,-5 90,15 Q135,35 180,15
-      Q225,-5 270,15 Q315,35 360,15
-      Q405,-5 450,15 Q495,35 540,15
-      Q585,-5 630,15 Q675,35 720,15
-      Q765,-5 810,15 Q855,35 900,15
-      Q945,-5 990,15 Q1035,35 1080,15
-      Q1125,-5 1170,15 Q1215,35 1260,15
-      Q1305,-5 1350,15 Q1395,35 1440,20
-      L1440,0 L0,0 Z" />
+  <!--
+    Three wave layers, each lower than the last.
+    Each wave fills ABOVE its path (charcoal at top, black at bottom).
+    Paths close at Y=-20 (above container) — overflow:hidden clips the
+    straight line, leaving only the wavy boundary visible.
+    They overlap and interfere, creating a textured charcoal-to-black dissolve.
+  -->
+
+  <!-- Wave 1: highest, 2 oscillations, strongest -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-1">
+    <path d="M0,30 Q360,5 720,30 Q1080,55 1440,30 L1440,-20 L0,-20 Z" />
   </svg>
 
-  <!-- Mid: 5 oscillations, medium coverage -->
-  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-mid">
-    <path d="M0,50
-      Q72,20 144,50 Q216,80 288,50
-      Q360,20 432,50 Q504,80 576,50
-      Q648,20 720,50 Q792,80 864,50
-      Q936,20 1008,50 Q1080,80 1152,50
-      Q1224,20 1296,50 Q1368,80 1440,58
-      L1440,0 L0,0 Z" />
+  <!-- Wave 2: mid height, 1.5 oscillations, medium -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-2">
+    <path d="M0,60 Q480,35 960,60 Q1440,85 1440,60 L1440,-20 L0,-20 Z" />
   </svg>
 
-  <!-- Deep: 3 oscillations, faint reach toward the bottom -->
-  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-deep">
-    <path d="M0,85
-      Q120,55 240,85 Q360,115 480,85
-      Q600,55 720,85 Q840,115 960,85
-      Q1080,55 1200,85 Q1320,115 1440,90
-      L1440,0 L0,0 Z" />
+  <!-- Wave 3: lowest, 1 oscillation, faintest -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-3">
+    <path d="M0,90 Q720,65 1440,90 L1440,-20 L0,-20 Z" />
   </svg>
 </div>
 
@@ -54,19 +43,19 @@
     height: 100%;
   }
 
-  .fade-deep path {
+  .fade-1 path {
+    fill: var(--color-charcoal);
+    opacity: 0.55;
+  }
+
+  .fade-2 path {
+    fill: var(--color-charcoal);
+    opacity: 0.4;
+  }
+
+  .fade-3 path {
     fill: var(--color-charcoal);
     opacity: 0.25;
-  }
-
-  .fade-mid path {
-    fill: var(--color-charcoal);
-    opacity: 0.45;
-  }
-
-  .fade-shallow path {
-    fill: var(--color-charcoal);
-    opacity: 0.7;
   }
 
   @media (max-width: 768px) {
