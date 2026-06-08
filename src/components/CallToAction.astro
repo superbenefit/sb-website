@@ -9,33 +9,24 @@
       is an open community &mdash; whether you&rsquo;re a builder, researcher,
       funder, or simply curious, there&rsquo;s a place for you here.
     </p>
-    <div class="cta-links">
+
+    <div class="cta-actions">
       <a
         href="https://discord.gg/q95fFXGu67"
-        class="cta-link"
+        class="cta-btn cta-btn--join"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <span class="cta-link-icon" aria-hidden="true">&#9679;</span>
-        Discord
+        Join the community
       </a>
       <a
-        href="https://github.com/superbenefit"
-        class="cta-link"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/contact"
+        class="cta-btn cta-btn--contact"
       >
-        <span class="cta-link-icon" aria-hidden="true">&#9900;</span>
-        GitHub
-      </a>
-      <a
-        href="https://knowledge.superbenefit.org"
-        class="cta-link"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span class="cta-link-icon" aria-hidden="true">&#9733;</span>
-        Knowledge Garden
+        Get in touch
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
       </a>
     </div>
   </div>
@@ -44,7 +35,9 @@
 <style>
   .cta {
     background: var(--color-charcoal);
-    padding-block: var(--space-xl);
+    padding-block-start: var(--space-xl);
+    padding-block-end: calc(var(--space-xl) + 120px); /* 120px offset for FooterFade overlap */
+    position: relative;
   }
 
   .cta-inner {
@@ -62,43 +55,80 @@
     opacity: 0.8;
     font-size: var(--text-lg);
     line-height: 1.7;
-    margin-block-end: var(--space-lg);
+    margin-block-end: var(--space-xl);
     margin-inline: auto;
   }
 
-  .cta-links {
+  /* ===== Button row ===== */
+  .cta-actions {
     display: flex;
     gap: var(--space-md);
     justify-content: center;
     flex-wrap: wrap;
   }
 
-  .cta-link {
-    display: flex;
+  /* ===== Shared button base — matches .btn-primary shape ===== */
+  .cta-btn {
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: 0.7em 1.5em;
-    border: 1px solid rgb(var(--color-cream-rgb) / 0.2);
+    gap: 0.4em;
+    padding: 0.9em 2em;
     border-radius: 50px;
-    color: var(--color-cream);
-    font-weight: 500;
-    font-size: var(--text-sm);
+    font-weight: 600;
+    font-size: var(--text-base);
+    letter-spacing: 0.02em;
+    text-decoration: none;
     transition:
       background var(--transition-fast),
       border-color var(--transition-fast),
       transform var(--transition-fast),
+      box-shadow var(--transition-fast),
       color var(--transition-fast);
-    text-decoration: none;
   }
 
-  .cta-link:hover {
-    background: var(--color-orange);
-    border-color: var(--color-orange);
+  /* ===== Join (left) — ghost outline per .btn-ghost ===== */
+  .cta-btn--join {
+    background: transparent;
     color: var(--color-cream);
+    border: 2px solid var(--color-cream);
+  }
+
+  .cta-btn--join:hover {
+    background: var(--color-cream);
+    color: var(--color-orange);
+    border-color: var(--color-cream);
     transform: translateY(-2px);
   }
 
-  .cta-link-icon {
-    font-size: 1.2em;
+  /* ===== Contact (right) — filled, emphasized, per .btn-primary shape ===== */
+  .cta-btn--contact {
+    background: var(--color-orange);
+    color: var(--color-cream);
+    border: 2px solid var(--color-orange);
+  }
+
+  .cta-btn--contact:hover {
+    background: var(--color-orange-dark);
+    border-color: var(--color-orange-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(245, 135, 44, 0.35);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .cta {
+      padding-block-end: calc(var(--space-xl) + 80px); /* 80px offset — FooterFade is shorter on mobile */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cta-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .cta-btn {
+      justify-content: center;
+    }
   }
 </style>

@@ -1,0 +1,182 @@
+---
+/**
+ * ExternalServices — green sage section showing the consulting / advisory
+ * services SuperBenefit offers to outside organizations and ecosystems.
+ *
+ * Three-column grid layout. Cream accents throughout — no gold, no orange.
+ * Clean, confident, text-forward — like a design studio's capabilities page.
+ */
+---
+
+<section class="external-services">
+  <div class="container">
+    <span class="ext-label" data-animate="fade-up">What We Offer</span>
+    <h2 class="ext-heading" data-animate="fade-up">
+      Services for organizations &amp; ecosystems
+    </h2>
+    <p class="ext-lede" data-animate="fade-up">
+      Beyond our internal commons, SuperBenefit works with aligned organizations
+      and networks to design governance, steward transitions, and build
+      regenerative systems. Every engagement is collaborative — we learn as
+      much as we share.
+    </p>
+
+    <div class="ext-services">
+      <div class="ext-service" data-animate="fade-up" style="--stagger: 0ms">
+        <h3 class="ext-service-heading">Strategic advisory</h3>
+        <p class="ext-service-body">
+          We help organizations design governance systems, steward community
+          transitions, and navigate web3 adoption — from DAO legal wrappers
+          to participatory budgeting and multi-stakeholder coordination.
+        </p>
+      </div>
+
+      <hr class="ext-rule" aria-hidden="true">
+
+      <div class="ext-service" data-animate="fade-up" style="--stagger: 100ms">
+        <h3 class="ext-service-heading">Research &amp; strategy</h3>
+        <p class="ext-service-body">
+          Deep-dive research on coordination mechanisms, regenerative
+          economics, and AI-augmented governance. We produce frameworks,
+          reports, and actionable recommendations grounded in lived
+          practice — not armchair theory.
+        </p>
+      </div>
+
+      <hr class="ext-rule" aria-hidden="true">
+
+      <div class="ext-service" data-animate="fade-up" style="--stagger: 200ms">
+        <h3 class="ext-service-heading">Workshops &amp; facilitation</h3>
+        <p class="ext-service-body">
+          Tailored sessions for leadership teams, boards, and communities.
+          We design and facilitate experiences that build shared
+          understanding, surface latent tensions, and create alignment
+          around complex decisions.
+        </p>
+      </div>
+    </div>
+
+    <footer class="ext-footer" data-animate="fade-up">
+      <a href="/contact" class="ext-cta">
+        Get in touch
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .external-services {
+    background: var(--color-green-sage);
+    padding-block: var(--space-xl) var(--space-2xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== Label ===== */
+  .ext-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-cream);
+    margin-block-end: var(--space-md);
+  }
+
+  /* ===== Heading ===== */
+  .ext-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-charcoal);
+    line-height: 1.2;
+    margin-block-end: var(--space-md);
+    max-width: 16ch;
+  }
+
+  /* ===== Lede ===== */
+  .ext-lede {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.68;
+    line-height: 1.7;
+    max-width: 580px;
+    margin-block-end: var(--space-2xl);
+  }
+
+  /* ===== Services grid — three columns ===== */
+  .ext-services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .ext-service {
+    /* no padding — column layout handles spacing via grid gap */
+  }
+
+  /* ===== Cream vertical rule between columns ===== */
+  .ext-rule {
+    display: none;
+  }
+
+  /* ===== Service heading ===== */
+  .ext-service-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    line-height: 1.25;
+    margin: 0 0 var(--space-sm);
+  }
+
+  /* ===== Service body ===== */
+  .ext-service-body {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.65;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ===== Footer CTA ===== */
+  .ext-footer {
+    margin-block-start: var(--space-xl);
+  }
+
+  .ext-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-cream);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .ext-cta:hover {
+    opacity: 0.7;
+  }
+
+  /* ===== Stagger animation delay ===== */
+  .ext-service[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .ext-services {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ext-services {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
