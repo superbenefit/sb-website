@@ -5,7 +5,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 import MissionStatement from '../components/MissionStatement.astro';
-import InitiativeGrid from '../components/InitiativeGrid.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
+import InternalServices from '../components/InternalServices.astro';
 import KnowledgeSpotlight from '../components/KnowledgeSpotlight.astro';
 import CallToAction from '../components/CallToAction.astro';
 ---
@@ -18,8 +19,11 @@ import CallToAction from '../components/CallToAction.astro';
   <SectionDivider from="black" to="cream" />
   <MissionStatement />
 
-  <SectionDivider from="cream" to="charcoal" />
-  <InitiativeGrid />
+  <SectionDivider from="cream" to="orange" />
+  <ProjectsGrid />
+
+  <SectionDivider from="orange" to="charcoal" />
+  <InternalServices />
 
   <SectionDivider from="charcoal" to="cream" />
   <KnowledgeSpotlight />

@@ -1,0 +1,252 @@
+---
+/**
+ * ProjectsGrid — orange section with 4 cream project cards in a 4-column grid.
+ *
+ * Cards use a single neutral charcoal accent (no per-card themes) to avoid
+ * clashing with future project images. Top accent stripe via ::before,
+ * left-border hover effect via BlogCard pattern.
+ */
+---
+
+<section class="projects-grid">
+  <div class="container">
+    <span class="projects-label" data-animate="fade-up">Projects</span>
+    <h2 class="projects-heading" data-animate="fade-up">What we're building</h2>
+    <p class="projects-lede" data-animate="fade-up">
+      SuperBenefit cells incubate and advance projects that harness emerging
+      technologies and practices for decentralized coordination. Each project
+      is self-organized, purpose-aligned, and supported by our shared commons.
+    </p>
+
+    <div class="projects-cards">
+      <article class="project-card" data-animate="fade-up" style="--stagger: 0ms">
+        <div class="project-card-img" aria-hidden="true"></div>
+        <div class="project-card-body">
+          <h3 class="project-heading">Prueba Protocol</h3>
+          <p class="project-body">
+            A lightweight on-chain governance toolkit for DAOs and community
+            collectives &mdash; modular, composable, and open.
+          </p>
+        </div>
+      </article>
+
+      <article class="project-card" data-animate="fade-up" style="--stagger: 100ms">
+        <div class="project-card-img" aria-hidden="true"></div>
+        <div class="project-card-body">
+          <h3 class="project-heading">Social Lean Canvas</h3>
+          <p class="project-body">
+            A collaborative mapping app that adapts the Lean Canvas for
+            social-impact initiatives &mdash; align on theories of change and
+            measurable outcomes together.
+          </p>
+        </div>
+      </article>
+
+      <article class="project-card" data-animate="fade-up" style="--stagger: 200ms">
+        <div class="project-card-img" aria-hidden="true"></div>
+        <div class="project-card-body">
+          <h3 class="project-heading">Reimagining Power</h3>
+          <p class="project-body">
+            A participatory research initiative exploring how distributed
+            governance reshapes power &mdash; blending ethnography with on-chain
+            data for post-hierarchical coordination.
+          </p>
+        </div>
+      </article>
+
+      <article class="project-card" data-animate="fade-up" style="--stagger: 300ms">
+        <div class="project-card-img" aria-hidden="true"></div>
+        <div class="project-card-body">
+          <h3 class="project-heading">Infinite Front Porch</h3>
+          <p class="project-body">
+            A digital commons for intentional communities &mdash; part forum,
+            part library, part neighbourhood porch. Slow and deep.
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <p class="projects-link-wrap" data-animate="fade-up">
+      <a href="/projects" class="projects-link">See all projects &rarr;</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .projects-grid {
+    background: var(--color-orange);
+    padding-block: var(--space-xl) var(--space-2xl);
+    position: relative;
+  }
+
+  /* ===== Label ===== */
+  .projects-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-cream);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Heading ===== */
+  .projects-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-cream);
+    line-height: 1.2;
+    margin-block-end: var(--space-md);
+  }
+
+  /* ===== Lede ===== */
+  .projects-lede {
+    font-size: var(--text-base);
+    color: var(--color-cream);
+    opacity: 0.75;
+    line-height: 1.7;
+    max-width: 640px;
+    margin-block-end: var(--space-xl);
+  }
+
+  /* ===== Cards grid — 4-col, stretch for height normalization ===== */
+  .projects-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+
+  /* ===== Card ===== */
+  .project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-cream);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.10),
+      0 8px 24px rgba(0, 0, 0, 0.12);
+    border-left: 3px solid transparent;
+    transition:
+      transform var(--transition-medium),
+      box-shadow var(--transition-medium),
+      border-left-color var(--transition-medium);
+  }
+
+  .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    border-left-color: var(--color-charcoal);
+  }
+
+  /* Top accent stripe — muted charcoal, won't clash with future images */
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-charcoal);
+    opacity: 0.3;
+    z-index: 1;
+  }
+
+  /* ===== Placeholder image (16:9, muted gradient) ===== */
+  .project-card-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-charcoal) 8%, var(--color-cream-light)),
+      color-mix(in srgb, var(--color-charcoal) 15%, var(--color-cream-light))
+    );
+  }
+
+  .project-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .project-card:hover .project-card-img img {
+    transform: scale(1.04);
+  }
+
+  /* ===== Card body — flex: 1 for uniform height ===== */
+  .project-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .project-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--color-charcoal);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .project-body {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ===== "See all projects" link ===== */
+  .projects-link-wrap {
+    text-align: center;
+  }
+
+  .projects-link {
+    display: inline-block;
+    margin-block-start: var(--space-xl);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-cream);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .projects-link:hover {
+    opacity: 0.8;
+  }
+
+  /* ===== Stagger animation delay ===== */
+  .project-card[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .projects-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .projects-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ===== Reduced motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .project-card {
+      transition: none;
+    }
+
+    .project-card-img img {
+      transition: none;
+    }
+  }
+</style>

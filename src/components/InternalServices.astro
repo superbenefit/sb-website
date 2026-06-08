@@ -1,0 +1,153 @@
+---
+/**
+ * InternalServices — charcoal section with 2×2 text grid of peer support
+ * services that SuperBenefit provides to its projects and cells.
+ *
+ * Text-only (no cards). Copy is placeholder/lipsum — ready for content
+ * team to update. Accent bar follows the MissionStatement pattern.
+ */
+---
+
+<section class="internal-services">
+  <div class="container">
+    <span class="services-label" data-animate="fade-up">Peer Support</span>
+    <h2 class="services-heading" data-animate="fade-up">
+      Internal services for projects &amp; cells
+    </h2>
+    <p class="services-lede" data-animate="fade-up">
+      SuperBenefit provides shared infrastructure and peer support services
+      to its projects and cells &mdash; keeping overhead light, coordination
+      clean, and capacity shared across the commons.
+    </p>
+    <div class="services-accent" aria-hidden="true" data-animate="fade-up"></div>
+
+    <div class="services-grid">
+      <div class="service-item" data-animate="fade-up" style="--stagger: 0ms">
+        <h3 class="service-item-heading">Legal &amp; incorporation</h3>
+        <p class="service-item-body">
+          Facilisis leo vel frangilla est ullamcorper eget nulla facilisi etiam.
+          Vitae suscipit tellus mauris a diam maecenas sed enim ut sem viverra
+          aliquet eget sit amet tellus cras adipiscing.
+        </p>
+      </div>
+
+      <div class="service-item" data-animate="fade-up" style="--stagger: 100ms">
+        <h3 class="service-item-heading">Treasury &amp; financial ops</h3>
+        <p class="service-item-body">
+          Amet consectetur adipiscing elit pellentesque habitant morbi. Cursus
+          metus aliquam eleifend mi in nulla posuere sollicitudin aliquam
+          ultrices sagittis orci a scelerisque purus semper eget.
+        </p>
+      </div>
+
+      <div class="service-item" data-animate="fade-up" style="--stagger: 200ms">
+        <h3 class="service-item-heading">People &amp; community ops</h3>
+        <p class="service-item-body">
+          Purus faucibus ornare suspendisse sed nisi lacus sed. Dignissim cras
+          tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius
+          duis at consectetur lorem donec massa sapien faucibus.
+        </p>
+      </div>
+
+      <div class="service-item" data-animate="fade-up" style="--stagger: 300ms">
+        <h3 class="service-item-heading">Governance &amp; coordination</h3>
+        <p class="service-item-body">
+          Adipiscing diam donec adipiscing tristique risus nec feugiat in
+          fermentum posuere urna nec tincidunt praesent semper feugiat nibh
+          sed pulvinar proin gravida hendrerit lectus a.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .internal-services {
+    background: var(--color-charcoal);
+    padding-block: var(--space-xl) var(--space-2xl);
+    position: relative;
+  }
+
+  /* ===== Label ===== */
+  .services-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Heading ===== */
+  .services-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-cream);
+    line-height: 1.2;
+    margin-block-end: var(--space-lg);
+  }
+
+  /* ===== Lede ===== */
+  .services-lede {
+    font-size: var(--text-base);
+    color: var(--color-cream);
+    opacity: 0.75;
+    line-height: 1.7;
+    max-width: 620px;
+    margin-block-end: var(--space-xl);
+  }
+
+  /* ===== Accent bar (MissionStatement pattern) ===== */
+  .services-accent {
+    width: 48px;
+    height: 3px;
+    background: var(--color-orange);
+    border-radius: 2px;
+    opacity: 0.5;
+    margin-block-end: var(--space-xl);
+  }
+
+  /* ===== 2×2 services grid ===== */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl) var(--space-lg);
+    align-items: start;
+  }
+
+  /* ===== Service item ===== */
+  .service-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .service-item-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--color-cream);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .service-item-body {
+    font-size: var(--text-sm);
+    color: var(--color-cream);
+    opacity: 0.6;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ===== Stagger animation delay ===== */
+  .service-item[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
