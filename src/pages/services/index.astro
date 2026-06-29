@@ -1,0 +1,265 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const hero = {
+  title: 'Services',
+  subtitle: 'Strategic advisory, research, and facilitation for aligned organizations and ecosystems',
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
+    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
+    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
+  )`,
+  showStars: true,
+};
+
+const services = [
+  {
+    id: 'advisory',
+    heading: 'Strategic Advisory',
+    summary: 'We help organizations design governance systems, steward community transitions, and navigate web3 adoption — from DAO legal wrappers to participatory budgeting and multi-stakeholder coordination.',
+    body: [
+      'Engagements typically begin with a listening tour: a structured set of conversations with stakeholders, contributors, and the people affected by the system being designed. From there, we move into co-design — drafting options, pressure-testing them against scenarios, and building consensus around the path forward.',
+      'We work in weeks, not months. A typical advisory engagement runs 4 to 12 weeks and produces a written recommendation, a governance design document, or a working prototype of the coordination mechanism being proposed.',
+    ],
+    deliverables: [
+      'Governance design documents',
+      'Stakeholder maps and decision frameworks',
+      'Proposal flows and decision logs',
+      'Retrospectives and recommendations',
+    ],
+    format: '4–12 week engagements; flat fee or retainer.',
+  },
+  {
+    id: 'research',
+    heading: 'Research & Strategy',
+    summary: 'Deep-dive research on coordination mechanisms, regenerative economics, and AI-augmented governance. We produce frameworks, reports, and actionable recommendations grounded in lived practice — not armchair theory.',
+    body: [
+      'Our research is practice-first. We start with the questions that have surfaced through our work with cells, projects, and partner ecosystems, then design studies that produce something useful: a framework someone can apply, a report that reframes a stuck conversation, a model that makes a tradeoff legible.',
+      'Outputs are openly licensed wherever possible, and we share raw data, methods, and working drafts so the work can be built on. Where we are funded to produce proprietary research for a specific partner, we are transparent about the terms.',
+    ],
+    deliverables: [
+      'Frameworks and conceptual models',
+      'Long-form reports and essays',
+      'Comparative case studies',
+      'Open data and reproducible methods',
+    ],
+    format: 'Project-based; scoped per engagement.',
+  },
+  {
+    id: 'workshops',
+    heading: 'Workshops & Facilitation',
+    summary: 'Tailored sessions for leadership teams, boards, and communities. We design and facilitate experiences that build shared understanding, surface latent tensions, and create alignment around complex decisions.',
+    body: [
+      'Workshops range from half-day intensives for leadership teams to multi-day retreats for whole communities. We co-design the agenda with you, prepare the materials, facilitate the sessions, and produce a written summary of what was decided, what was left open, and what surfaced that needs more attention.',
+      'Common formats: governance design sprints, strategy offsites, conflict mediation, decision retreats, and onboarding intensives for new contributors entering a DAO or steward pool.',
+    ],
+    deliverables: [
+      'Co-designed agendas and pre-reads',
+      'Facilitated sessions (remote or in-person)',
+      'Session recordings and transcripts',
+      'Written summaries and decision logs',
+    ],
+    format: 'Half-day to multi-day; remote or in-person.',
+  },
+];
+---
+
+<BaseLayout
+  title="Services — SuperBenefit"
+  description="Strategic advisory, research and strategy, and workshops and facilitation for organizations and ecosystems working on regenerative coordination."
+>
+  <PageHero {...hero} />
+
+  <SectionDivider from="black" to="cream" />
+
+  {/* Lede */}
+  <section class="services-lede">
+    <div class="container mission-content" data-animate="fade-up">
+      <span class="section-label">What We Offer</span>
+      <h2>Three ways we work alongside aligned organizations.</h2>
+      <p>
+        Beyond our internal commons, SuperBenefit works with aligned
+        organizations and networks to design governance, steward transitions,
+        and build regenerative systems. Every engagement is collaborative &mdash;
+        we learn as much as we share.
+      </p>
+    </div>
+  </section>
+
+  {/* Service sections */}
+  <section class="services-list">
+    <div class="container">
+      {services.map((service) => (
+        <article class="service-block" id={service.id} data-animate="fade-up">
+          <div class="service-accent" aria-hidden="true"></div>
+          <div class="service-body">
+            <h3>{service.heading}</h3>
+            <p class="service-summary">{service.summary}</p>
+            {service.body.map((para) => (
+              <p class="service-paragraph">{para}</p>
+            ))}
+            <div class="service-deliverables">
+              <span class="deliverables-label">What you get</span>
+              <ul>
+                {service.deliverables.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <p class="service-format">
+              <span class="format-label">Engagement format</span>
+              <span>{service.format}</span>
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <CallToAction />
+</BaseLayout>
+
+<style>
+  /* ===== Section label ===== */
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Lede ===== */
+  .services-lede {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .services-lede h2 {
+    margin-block-end: var(--space-lg);
+    max-width: 26ch;
+  }
+
+  .services-lede p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  /* ===== Service sections ===== */
+  .services-list {
+    background: var(--color-cream);
+    padding-block-end: var(--space-2xl);
+  }
+
+  .service-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding-block: var(--space-xl);
+    border-block-start: 1px solid rgb(var(--color-black-rgb) / 0.08);
+  }
+
+  .service-block:first-child {
+    border-block-start: none;
+    padding-block-start: 0;
+  }
+
+  .service-accent {
+    width: 48px;
+    height: 3px;
+    background: var(--color-orange);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  .service-body h3 {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .service-summary {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin: 0 0 var(--space-md);
+    max-width: 65ch;
+  }
+
+  .service-paragraph {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    line-height: 1.7;
+    margin: 0 0 var(--space-md);
+    max-width: 65ch;
+  }
+
+  .service-deliverables,
+  .service-format {
+    margin-block-start: var(--space-md);
+  }
+
+  .deliverables-label,
+  .format-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-xs);
+  }
+
+  .service-deliverables ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  @media (min-width: 768px) {
+    .service-deliverables ul { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .service-deliverables li {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    line-height: 1.6;
+    padding-inline-start: 1.2em;
+    position: relative;
+  }
+
+  .service-deliverables li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-orange);
+    font-weight: 600;
+  }
+
+  .service-format {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin-block-start: var(--space-lg);
+  }
+</style>

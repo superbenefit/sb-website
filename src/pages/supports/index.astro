@@ -1,0 +1,218 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const hero = {
+  title: 'Peer Support',
+  subtitle: 'Shared infrastructure and services for SuperBenefit projects and cells',
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-charcoal) 30%, transparent) 0%,
+    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
+    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
+  )`,
+  showStars: true,
+};
+
+const services = [
+  {
+    id: 'legal',
+    heading: 'Legal & Incorporation',
+    body: 'Coordination of legal structures across jurisdictions — wrappers for DAOs, fiscal sponsorships, multi-entity operating agreements, and the unglamorous but critical paperwork that keeps cells and projects in good standing.',
+    offerings: [
+      'DAO legal wrappers and operating agreements',
+      'Fiscal sponsorship and grant-pass-through structures',
+      'Multi-entity coordination across jurisdictions',
+      'Compliance, filings, and registered-agent services',
+    ],
+  },
+  {
+    id: 'treasury',
+    heading: 'Treasury & Financial Operations',
+    body: 'Day-to-day financial operations: bookkeeping, multi-sig treasury management, grant disbursements, reporting, and the connective tissue that lets money move through the commons without bottlenecks.',
+    offerings: [
+      'Multi-sig treasury management and bookkeeping',
+      'Grant disbursements and vendor payments',
+      'Financial reporting and audit preparation',
+      'Token and stablecoin accounting',
+    ],
+  },
+  {
+    id: 'people',
+    heading: 'People & Community Operations',
+    body: 'Lightweight operational support for the humans in the network — onboarding, contributor agreements, payroll and contractor payments, and the coordination work that keeps small teams running smoothly across time zones.',
+    offerings: [
+      'Contributor onboarding and agreements',
+      'Payroll, contractor payments, and 1099s',
+      'Coordination and scheduling support',
+      'Team health checks and conflict facilitation',
+    ],
+  },
+  {
+    id: 'governance',
+    heading: 'Governance & Coordination',
+    body: 'Design and stewardship of governance processes — proposal flows, voting mechanisms, decision logs, and the rituals that make distributed decision-making legible to the people affected by it.',
+    offerings: [
+      'Governance process design and documentation',
+      'Proposal flows, voting, and decision logs',
+      'Steward and delegate programs',
+      'Retrospectives and governance reviews',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Peer Support — SuperBenefit"
+  description="Shared services and peer support infrastructure that SuperBenefit provides to its projects and cells: legal, treasury, people, and governance."
+>
+  <PageHero {...hero} />
+
+  <SectionDivider from="black" to="cream" />
+
+  {/* Lede */}
+  <section class="supports-lede">
+    <div class="container mission-content" data-animate="fade-up">
+      <span class="section-label">Peer Support</span>
+      <h2>Shared infrastructure for a network of cells.</h2>
+      <p>
+        SuperBenefit operates as a network of small, autonomous cells. To keep
+        overhead light and capacity shared, the commons provides four core
+        services that any project or cell can lean on. These are not external
+        vendors &mdash; they are part of how the network holds itself together.
+      </p>
+    </div>
+  </section>
+
+  {/* Service sections */}
+  <section class="supports-services">
+    <div class="container">
+      {services.map((service) => (
+        <article class="service-block" id={service.id} data-animate="fade-up">
+          <div class="service-accent" aria-hidden="true"></div>
+          <div class="service-body">
+            <h3>{service.heading}</h3>
+            <p class="service-blurb">{service.body}</p>
+            <ul class="service-offerings">
+              {service.offerings.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+  <CallToAction />
+</BaseLayout>
+
+<style>
+  /* ===== Section label ===== */
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Lede ===== */
+  .supports-lede {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .supports-lede h2 {
+    margin-block-end: var(--space-lg);
+    max-width: 26ch;
+  }
+
+  .supports-lede p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  /* ===== Services list ===== */
+  .supports-services {
+    background: var(--color-cream);
+    padding-block-end: var(--space-2xl);
+  }
+
+  .service-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding-block: var(--space-xl);
+    border-block-start: 1px solid rgb(var(--color-black-rgb) / 0.08);
+  }
+
+  .service-block:first-child {
+    border-block-start: none;
+    padding-block-start: 0;
+  }
+
+  .service-accent {
+    width: 48px;
+    height: 3px;
+    background: var(--color-orange);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  .service-body h3 {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .service-blurb {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    line-height: 1.7;
+    margin: 0 0 var(--space-md);
+    max-width: 60ch;
+  }
+
+  .service-offerings {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  @media (min-width: 768px) {
+    .service-offerings { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .service-offerings li {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    line-height: 1.6;
+    padding-inline-start: 1.2em;
+    position: relative;
+  }
+
+  .service-offerings li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-orange);
+    font-weight: 600;
+  }
+</style>

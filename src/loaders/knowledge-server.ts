@@ -1,5 +1,5 @@
 import type { Loader, LoaderContext } from 'astro/loaders';
-import MOCK_POSTS from '../data/mock-posts.json';
+import MOCK_UPDATES from '../data/mock-updates.json';
 
 interface KnowledgeServerOptions {
   endpoint?: string;
@@ -69,7 +69,7 @@ export function knowledgeServerLoader(options: KnowledgeServerOptions = {}): Loa
       // Fallback: use mock data for development
       store.clear();
 
-      for (const post of MOCK_POSTS) {
+      for (const post of MOCK_UPDATES) {
         const data = await parseData({
           id: post.slug,
           data: {
@@ -92,7 +92,7 @@ export function knowledgeServerLoader(options: KnowledgeServerOptions = {}): Loa
         });
       }
 
-      logger.info(`Loaded ${MOCK_POSTS.length} mock posts (dev mode)`);
+      logger.info(`Loaded ${MOCK_UPDATES.length} mock posts (dev mode)`);
     },
   };
 }

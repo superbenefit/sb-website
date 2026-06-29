@@ -140,12 +140,12 @@
   to   { opacity: 1; }
 }
 
-/* Blog card → post: clean crossfade, no scale (morphing between
+/* Updates card → post: clean crossfade, no scale (morphing between
    wildly different element sizes produces choppy results) */
-::view-transition-old(blog-post) {
+::view-transition-old(update-post) {
   animation: 180ms ease-out both fade-out;
 }
 
-::view-transition-new(blog-post) {
+::view-transition-new(update-post) {
   animation: 250ms ease-in both fade-in;
 }

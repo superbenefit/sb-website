@@ -1,10 +1,7 @@
 ---
 /**
- * KnowledgeSpotlight — DEPRECATED. Replaced by UpdatesSection.astro on the
- * homepage. Retained for reference only; not imported anywhere.
- *
- * Uses getCollection('updates') from Astro content collections.
- * Gracefully handles empty state when no posts are available.
+ * UpdatesSection — cream section showing the 3 most recent posts from
+ * the SuperBenefit Updates feed. Sits between ExternalServices and CallToAction.
  */
 import { getCollection } from 'astro:content';
 import BlogCard from './BlogCard.astro';
@@ -15,18 +12,18 @@ const recentPosts = allPosts
   .slice(0, 3);
 ---
 
-<section class="knowledge-spotlight">
+<section class="updates-section">
   <div class="container">
-    <header class="spotlight-header" data-animate="fade-up">
-      <span class="spotlight-label">Knowledge Garden</span>
+    <header class="updates-header" data-animate="fade-up">
+      <span class="updates-label">Updates</span>
       <h2>Recent Writing</h2>
-      <p>Insights on governance, DAOs, and the frontiers of systems innovation</p>
+      <p>Notes on governance, DAOs, and the frontiers of systems innovation.</p>
     </header>
 
     {recentPosts.length > 0 ? (
-      <div class="spotlight-grid">
+      <div class="updates-grid">
         {recentPosts.map((post, i) => (
-          <div class="spotlight-card-wrap" data-animate="fade-up" style={`--stagger: ${i * 100}ms`}>
+          <div class="updates-card-wrap" data-animate="fade-up" style={`--stagger: ${i * 100}ms`}>
             <BlogCard
               id={post.id}
               title={post.data.title}
@@ -39,16 +36,16 @@ const recentPosts = allPosts
         ))}
       </div>
     ) : (
-      <div class="spotlight-empty" data-animate="fade-up">
-        <p>Coming soon — check back for writing on governance, DAOs, and systems innovation.</p>
+      <div class="updates-empty" data-animate="fade-up">
+        <p>Coming soon &mdash; check back for writing on governance, DAOs, and systems innovation.</p>
       </div>
     )}
 
-    <footer class="spotlight-footer" data-animate="fade-up">
-      <a href="/blog" class="spotlight-more">
-        View all posts
+    <footer class="updates-footer" data-animate="fade-up">
+      <a href="/updates" class="updates-more">
+        View all updates
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+          <path d="M5 12h14"></path><polyline points="12 5 19 12 12 19"></polyline>
         </svg>
       </a>
     </footer>
@@ -56,18 +53,21 @@ const recentPosts = allPosts
 </section>
 
 <style>
-  .knowledge-spotlight {
-    background: var(--color-cream);
+  .updates-section {
+    background: linear-gradient(
+      168deg,
+      var(--color-cream) 0%,
+      var(--color-cream-light) 50%,
+      var(--color-cream) 100%
+    );
     padding-block: var(--space-2xl);
+    position: relative;
+    overflow: hidden;
   }
 
-  /* ===== Header ===== */
-  .spotlight-header {
-    text-align: center;
-    margin-block-end: var(--space-2xl);
-  }
-
-  .spotlight-label {
+  /* Header */
+  .updates-header { text-align: center; margin-block-end: var(--space-2xl); }
+  .updates-label {
     display: inline-block;
     font-size: var(--text-xs);
     font-weight: 600;
@@ -76,14 +76,12 @@ const recentPosts = allPosts
     color: var(--color-orange);
     margin-block-end: var(--space-sm);
   }
-
-  .spotlight-header h2 {
+  .updates-header h2 {
     font-size: var(--text-2xl);
     color: var(--color-charcoal);
     margin-block-end: var(--space-sm);
   }
-
-  .spotlight-header p {
+  .updates-header p {
     font-size: var(--text-base);
     color: var(--color-charcoal);
     opacity: 0.6;
@@ -91,46 +89,29 @@ const recentPosts = allPosts
     max-width: 48ch;
   }
 
-  /* ===== Cards grid ===== */
-  .spotlight-grid {
+  /* Grid */
+  .updates-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-lg);
   }
+  @media (min-width: 640px) { .updates-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .updates-grid { grid-template-columns: repeat(3, 1fr); } }
+  .updates-card-wrap { animation-delay: var(--stagger); }
 
-  @media (min-width: 640px) {
-    .spotlight-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .spotlight-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .spotlight-card-wrap {
-    animation-delay: var(--stagger);
-  }
-
-  /* ===== Empty state ===== */
-  .spotlight-empty {
+  /* Empty state */
+  .updates-empty {
     text-align: center;
     padding-block: var(--space-xl);
     color: var(--color-charcoal);
     opacity: 0.5;
-    font-size: var(--text-lg);
     font-style: italic;
+    font-size: var(--text-lg);
   }
 
-  /* ===== Footer link ===== */
-  .spotlight-footer {
-    text-align: center;
-    margin-block-start: var(--space-xl);
-  }
-
-  .spotlight-more {
+  /* Footer */
+  .updates-footer { text-align: center; margin-block-start: var(--space-xl); }
+  .updates-more {
     display: inline-flex;
     align-items: center;
     gap: 0.4em;
@@ -142,8 +123,5 @@ const recentPosts = allPosts
     letter-spacing: 0.04em;
     transition: opacity var(--transition-fast);
   }
-
-  .spotlight-more:hover {
-    opacity: 0.7;
-  }
+  .updates-more:hover { opacity: 0.7; }
 </style>

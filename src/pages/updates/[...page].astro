@@ -10,7 +10,7 @@ import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const allPosts = await getCollection('updates', ({ data }) => !data.draft);
   const sortedPosts = allPosts.sort(
     (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()
   );
@@ -20,8 +20,8 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 
 const hero = {
-  title: 'Blog',
-  subtitle: 'Exploring governance, DAOs, and the frontiers of systems innovation',
+  title: 'Updates',
+  subtitle: 'Notes on governance, DAOs, and the frontiers of systems innovation',
   overlayGradient: `linear-gradient(
     to bottom,
     color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
@@ -33,19 +33,19 @@ const hero = {
 ---
 
 <BaseLayout
-  title={page.currentPage === 1 ? 'Blog — SuperBenefit' : `Blog — Page ${page.currentPage} — SuperBenefit`}
-  description="Thoughts on governance, DAOs, web3, and building a better world through systems innovation."
+  title={page.currentPage === 1 ? 'Updates — SuperBenefit' : `Updates — Page ${page.currentPage} — SuperBenefit`}
+  description="Notes on governance, DAOs, web3, and building a better world through systems innovation."
 >
   <PageHero {...hero} />
 
   <SectionDivider from="black" to="cream" />
 
-  <section class="blog-content">
+  <section class="updates-content">
     <div class="container">
       <BlogList posts={page.data} />
 
       {page.lastPage > 1 && (
-        <nav class="pagination" aria-label="Blog pagination">
+        <nav class="pagination" aria-label="Updates pagination">
           {page.url.prev && (
             <a href={page.url.prev} class="pagination-btn">← Newer</a>
           )}
@@ -64,7 +64,7 @@ const hero = {
 </BaseLayout>
 
 <style>
-  .blog-content {
+  .updates-content {
     background: var(--color-cream);
     padding-block: var(--space-2xl);
   }

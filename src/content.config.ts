@@ -20,7 +20,7 @@ const contentSchema = z.object({
   draft: z.boolean().default(false),
 });
 
-const blog = defineCollection({
+const updates = defineCollection({
   loader: knowledgeServerLoader({
     endpoint: import.meta.env.KNOWLEDGE_API_URL,
   }),
@@ -32,4 +32,4 @@ const projects = defineCollection({
   schema: contentSchema,
 });
 
-export const collections = { blog, projects };
+export const collections = { updates, projects };

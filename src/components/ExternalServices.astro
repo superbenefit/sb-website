@@ -57,11 +57,14 @@
     </div>
 
     <footer class="ext-footer" data-animate="fade-up">
-      <a href="/contact" class="ext-cta">
-        Get in touch
+      <a href="/services" class="ext-cta ext-cta-primary">
+        See all services
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+          <path d="M5 12h14"></path><polyline points="12 5 19 12 12 19"></polyline>
         </svg>
+      </a>
+      <a href="/contact" class="ext-cta ext-cta-secondary">
+        Get in touch
       </a>
     </footer>
   </div>
@@ -143,6 +146,10 @@
   /* ===== Footer CTA ===== */
   .ext-footer {
     margin-block-start: var(--space-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
   }
 
   .ext-cta {
@@ -151,15 +158,30 @@
     gap: 0.5em;
     font-size: var(--text-sm);
     font-weight: 600;
-    color: var(--color-cream);
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     transition: opacity var(--transition-fast);
   }
 
-  .ext-cta:hover {
+  .ext-cta-primary {
+    color: var(--color-cream);
+  }
+
+  .ext-cta-primary:hover {
     opacity: 0.7;
+  }
+
+  .ext-cta-secondary {
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+
+  .ext-cta-secondary:hover {
+    opacity: 1;
   }
 
   /* ===== Stagger animation delay ===== */

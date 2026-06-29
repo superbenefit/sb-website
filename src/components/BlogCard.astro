@@ -17,8 +17,8 @@ const formattedDate = publishedAt.toLocaleDateString('en-US', {
 });
 ---
 
-<article class="blog-card" transition:name={`blog-${id}`}>
-  <a href={`/blog/${id}`} class="card-link">
+<article class="blog-card" transition:name={`update-${id}`}>
+  <a href={`/updates/${id}`} class="card-link">
     {coverImage && (
       <div class="card-image">
         <img src={coverImage} alt={title} loading="lazy" />
