@@ -1,4 +1,6 @@
 ---
+import { isNavLinkActive } from '../utils/nav';
+
 interface Props {
   currentPath: string;
 }
@@ -8,34 +10,45 @@ const { currentPath } = Astro.props;
 const links = [
   { href: '/about', label: 'About' },
   { href: '/projects', label: 'Projects' },
+  { href: '/services', label: 'Services' },
   { href: '/updates', label: 'Updates' },
 ];
+
+const ctaHref = '/contact';
+const ctaLabel = 'Contact';
+const ctaActive = isNavLinkActive(currentPath, ctaHref);
 ---
 
 <nav class="site-nav" aria-label="Main navigation">
-  <ul>
-    {links.map(({ href, label }) => {
-      const isExternal = href.startsWith('http');
-      const isActive = !isExternal && (href === '/'
-        ? currentPath === '/'
-        : currentPath.startsWith(href));
-      return (
-        <li>
-          <a
-            href={href}
-            class:list={['nav-link', { active: isActive }]}
-            {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          >
-            {label}
-          </a>
-        </li>
-      );
-    })}
+  <ul class="site-nav-links">
+    {links.map(({ href, label }) => (
+      <li>
+        <a
+          href={href}
+          class:list={['nav-link', { active: isNavLinkActive(currentPath, href) }]}
+        >
+          {label}
+        </a>
+      </li>
+    ))}
   </ul>
+  <a
+    href={ctaHref}
+    class:list={['nav-cta', { active: ctaActive }]}
+    aria-current={ctaActive ? 'page' : undefined}
+  >
+    {ctaLabel}
+  </a>
 </nav>
 
 <style>
-  .site-nav ul {
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .site-nav-links {
     display: flex;
     gap: var(--space-lg);
     list-style: none;
@@ -79,6 +92,42 @@ const links = [
     color: var(--color-orange);
   }
 
+  /* Contact CTA — pushed to the right edge of the nav with margin-inline-start: auto */
+  .nav-cta {
+    margin-inline-start: auto;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-cream);
+    background-color: var(--color-orange);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 999px;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
+    white-space: nowrap;
+  }
+
+  .nav-cta:hover {
+    background-color: var(--color-orange-dark);
+    color: var(--color-cream);
+  }
+
+  .nav-cta.active {
+    background-color: var(--color-cream);
+    color: var(--color-orange);
+  }
+
+  .nav-cta.active:hover {
+    background-color: var(--color-cream);
+    color: var(--color-orange-dark);
+  }
+
   @media (max-width: 768px) {
     .site-nav {
       position: fixed;
@@ -88,12 +137,16 @@ const links = [
       bottom: 0;
       background: rgb(var(--color-black-rgb) / 0.97);
       backdrop-filter: blur(16px);
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
+      align-items: stretch;
+      gap: 0;
+      padding: var(--space-xl) var(--space-lg);
       opacity: 0;
       visibility: hidden;
-      transition: opacity var(--transition-medium), visibility var(--transition-medium);
+      transition:
+        opacity var(--transition-medium),
+        visibility var(--transition-medium);
     }
 
     .site-nav.is-open {
@@ -101,7 +154,7 @@ const links = [
       visibility: visible;
     }
 
-    .site-nav ul {
+    .site-nav-links {
       flex-direction: column;
       align-items: center;
       gap: var(--space-xl);
@@ -109,6 +162,13 @@ const links = [
 
     .nav-link {
       font-size: var(--text-xl);
+    }
+
+    .nav-cta {
+      margin: var(--space-2xl) auto 0;
+      padding: var(--space-md) var(--space-xl);
+      font-size: var(--text-base);
+      justify-content: center;
     }
   }
 </style>
