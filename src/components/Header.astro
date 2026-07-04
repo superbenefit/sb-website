@@ -45,6 +45,16 @@ const currentPath = Astro.url.pathname;
     const isOpen = (): boolean =>
       toggle.getAttribute('aria-expanded') === 'true';
 
+    // Close mobile menu when a homepage section anchor link is clicked.
+    // Anchor links (hrefs containing "/#") scroll to sections on the
+    // current page; the menu should close before the scroll happens.
+    nav.addEventListener('click', (e) => {
+      const link = (e.target as Element).closest('a[href*="/#"]');
+      if (link && isOpen()) {
+        closeMenu();
+      }
+    });
+
     const setBackgroundInert = (inert: boolean): void => {
       // <main> and <footer> are not persisted, so querySelector each call
       // (they're fresh nodes after every view transition).

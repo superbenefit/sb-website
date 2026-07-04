@@ -1,22 +1,26 @@
 /**
  * Determines whether a nav link should be highlighted as the current page.
  *
- * Active if either:
- *   - the current path exactly equals the link's href, OR
- *   - the current path begins with the link's href followed by a slash
- *     (i.e. a child route of the link).
+ * Active if the current path matches the link's path. Anchor links (hrefs
+ * containing a #fragment) are NEVER active — they point to sections on the
+ * homepage and do not represent standalone pages.
  *
- * The trailing-slash check is important: it prevents `/services` from
- * matching a hypothetical `/services-faq` or `/serviceshare` route.
+ * The trailing-slash check prevents `/services` from matching a hypothetical
+ * `/services-faq` or `/serviceshare` route.
  *
  * Special case for the root: `/` is active only on `/`, never on a child
  * (since every path starts with `/`, which would otherwise match).
  *
- * Single source of truth for nav active state. Imported by both
- * `Nav.astro` (server) and `BaseLayout.astro` (client) so the logic
+ * Note: This function is duplicated in `BaseLayout.astro` for client-side
+ * re-evaluation on every `astro:page-load`. Keep both copies in sync so they
  * cannot drift between them.
  */
 export function isNavLinkActive(currentPath: string, href: string): boolean {
+  // Anchor links (#fragment) are never "active" — they scroll to homepage sections
+  if (href.includes('#')) {
+    return false;
+  }
+
   if (href === '/') {
     return currentPath === '/';
   }

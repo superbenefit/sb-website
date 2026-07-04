@@ -1,33 +1,72 @@
 ---
+interface Props {
+  /** 'default' = existing CTA (Discord + /contact). 'contact' = community CTA for contact page. */
+  variant?: 'default' | 'contact';
+}
+
+const { variant = 'default' } = Astro.props;
+const isContact = variant === 'contact';
 ---
 
 <section class="cta">
   <div class="container cta-inner" data-animate="fade-up">
-    <h2>Pull Up a Chair</h2>
-    <p>
-      If our work resonates, we warmly invite you to connect. SuperBenefit
-      is an open community &mdash; whether you&rsquo;re a builder, researcher,
-      funder, or simply curious, there&rsquo;s a place for you here.
-    </p>
+    <h2>{isContact ? 'Join the community' : 'Pull Up a Chair'}</h2>
+    {isContact ? (
+      <p>
+        SuperBenefit is an open community of builders, researchers, and
+        funders working on governance and systems innovation. Join the
+        conversation on Discord, or schedule an onboarding call to learn more.
+      </p>
+    ) : (
+      <p>
+        If our work resonates, we warmly invite you to connect. SuperBenefit
+        is an open community &mdash; whether you&rsquo;re a builder, researcher,
+        funder, or simply curious, there&rsquo;s a place for you here.
+      </p>
+    )}
 
-    <div class="cta-actions">
-      <a
-        href="https://discord.gg/q95fFXGu67"
-        class="cta-btn cta-btn--join"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Join the community
-      </a>
-      <a
-        href="/contact"
-        class="cta-btn cta-btn--contact"
-      >
-        Get in touch
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </a>
+    <div class={isContact ? 'cta-actions cta-actions--stacked' : 'cta-actions'}>
+      {isContact ? (
+        <>
+          <a
+            href="https://discord.gg/q95fFXGu67"
+            class="cta-btn cta-btn--contact"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Join the community
+          </a>
+          <a
+            href="#"
+            class="cta-link"
+          >
+            Schedule an onboarding call
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </>
+      ) : (
+        <>
+          <a
+            href="https://discord.gg/q95fFXGu67"
+            class="cta-btn cta-btn--join"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Join the community
+          </a>
+          <a
+            href="/contact"
+            class="cta-btn cta-btn--contact"
+          >
+            Get in touch
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </>
+      )}
     </div>
   </div>
 </section>
@@ -65,6 +104,13 @@
     gap: var(--space-md);
     justify-content: center;
     flex-wrap: wrap;
+  }
+
+  /* ===== Stacked variant — primary button on top, text link below ===== */
+  .cta-actions--stacked {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
   }
 
   /* ===== Shared button base — matches .btn-primary shape ===== */
@@ -114,21 +160,49 @@
     box-shadow: 0 6px 24px rgba(245, 135, 44, 0.35);
   }
 
+  /* ===== Text link — used for the secondary schedule action on contact variant ===== */
+  .cta-link {
+    position: relative;
+    display: inline-block;
+    font-weight: 600;
+    font-size: var(--text-base);
+    letter-spacing: 0.02em;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    color: var(--color-cream);
+    opacity: 0.85;
+    transition:
+      color var(--transition-fast),
+      opacity var(--transition-fast);
+  }
+
+  .cta-link:hover {
+    color: var(--color-orange);
+    opacity: 1;
+  }
+
+  /* Arrow sits to the right of the text, outside the normal flow so the
+     link's width equals the text width alone. The parent column's
+     align-items: center then centers the TEXT, with the arrow naturally
+     adjacent to it. */
+  .cta-link svg {
+    position: absolute;
+    left: 100%;
+    margin-left: 0.4em;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform var(--transition-fast);
+  }
+
+  .cta-link:hover svg {
+    transform: translateY(-50%) translateX(3px);
+  }
+
   /* ===== Responsive ===== */
   @media (max-width: 768px) {
     .cta {
       padding-block-end: calc(var(--space-xl) + 80px); /* 80px offset — FooterFade is shorter on mobile */
-    }
-  }
-
-  @media (max-width: 480px) {
-    .cta-actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .cta-btn {
-      justify-content: center;
     }
   }
 </style>

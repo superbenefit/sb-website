@@ -1,27 +1,13 @@
 ---
-import { actions, isInputError } from 'astro:actions';
-import { env } from 'cloudflare:workers';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 import CallToAction from '../components/CallToAction.astro';
 
-const siteKey = env.PUBLIC_TURNSTILE_SITE_KEY;
-if (!siteKey) {
-  throw new Error(
-    'Server misconfiguration: PUBLIC_TURNSTILE_SITE_KEY is not set. ' +
-      'Add it to wrangler.jsonc [vars] (it must be a [var], not a ' +
-      'secret, because the value is exposed to the client bundle).',
-  );
-}
+export const prerender = true;
 
-const result = Astro.getActionResult(actions.contact);
-const inputErrors = isInputError(result?.error) ? result.error.fields : {};
-const generalError =
-  result?.error && !isInputError(result?.error)
-    ? result.error.message
-    : null;
-const success = result?.data?.ok === true;
+const siteKey =
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
 const hero = {
   title: 'Get in touch',
@@ -46,18 +32,12 @@ const hero = {
 
   <section class="contact-form-section">
     <div class="container">
-      {success && (
-        <div class="contact-banner contact-banner-success" role="status">
-          <strong>Thanks — your message is on its way.</strong>
-          We'll be in touch within a few days.
-        </div>
-      )}
+      <div class="contact-banner contact-banner-success" role="status" hidden>
+        <strong>Thanks — your message is on its way.</strong>
+        We'll be in touch within a few days.
+      </div>
 
-      {generalError && (
-        <div class="contact-banner contact-banner-error" role="alert">
-          {generalError}
-        </div>
-      )}
+      <div class="contact-banner contact-banner-error" role="alert" hidden></div>
 
       <div class="contact-grid">
         <aside class="contact-aside">
@@ -75,7 +55,7 @@ const hero = {
           </p>
         </aside>
 
-        <form class="contact-form" method="POST" action={actions.contact}>
+        <form class="contact-form" method="POST">
           <div class="contact-field">
             <label for="name">Name</label>
             <input
@@ -86,9 +66,6 @@ const hero = {
               maxlength="120"
               autocomplete="name"
             />
-            {inputErrors.name && (
-              <p class="contact-field-error">{inputErrors.name.join(', ')}</p>
-            )}
           </div>
 
           <div class="contact-field">
@@ -101,9 +78,6 @@ const hero = {
               maxlength="200"
               autocomplete="email"
             />
-            {inputErrors.email && (
-              <p class="contact-field-error">{inputErrors.email.join(', ')}</p>
-            )}
           </div>
 
           <div class="contact-field">
@@ -115,9 +89,6 @@ const hero = {
               required
               maxlength="200"
             />
-            {inputErrors.subject && (
-              <p class="contact-field-error">{inputErrors.subject.join(', ')}</p>
-            )}
           </div>
 
           <div class="contact-field">
@@ -129,9 +100,6 @@ const hero = {
               rows="6"
               maxlength="5000"
             ></textarea>
-            {inputErrors.message && (
-              <p class="contact-field-error">{inputErrors.message.join(', ')}</p>
-            )}
           </div>
 
           <div class="contact-turnstile">
@@ -140,11 +108,6 @@ const hero = {
               data-sitekey={siteKey}
               data-theme="light"
             ></div>
-            {inputErrors['cf-turnstile-response'] && (
-              <p class="contact-field-error">
-                {inputErrors['cf-turnstile-response'].join(', ')}
-              </p>
-            )}
           </div>
 
           <button type="submit" class="contact-submit">
@@ -171,8 +134,78 @@ const hero = {
 
   <SectionDivider from="cream" to="charcoal" />
 
-  <CallToAction />
+  <CallToAction variant="contact" />
 </BaseLayout>
+
+<script>
+  import { actions, isInputError } from 'astro:actions';
+
+  const form = document.querySelector('.contact-form') as HTMLFormElement | null;
+  if (!form) {
+    throw new Error('Contact form not found');
+  }
+
+  const container = form.closest('.container');
+  const successBanner = container?.querySelector('.contact-banner-success');
+  const errorBanner = container?.querySelector('.contact-banner-error');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Clear previous state
+    form.querySelectorAll('.contact-field-error').forEach((el) => el.remove());
+    successBanner?.setAttribute('hidden', '');
+    errorBanner?.setAttribute('hidden', '');
+
+    const submitBtn = form.querySelector('.contact-submit') as HTMLButtonElement;
+    const originalHTML = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const formData = new FormData(form);
+      const { data, error } = await actions.contact(formData);
+
+      if (data?.ok) {
+        successBanner?.removeAttribute('hidden');
+        form.reset();
+        // Reset Turnstile widget so a fresh challenge is shown if the
+        // user fills in the form again.
+        if (window.turnstile) {
+          window.turnstile.reset();
+        }
+      } else if (isInputError(error)) {
+        for (const [field, messages] of Object.entries(error.fields)) {
+          const p = document.createElement('p');
+          p.className = 'contact-field-error';
+          p.textContent = messages.join(', ');
+
+          if (field === 'cf-turnstile-response') {
+            form.querySelector('.contact-turnstile')?.appendChild(p);
+          } else {
+            const input = form.querySelector(`[name="${CSS.escape(field)}"]`);
+            input?.closest('.contact-field')?.appendChild(p);
+          }
+        }
+      } else if (error) {
+        if (errorBanner) {
+          errorBanner.innerHTML = error.message;
+          errorBanner.removeAttribute('hidden');
+        }
+      }
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalHTML;
+    }
+  });
+
+  // Needed for Turnstile widget global types
+  declare global {
+    interface Window {
+      turnstile?: { reset: () => void };
+    }
+  }
+</script>
 
 <!-- Turnstile widget loader. is:inline so Astro does not try to bundle it.
      Cloudflare's CDN is the canonical source. The widget auto-injects a

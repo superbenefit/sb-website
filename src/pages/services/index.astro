@@ -68,13 +68,29 @@ const services = [
     format: 'Half-day to multi-day; remote or in-person.',
   },
 ];
+
+// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
+// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
+const pageIsDraft = true;
+const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 ---
 
 <BaseLayout
   title="Services — SuperBenefit"
   description="Strategic advisory, research and strategy, and workshops and facilitation for organizations and ecosystems working on regenerative coordination."
 >
-  <PageHero {...hero} />
+  {showDraftPlaceholder ? (
+    <section class="draft-placeholder">
+      <div class="container">
+        <span class="section-label">Draft</span>
+        <h1>Coming soon</h1>
+        <p>We're working on this page. Check back soon.</p>
+        <a href="/" class="draft-cta">Back to home</a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <PageHero {...hero} />
 
   <SectionDivider from="black" to="cream" />
 
@@ -124,10 +140,50 @@ const services = [
 
   <SectionDivider from="cream" to="charcoal" />
 
-  <CallToAction />
+      <CallToAction />
+    </>
+  )}
 </BaseLayout>
 
 <style>
+  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
+  .draft-placeholder {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  .draft-placeholder .container {
+    max-width: 640px;
+  }
+  .draft-placeholder h1 {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+  .draft-placeholder p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    margin-block-end: var(--space-xl);
+  }
+  .draft-cta {
+    display: inline-block;
+    padding: 0.9em 2em;
+    border-radius: 50px;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .draft-cta:hover {
+    background: var(--color-orange-dark);
+  }
+
   /* ===== Section label ===== */
   .section-label {
     display: inline-block;

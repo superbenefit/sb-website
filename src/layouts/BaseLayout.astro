@@ -70,6 +70,26 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
         });
       }
       document.addEventListener('astro:page-load', updateNavActive);
+
+      // Handle hash-based scrolling after view transitions.
+      // When navigating to /#section-id from another page, Astro's
+      // ClientRouter swaps the page content but may not scroll to the
+      // hash target. This ensures the section is scrolled into view.
+      function scrollToHash() {
+        const hash = window.location.hash;
+        if (hash) {
+          const el = document.querySelector(hash);
+          if (el) {
+            // Small delay to ensure DOM is settled after view transition
+            setTimeout(() => {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+        }
+      }
+      document.addEventListener('astro:after-swap', scrollToHash);
+      // Also run on initial page load (e.g., direct link with hash)
+      scrollToHash();
     </script>
   </body>
 </html>
