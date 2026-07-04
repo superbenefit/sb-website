@@ -39,3 +39,6 @@ tmp/
 # Claude Code local config (machine-specific)
 .claude/settings.local.json
 .claude/typecheck.log
+
+# Agent working directory (machine-specific)
+.opencode/

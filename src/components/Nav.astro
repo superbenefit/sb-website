@@ -10,6 +10,7 @@ const { currentPath } = Astro.props;
 const links = [
   { href: '/about', label: 'About' },
   { href: '/projects', label: 'Projects' },
+  { href: '/support', label: 'Support' },
   { href: '/services', label: 'Services' },
   { href: '/updates', label: 'Updates' },
 ];
@@ -21,16 +22,20 @@ const ctaActive = isNavLinkActive(currentPath, ctaHref);
 
 <nav class="site-nav" aria-label="Main navigation">
   <ul class="site-nav-links">
-    {links.map(({ href, label }) => (
-      <li>
-        <a
-          href={href}
-          class:list={['nav-link', { active: isNavLinkActive(currentPath, href) }]}
-        >
-          {label}
-        </a>
-      </li>
-    ))}
+    {links.map(({ href, label }) => {
+      const active = isNavLinkActive(currentPath, href);
+      return (
+        <li>
+          <a
+            href={href}
+            class:list={['nav-link', { active }]}
+            aria-current={active ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        </li>
+      );
+    })}
   </ul>
   <a
     href={ctaHref}
