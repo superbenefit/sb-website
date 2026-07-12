@@ -15,56 +15,54 @@
       Services for organizations &amp; ecosystems
     </h2>
     <p class="ext-lede" data-animate="fade-up">
-      Beyond our internal commons, SuperBenefit works with aligned organizations
-      and networks to design governance, steward transitions, and build
-      regenerative systems. Every engagement is collaborative — we learn as
-      much as we share.
+      Offerings start as light-touch engagements and scale up to meet
+      specific needs. We pull teams from across our networks, with SLAs
+      that keep support responsive.
     </p>
 
     <div class="ext-services">
       <div class="ext-service" data-animate="fade-up" style="--stagger: 0ms">
-        <h3 class="ext-service-heading">Strategic advisory</h3>
+        <h3 class="ext-service-heading">Sensemaking &amp; network weaving</h3>
         <p class="ext-service-body">
-          We help organizations design governance systems, steward community
-          transitions, and navigate web3 adoption — from DAO legal wrappers
-          to participatory budgeting and multi-stakeholder coordination.
+          Full access to the SuperBenefit community, a network of
+          practitioners working at the edge of technology and systems
+          change. Peers who help you see around corners.
         </p>
+        <p class="ext-service-price">From $5,000 / year</p>
       </div>
 
       <hr class="ext-rule" aria-hidden="true">
 
       <div class="ext-service" data-animate="fade-up" style="--stagger: 100ms">
-        <h3 class="ext-service-heading">Research &amp; strategy</h3>
+        <h3 class="ext-service-heading">Project co-stewardship</h3>
         <p class="ext-service-body">
-          Deep-dive research on coordination mechanisms, regenerative
-          economics, and AI-augmented governance. We produce frameworks,
-          reports, and actionable recommendations grounded in lived
-          practice — not armchair theory.
+          We host and work on your project, with dedicated channels, a
+          priority support SLA, and bi-weekly syncs. You own the vision.
+          We handle the mechanics.
         </p>
+        <p class="ext-service-price">From $5,000 / quarter</p>
       </div>
 
       <hr class="ext-rule" aria-hidden="true">
 
       <div class="ext-service" data-animate="fade-up" style="--stagger: 200ms">
-        <h3 class="ext-service-heading">Workshops &amp; facilitation</h3>
+        <h3 class="ext-service-heading">Digital commons development</h3>
         <p class="ext-service-body">
-          Tailored sessions for leadership teams, boards, and communities.
-          We design and facilitate experiences that build shared
-          understanding, surface latent tensions, and create alignment
-          around complex decisions.
+          We build tools for your community. Self-managed and
+          deliverable focused, with a year of basic support included so
+          the handoff is clean.
         </p>
+        <p class="ext-service-price">From $5,000 / engagement</p>
       </div>
     </div>
 
     <footer class="ext-footer" data-animate="fade-up">
-      <a href="/services" class="ext-cta ext-cta-primary">
+      <!-- "See all services" hidden until /services page is ready to launch -->
+      <a href="/services" class="ext-cta ext-cta-primary" hidden>
         See all services
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M5 12h14"></path><polyline points="12 5 19 12 12 19"></polyline>
         </svg>
-      </a>
-      <a href="/contact" class="ext-cta ext-cta-secondary">
-        Get in touch
       </a>
     </footer>
   </div>
@@ -106,7 +104,7 @@
     opacity: 0.68;
     line-height: 1.7;
     max-width: 580px;
-    margin-block-end: var(--space-2xl);
+    margin-block-end: var(--space-xl);
   }
 
   /* ===== Services grid — three columns ===== */
@@ -141,6 +139,18 @@
     opacity: 0.65;
     line-height: 1.7;
     margin: 0;
+  }
+
+  /* ===== Service price (own line, subtle addendum) ===== */
+  .ext-service-price {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-charcoal);
+    opacity: 0.55;
+    margin: 0;
+    margin-block-start: var(--space-md);
+    padding-block-start: var(--space-sm);
+    border-block-start: 1px solid rgb(var(--color-charcoal-rgb) / 0.1);
   }
 
   /* ===== Footer CTA ===== */

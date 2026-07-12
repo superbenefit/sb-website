@@ -8,7 +8,7 @@ import CallToAction from '../../components/CallToAction.astro';
 
 const hero = {
   title: 'Services',
-  subtitle: 'Strategic advisory, research, and facilitation for aligned organizations and ecosystems',
+  subtitle: 'Community, co-stewardship, and development for aligned organizations and ecosystems',
   overlayGradient: `linear-gradient(
     to bottom,
     color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
@@ -20,52 +20,52 @@ const hero = {
 
 const services = [
   {
-    id: 'advisory',
-    heading: 'Strategic Advisory',
-    summary: 'We help organizations design governance systems, steward community transitions, and navigate web3 adoption — from DAO legal wrappers to participatory budgeting and multi-stakeholder coordination.',
+    id: 'sensemaking',
+    heading: 'Sensemaking & Network Weaving',
+    summary: 'We connect you to a community of practitioners working at the edge of technology and systems change — peers who help each other see around corners and find paths forward.',
     body: [
-      'Engagements typically begin with a listening tour: a structured set of conversations with stakeholders, contributors, and the people affected by the system being designed. From there, we move into co-design — drafting options, pressure-testing them against scenarios, and building consensus around the path forward.',
-      'We work in weeks, not months. A typical advisory engagement runs 4 to 12 weeks and produces a written recommendation, a governance design document, or a working prototype of the coordination mechanism being proposed.',
+      'This is our lightest-touch engagement: full access to the SuperBenefit community, a network of people designing, building, and stewarding new systems of coordination. Members share hard-won lessons, surface emerging patterns, and offer support through regular touchpoints and asynchronous channels.',
+      'A 4 hr/mo async support SLA keeps things responsive, and dedicated attention at regular check-ins ensures you\'re never shouting into the void. When we have extra capacity, we sponsor gatherings and online events — bringing the community together around shared questions.',
     ],
     deliverables: [
-      'Governance design documents',
-      'Stakeholder maps and decision frameworks',
-      'Proposal flows and decision logs',
-      'Retrospectives and recommendations',
+      'Full community access and async channels',
+      'Dedicated attention at regular touchpoints',
+      '4 hr/mo async support SLA',
+      'Sponsored gatherings (capacity permitting)',
     ],
-    format: '4–12 week engagements; flat fee or retainer.',
+    format: 'Annual retainer; from $5,000/year.',
   },
   {
-    id: 'research',
-    heading: 'Research & Strategy',
-    summary: 'Deep-dive research on coordination mechanisms, regenerative economics, and AI-augmented governance. We produce frameworks, reports, and actionable recommendations grounded in lived practice — not armchair theory.',
+    id: 'stewardship',
+    heading: 'Project Co-Stewardship',
+    summary: 'We embed alongside your project — providing dedicated support, operational rhythm, and shared infrastructure so you can focus on the work that matters.',
     body: [
-      'Our research is practice-first. We start with the questions that have surfaced through our work with cells, projects, and partner ecosystems, then design studies that produce something useful: a framework someone can apply, a report that reframes a stuck conversation, a model that makes a tradeoff legible.',
-      'Outputs are openly licensed wherever possible, and we share raw data, methods, and working drafts so the work can be built on. Where we are funded to produce proprietary research for a specific partner, we are transparent about the terms.',
+      'When a project needs more than occasional support, we step into a co-stewardship role. We set up dedicated channels, establish a bi-weekly coordination cadence, and assign committed contacts who understand your context and can move things forward between syncs.',
+      'A 4 hr/wk priority support SLA means you have a reliable operational backbone — someone who can draft proposals, facilitate decisions, document processes, and produce learning artifacts that help the team improve over time. You own the vision; we handle the mechanics.',
     ],
     deliverables: [
-      'Frameworks and conceptual models',
-      'Long-form reports and essays',
-      'Comparative case studies',
-      'Open data and reproducible methods',
+      'Dedicated channels and contacts',
+      'Bi-weekly operational rhythm',
+      '4 hr/wk priority support SLA',
+      'Process and learning artifacts',
     ],
-    format: 'Project-based; scoped per engagement.',
+    format: 'Quarterly engagement; from $5,000/quarter.',
   },
   {
-    id: 'workshops',
-    heading: 'Workshops & Facilitation',
-    summary: 'Tailored sessions for leadership teams, boards, and communities. We design and facilitate experiences that build shared understanding, surface latent tensions, and create alignment around complex decisions.',
+    id: 'development',
+    heading: 'Digital Commons Development',
+    summary: 'We build purpose-fit tools and digital infrastructure for your community — self-managed, deliverable-focused, and designed to outlast the engagement.',
     body: [
-      'Workshops range from half-day intensives for leadership teams to multi-day retreats for whole communities. We co-design the agenda with you, prepare the materials, facilitate the sessions, and produce a written summary of what was decided, what was left open, and what surfaced that needs more attention.',
-      'Common formats: governance design sprints, strategy offsites, conflict mediation, decision retreats, and onboarding intensives for new contributors entering a DAO or steward pool.',
+      'Sometimes a community needs software: a coordination dashboard, a custom governance interface, a knowledge base, a tool for participatory budgeting. We scope the work together, build it, and hand it over — with documentation, training, and a year of basic support so you\'re not left holding something you can\'t maintain.',
+      'Deliverables are open source by default, and we build with the assumption that the code will be maintained by the community after we step back. One year of basic support (4 hr/yr) is included to catch edge cases, handle updates, and answer questions as they come up.',
     ],
     deliverables: [
-      'Co-designed agendas and pre-reads',
-      'Facilitated sessions (remote or in-person)',
-      'Session recordings and transcripts',
-      'Written summaries and decision logs',
+      'Scoped, delivered software tools',
+      'Documentation and maintenance guides',
+      'Handoff training and onboarding',
+      '1 year basic support (4 hr/yr)',
     ],
-    format: 'Half-day to multi-day; remote or in-person.',
+    format: 'Per engagement; from $5,000.',
   },
 ];
 
@@ -77,7 +77,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 
 <BaseLayout
   title="Services — SuperBenefit"
-  description="Strategic advisory, research and strategy, and workshops and facilitation for organizations and ecosystems working on regenerative coordination."
+  description="Community sensemaking, project co-stewardship, and digital commons development for organizations and ecosystems working on regenerative coordination."
 >
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">
@@ -98,12 +98,12 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
   <section class="services-lede">
     <div class="container mission-content" data-animate="fade-up">
       <span class="section-label">What We Offer</span>
-      <h2>Three ways we work alongside aligned organizations.</h2>
+      <h2>Three tiers of engagement, scaled to your needs.</h2>
       <p>
-        Beyond our internal commons, SuperBenefit works with aligned
-        organizations and networks to design governance, steward transitions,
-        and build regenerative systems. Every engagement is collaborative &mdash;
-        we learn as much as we share.
+        Offerings start as light-touch engagements and scale to meet specific
+        needs. We convene teams from across our networks — backstopped by the
+        core team — with SLAs that keep support responsive and sustainable.
+        Every engagement is collaborative: we learn as much as we share.
       </p>
     </div>
   </section>
