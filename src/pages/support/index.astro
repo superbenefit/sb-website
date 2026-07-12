@@ -8,7 +8,7 @@ import CallToAction from '../../components/CallToAction.astro';
 
 const hero = {
   title: 'Peer Support',
-  subtitle: 'Shared infrastructure and services for SuperBenefit projects and cells',
+  subtitle: 'Shared services for projects in the SuperBenefit network',
   overlayGradient: `linear-gradient(
     to bottom,
     color-mix(in srgb, var(--color-charcoal) 30%, transparent) 0%,
@@ -20,48 +20,24 @@ const hero = {
 
 const services = [
   {
-    id: 'legal',
-    heading: 'Legal & Incorporation',
-    body: 'Coordination of legal structures across jurisdictions — wrappers for DAOs, fiscal sponsorships, multi-entity operating agreements, and the unglamorous but critical paperwork that keeps cells and projects in good standing.',
-    offerings: [
-      'DAO legal wrappers and operating agreements',
-      'Fiscal sponsorship and grant-pass-through structures',
-      'Multi-entity coordination across jurisdictions',
-      'Compliance, filings, and registered-agent services',
-    ],
-  },
-  {
-    id: 'treasury',
-    heading: 'Treasury & Financial Operations',
-    body: 'Day-to-day financial operations: bookkeeping, multi-sig treasury management, grant disbursements, reporting, and the connective tissue that lets money move through the commons without bottlenecks.',
-    offerings: [
-      'Multi-sig treasury management and bookkeeping',
-      'Grant disbursements and vendor payments',
-      'Financial reporting and audit preparation',
-      'Token and stablecoin accounting',
-    ],
-  },
-  {
     id: 'people',
-    heading: 'People & Community Operations',
-    body: 'Lightweight operational support for the humans in the network — onboarding, contributor agreements, payroll and contractor payments, and the coordination work that keeps small teams running smoothly across time zones.',
-    offerings: [
-      'Contributor onboarding and agreements',
-      'Payroll, contractor payments, and 1099s',
-      'Coordination and scheduling support',
-      'Team health checks and conflict facilitation',
-    ],
+    heading: 'People to work with',
+    body: 'Find the people your project needs to keep moving. Facilitators, contributors, and stewards across the network can step in for coordination, decision support, and ongoing work.',
   },
   {
-    id: 'governance',
-    heading: 'Governance & Coordination',
-    body: 'Design and stewardship of governance processes — proposal flows, voting mechanisms, decision logs, and the rituals that make distributed decision-making legible to the people affected by it.',
-    offerings: [
-      'Governance process design and documentation',
-      'Proposal flows, voting, and decision logs',
-      'Steward and delegate programs',
-      'Retrospectives and governance reviews',
-    ],
+    id: 'infrastructure',
+    heading: 'Shared infrastructure',
+    body: 'Use the infrastructure other projects already depend on. The DAO, shared tooling, documentation templates, and patterns you can adapt instead of inventing.',
+  },
+  {
+    id: 'funding',
+    heading: 'Funding support',
+    body: 'Apply for grants with input from people who have done it before. Connect with fiscal hosts in the network who can move funds where they need to go. Share reporting approaches and learn from other projects so no one starts from scratch.',
+  },
+  {
+    id: 'admin',
+    heading: 'Admin and paperwork',
+    body: 'Use our DAO and existing entity arrangements when you need them. We help with the admin, filings, and coordination that keep a project running, without requiring you to stand up your own back office.',
   },
 ];
 
@@ -73,7 +49,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 
 <BaseLayout
   title="Peer Support — SuperBenefit"
-  description="Shared services and peer support infrastructure that SuperBenefit provides to its projects and cells: legal, treasury, people, and governance."
+  description="Peer support for SuperBenefit projects: people to work with, shared infrastructure, funding support, and admin and paperwork."
 >
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">
@@ -94,12 +70,15 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
   <section class="supports-lede">
     <div class="container mission-content" data-animate="fade-up">
       <span class="section-label">Peer Support</span>
-      <h2>Shared infrastructure for a network of cells.</h2>
+      <h2>Shared infrastructure for the network.</h2>
       <p>
-        SuperBenefit operates as a network of small, autonomous cells. To keep
-        overhead light and capacity shared, the commons provides four core
-        services that any project or cell can lean on. These are not external
-        vendors &mdash; they are part of how the network holds itself together.
+        SuperBenefit is made up of small, self-directed teams working on shared
+        problems. Each project stays in charge of its funds and decisions. But
+        no one has to build everything from scratch.
+      </p>
+      <p>
+        Bring your own organization, anchor in our DAO, or pass through. Leave
+        anytime.
       </p>
     </div>
   </section>
@@ -113,11 +92,6 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
           <div class="service-body">
             <h3>{service.heading}</h3>
             <p class="service-blurb">{service.body}</p>
-            <ul class="service-offerings">
-              {service.offerings.map((item) => (
-                <li>{item}</li>
-              ))}
-            </ul>
           </div>
         </article>
       ))}
@@ -242,33 +216,4 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     max-width: 60ch;
   }
 
-  .service-offerings {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xs);
-  }
-
-  @media (min-width: 768px) {
-    .service-offerings { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  .service-offerings li {
-    font-size: var(--text-sm);
-    color: var(--color-charcoal);
-    opacity: 0.7;
-    line-height: 1.6;
-    padding-inline-start: 1.2em;
-    position: relative;
-  }
-
-  .service-offerings li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--color-orange);
-    font-weight: 600;
-  }
 </style>
