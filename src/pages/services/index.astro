@@ -78,6 +78,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 <BaseLayout
   title="Services — SuperBenefit"
   description="Community sensemaking, project co-stewardship, and digital commons development for organizations and ecosystems working on regenerative coordination."
+  noindex={showDraftPlaceholder}
 >
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">

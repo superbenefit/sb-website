@@ -35,7 +35,26 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
   ogImage={post.data.coverImage}
   type="article"
   publishedAt={post.data.publishedAt}
+  noindex={showDraftPlaceholder}
+  authorName={post.data.author?.name}
+  coverImage={post.data.coverImage}
+  dateModified={post.data.updatedAt}
 >
+  {!showDraftPlaceholder && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://superbenefit.org/' },
+          { '@type': 'ListItem', position: 2, name: 'Updates', item: 'https://superbenefit.org/updates/' },
+          { '@type': 'ListItem', position: 3, name: post.data.title, item: `https://superbenefit.org/updates/${post.id}/` },
+        ],
+      })}
+    />
+  )}
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">
       <div class="container">

@@ -68,6 +68,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 <BaseLayout
   title="Projects — SuperBenefit"
   description="SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams building the commons."
+  noindex={showDraftPlaceholder}
 >
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">

@@ -50,6 +50,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 <BaseLayout
   title="Peer Support — SuperBenefit"
   description="Peer support for SuperBenefit projects: people to work with, shared infrastructure, funding support, and admin and paperwork."
+  noindex={showDraftPlaceholder}
 >
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">

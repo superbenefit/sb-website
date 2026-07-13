@@ -40,7 +40,32 @@ const hero = {
 <BaseLayout
   title={page.currentPage === 1 ? 'Updates — SuperBenefit' : `Updates — Page ${page.currentPage} — SuperBenefit`}
   description="Notes on governance, DAOs, web3, and building a better world through systems innovation."
+  noindex={showDraftPlaceholder}
 >
+  {!showDraftPlaceholder && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://superbenefit.org/' },
+          { '@type': 'ListItem', position: 2, name: 'Updates', item: 'https://superbenefit.org/updates/' },
+          ...(page.currentPage > 1
+            ? [
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: `Page ${page.currentPage}`,
+                  item: `https://superbenefit.org/updates/${page.currentPage === 2 ? '' : page.currentPage + '/'}`,
+                },
+              ]
+            : []),
+        ],
+      })}
+    />
+  )}
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">
       <div class="container">

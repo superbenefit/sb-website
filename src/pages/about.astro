@@ -26,7 +26,8 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 
 <BaseLayout
   title="About — SuperBenefit"
-  description="A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked."
+  description="About SuperBenefit: a purpose-aligned network using emerging technologies to grow new systems of coordination. Our mission, values, and theory of change."
+  noindex={showDraftPlaceholder}
 >
   {showDraftPlaceholder ? (
     <section class="draft-placeholder">

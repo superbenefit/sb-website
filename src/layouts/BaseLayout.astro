@@ -15,9 +15,62 @@ interface Props {
   bodyClass?: string;
   type?: 'website' | 'article';
   publishedAt?: Date;
+  noindex?: boolean;
+  authorName?: string;
+  authorUrl?: string;
+  coverImage?: string;
+  dateModified?: Date;
 }
 
-const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  bodyClass = '',
+  type,
+  publishedAt,
+  noindex = false,
+  authorName,
+  authorUrl,
+  coverImage,
+  dateModified,
+} = Astro.props;
+
+const siteUrl = Astro.site?.href ?? 'https://superbenefit.org/';
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteUrl}#organization`,
+  name: 'SuperBenefit',
+  url: siteUrl,
+  description: 'A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked.',
+  logo: new URL('/images/superbenefit-logo.webp', Astro.site).href,
+  sameAs: [
+    'https://discord.gg/q95fFXGu67',
+    'https://github.com/superbenefit',
+    'https://twitter.com/SuperBenefitDAO',
+    'https://knowledge.superbenefit.org',
+    'https://paragraph.com/@superbenefit-2',
+  ],
+};
+
+const isHomepage = Astro.url.pathname === '/';
+const websiteSchema = isHomepage
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${siteUrl}#website`,
+      name: 'SuperBenefit',
+      url: siteUrl,
+      description: 'A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked.',
+      publisher: { '@id': `${siteUrl}#organization` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${siteUrl}updates?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    }
+  : null;
 ---
 
 <!doctype html>
@@ -25,22 +78,12 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <SEO title={title} description={description} ogImage={ogImage} type={type} publishedAt={publishedAt} />
+    <SEO title={title} description={description} ogImage={ogImage} type={type} publishedAt={publishedAt} noindex={noindex} authorName={authorName} authorUrl={authorUrl} coverImage={coverImage} dateModified={dateModified} />
+    <link rel="manifest" href="/manifest.json" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "SuperBenefit",
-      "url": "https://superbenefit.org",
-      "description": "A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked.",
-      "sameAs": [
-        "https://discord.gg/q95fFXGu67",
-        "https://github.com/superbenefit",
-        "https://twitter.com/SuperBenefitDAO",
-        "https://knowledge.superbenefit.org",
-        "https://paragraph.com/@superbenefit-2"
-      ]
-    })} />
+    <link rel="preconnect" href="https://challenges.cloudflare.com" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    {websiteSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
     <Font cssVariable="--font-playfair" preload />
     <Font cssVariable="--font-inter" preload />
     <ClientRouter />
@@ -57,7 +100,8 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
 
       function updateNavActive() {
         const path = window.location.pathname;
-        document.querySelectorAll<HTMLAnchorElement>('.site-nav a').forEach((link) => {
+
+        function setActive(link: HTMLAnchorElement) {
           const href = link.getAttribute('href');
           if (!href || href.startsWith('http')) return;
           const isActive = isNavLinkActive(path, href);
@@ -67,7 +111,13 @@ const { title, description, ogImage, bodyClass = '', type, publishedAt } = Astro
           } else {
             link.removeAttribute('aria-current');
           }
-        });
+        }
+
+        // Links inside .site-nav (nav links + mobile contact CTA)
+        document.querySelectorAll<HTMLAnchorElement>('.site-nav a').forEach(setActive);
+
+        // Desktop contact CTA (outside .site-nav, inside .header-inner)
+        document.querySelectorAll<HTMLAnchorElement>('.header-cta').forEach(setActive);
       }
       document.addEventListener('astro:page-load', updateNavActive);
 

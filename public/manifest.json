@@ -1,0 +1,26 @@
+{
+  "name": "SuperBenefit",
+  "short_name": "SuperBenefit",
+  "description": "A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1a1a",
+  "background_color": "#edddc8",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/superbenefit-logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["nonprofit", "education", "social"]
+}
