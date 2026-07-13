@@ -40,5 +40,10 @@ tmp/
 .claude/settings.local.json
 .claude/typecheck.log
 
+# Claude Code agent skills/commands (machine-specific, not project source)
+.claude/commands/
+.claude/skills/openspec-*/
+.od-skills/
+
 # Agent working directory (machine-specific)
 .opencode/
