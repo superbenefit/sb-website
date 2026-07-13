@@ -6,8 +6,14 @@ import CallToAction from '../components/CallToAction.astro';
 
 export const prerender = true;
 
+// Hardcoded to the production site key because contact.astro is prerendered:
+// the value is baked into the static HTML at build time, and
+// `wrangler.jsonc [vars]` are runtime-only (not visible to Vite/Astro during
+// the build). `import.meta.env` override remains available for local dev.
+// Per the contact-form policy in .opencode/context/.../contact-form.md,
+// this page must never silently fall back to a visible test key.
 const siteKey =
-  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADtinm8-q80lFVL-';
 
 const hero = {
   title: 'Get in touch',
