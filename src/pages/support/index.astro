@@ -1,0 +1,220 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const hero = {
+  title: 'Peer Support',
+  subtitle: 'Shared services for projects in the SuperBenefit network',
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-charcoal) 30%, transparent) 0%,
+    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
+    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
+  )`,
+  showStars: true,
+};
+
+const services = [
+  {
+    id: 'people',
+    heading: 'People to work with',
+    body: 'Find the people your project needs to keep moving. Facilitators, contributors, and stewards across the network can step in for coordination, decision support, and ongoing work.',
+  },
+  {
+    id: 'infrastructure',
+    heading: 'Shared infrastructure',
+    body: 'Use the infrastructure other projects already depend on. The DAO, shared tooling, documentation templates, and patterns you can adapt instead of inventing.',
+  },
+  {
+    id: 'funding',
+    heading: 'Funding support',
+    body: 'Apply for grants with input from people who have done it before. Connect with fiscal hosts in the network who can move funds where they need to go. Share reporting approaches and learn from other projects so no one starts from scratch.',
+  },
+  {
+    id: 'admin',
+    heading: 'Admin and paperwork',
+    body: 'Use our DAO and existing entity arrangements when you need them. We help with the admin, filings, and coordination that keep a project running, without requiring you to stand up your own back office.',
+  },
+];
+
+// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
+// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
+const pageIsDraft = true;
+const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
+---
+
+<BaseLayout
+  title="Peer Support — SuperBenefit"
+  description="Peer support for SuperBenefit projects: people to work with, shared infrastructure, funding support, and admin and paperwork."
+  noindex={showDraftPlaceholder}
+>
+  {showDraftPlaceholder ? (
+    <section class="draft-placeholder">
+      <div class="container">
+        <span class="section-label">Draft</span>
+        <h1>Coming soon</h1>
+        <p>We're working on this page. Check back soon.</p>
+        <a href="/" class="draft-cta">Back to home</a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <PageHero {...hero} />
+
+  <SectionDivider from="black" to="cream" />
+
+  {/* Lede */}
+  <section class="supports-lede">
+    <div class="container mission-content" data-animate="fade-up">
+      <span class="section-label">Peer Support</span>
+      <h2>Shared infrastructure for the network.</h2>
+      <p>
+        SuperBenefit is made up of small, self-directed teams working on shared
+        problems. Each project stays in charge of its funds and decisions. But
+        no one has to build everything from scratch.
+      </p>
+      <p>
+        Bring your own organization, anchor in our DAO, or pass through. Leave
+        anytime.
+      </p>
+    </div>
+  </section>
+
+  {/* Service sections */}
+  <section class="supports-services">
+    <div class="container">
+      {services.map((service) => (
+        <article class="service-block" id={service.id} data-animate="fade-up">
+          <div class="service-accent" aria-hidden="true"></div>
+          <div class="service-body">
+            <h3>{service.heading}</h3>
+            <p class="service-blurb">{service.body}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+      <CallToAction />
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
+  .draft-placeholder {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  .draft-placeholder .container {
+    max-width: 640px;
+  }
+  .draft-placeholder h1 {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+  .draft-placeholder p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    margin-block-end: var(--space-xl);
+  }
+  .draft-cta {
+    display: inline-block;
+    padding: 0.9em 2em;
+    border-radius: 50px;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .draft-cta:hover {
+    background: var(--color-orange-dark);
+  }
+
+  /* ===== Section label ===== */
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Lede ===== */
+  .supports-lede {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .supports-lede h2 {
+    margin-block-end: var(--space-lg);
+    max-width: 26ch;
+  }
+
+  .supports-lede p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  /* ===== Services list ===== */
+  .supports-services {
+    background: var(--color-cream);
+    padding-block-end: var(--space-2xl);
+  }
+
+  .service-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding-block: var(--space-xl);
+    border-block-start: 1px solid rgb(var(--color-black-rgb) / 0.08);
+  }
+
+  .service-block:first-child {
+    border-block-start: none;
+    padding-block-start: 0;
+  }
+
+  .service-accent {
+    width: 48px;
+    height: 3px;
+    background: var(--color-orange);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  .service-body h3 {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .service-blurb {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    line-height: 1.7;
+    margin: 0 0 var(--space-md);
+    max-width: 60ch;
+  }
+
+</style>

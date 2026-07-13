@@ -1,0 +1,240 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
+import { getCollection } from 'astro:content';
+import { sanitizeHtml } from '../../utils/sanitize';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('updates', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+
+const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
+// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
+const pageIsDraft = true;
+const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
+---
+
+<BaseLayout
+  title={`${post.data.title} — SuperBenefit Updates`}
+  description={post.data.excerpt || ''}
+  ogImage={post.data.coverImage}
+  type="article"
+  publishedAt={post.data.publishedAt}
+  noindex={showDraftPlaceholder}
+  authorName={post.data.author?.name}
+  coverImage={post.data.coverImage}
+  dateModified={post.data.updatedAt}
+>
+  {!showDraftPlaceholder && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://superbenefit.org/' },
+          { '@type': 'ListItem', position: 2, name: 'Updates', item: 'https://superbenefit.org/updates/' },
+          { '@type': 'ListItem', position: 3, name: post.data.title, item: `https://superbenefit.org/updates/${post.id}/` },
+        ],
+      })}
+    />
+  )}
+  {showDraftPlaceholder ? (
+    <section class="draft-placeholder">
+      <div class="container">
+        <span class="section-label">Draft</span>
+        <h1>Coming soon</h1>
+        <p>We're working on this page. Check back soon.</p>
+        <a href="/" class="draft-cta">Back to home</a>
+      </div>
+    </section>
+  ) : (
+    <>
+    <article class="updates-post" transition:name={`update-${post.id}`}>
+    {post.data.coverImage && (
+      <div class="post-cover">
+        <img src={post.data.coverImage} alt={post.data.title} />
+      </div>
+    )}
+
+    <div class="container post-container">
+      <header class="post-header">
+        <div class="post-meta">
+          <time datetime={post.data.publishedAt.toISOString()}>{formattedDate}</time>
+          {post.data.tags.length > 0 && (
+            <div class="post-tags">
+              {post.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+        <h1>{post.data.title}</h1>
+        {post.data.author && (
+          <div class="post-author">
+            <span>by {post.data.author.name}</span>
+          </div>
+        )}
+      </header>
+
+      <div class="prose" set:html={sanitizeHtml(post.data.content)} />
+
+      <footer class="post-footer">
+        <a href="/updates" class="back-link">&larr; Back to all posts</a>
+      </footer>
+    </div>
+  </article>
+
+      <SectionDivider from="cream" to="charcoal" />
+
+      <CallToAction />
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
+  .draft-placeholder {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  .draft-placeholder .container {
+    max-width: 640px;
+  }
+  .draft-placeholder .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+  .draft-placeholder h1 {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+  .draft-placeholder p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    margin-block-end: var(--space-xl);
+  }
+  .draft-cta {
+    display: inline-block;
+    padding: 0.9em 2em;
+    border-radius: 50px;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .draft-cta:hover {
+    background: var(--color-orange-dark);
+  }
+
+  .updates-post {
+    padding-block-start: var(--header-height);
+  }
+
+  .post-cover {
+    width: 100%;
+    max-height: 420px;
+    overflow: hidden;
+  }
+
+  .post-cover img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+  }
+
+  .post-container {
+    max-width: 760px;
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .post-header {
+    margin-block-end: var(--space-xl);
+    padding-block-end: var(--space-lg);
+    border-block-end: 1px solid rgb(var(--color-black-rgb) / 0.08);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-block-end: var(--space-md);
+  }
+
+  .post-meta time {
+    font-size: var(--text-xs);
+    color: var(--color-orange);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: var(--text-xs);
+    padding: 0.2em 0.7em;
+    background: rgb(var(--color-green-rgb) / 0.15);
+    color: var(--color-green);
+    border-radius: 50px;
+    font-weight: 500;
+  }
+
+  .post-header h1 {
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-sm);
+  }
+
+  .post-author {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.6;
+  }
+
+  .post-footer {
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-lg);
+    border-block-start: 1px solid rgb(var(--color-black-rgb) / 0.08);
+  }
+
+  .back-link {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+</style>

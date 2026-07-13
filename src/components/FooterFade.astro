@@ -1,0 +1,67 @@
+---
+---
+
+<div class="footer-fade" aria-hidden="true">
+  <!--
+    Three wave layers, each lower than the last.
+    Each wave fills ABOVE its path (charcoal at top, black at bottom).
+    Paths close at Y=-20 (above container) — overflow:hidden clips the
+    straight line, leaving only the wavy boundary visible.
+    They overlap and interfere, creating a textured charcoal-to-black dissolve.
+  -->
+
+  <!-- Wave 1: highest, 2 oscillations, strongest -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-1">
+    <path d="M0,30 Q360,5 720,30 Q1080,55 1440,30 L1440,-20 L0,-20 Z" />
+  </svg>
+
+  <!-- Wave 2: mid height, 1.5 oscillations, medium -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-2">
+    <path d="M0,60 Q480,35 960,60 Q1440,85 1440,60 L1440,-20 L0,-20 Z" />
+  </svg>
+
+  <!-- Wave 3: lowest, 1 oscillation, faintest -->
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" class="fade-wave fade-3">
+    <path d="M0,90 Q720,65 1440,90 L1440,-20 L0,-20 Z" />
+  </svg>
+</div>
+
+<style>
+  .footer-fade {
+    position: relative;
+    height: 120px;
+    margin-top: -120px;
+    background: linear-gradient(to bottom, var(--color-charcoal) 0%, var(--color-black) 100%);
+    line-height: 0;
+    overflow: hidden;
+  }
+
+  .fade-wave {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fade-1 path {
+    fill: var(--color-charcoal);
+    opacity: 0.55;
+  }
+
+  .fade-2 path {
+    fill: var(--color-charcoal);
+    opacity: 0.4;
+  }
+
+  .fade-3 path {
+    fill: var(--color-charcoal);
+    opacity: 0.25;
+  }
+
+  @media (max-width: 768px) {
+    .footer-fade {
+      height: 80px;
+      margin-top: -80px;
+    }
+  }
+</style>

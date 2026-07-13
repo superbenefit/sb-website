@@ -1,0 +1,214 @@
+---
+/**
+ * ExternalServices — green sage section showing the consulting / advisory
+ * services SuperBenefit offers to outside organizations and ecosystems.
+ *
+ * Three-column grid layout. Cream accents throughout — no gold, no orange.
+ * Clean, confident, text-forward — like a design studio's capabilities page.
+ */
+---
+
+<section id="services" class="external-services">
+  <div class="container">
+    <span class="ext-label" data-animate="fade-up">What We Offer</span>
+    <h2 class="ext-heading" data-animate="fade-up">
+      Services for organizations &amp; ecosystems
+    </h2>
+    <p class="ext-lede" data-animate="fade-up">
+      Offerings start as light-touch engagements and scale up to meet
+      specific needs. We pull teams from across our networks, with SLAs
+      that keep support responsive.
+    </p>
+
+    <div class="ext-services">
+      <div class="ext-service" data-animate="fade-up" style="--stagger: 0ms">
+        <h3 class="ext-service-heading">Sensemaking &amp; network weaving</h3>
+        <p class="ext-service-body">
+          Navigate complex challenges with systems-thinking practitioners. We
+          weave connections across our network so you find peers, patterns, and
+          pathways.
+        </p>
+        <p class="ext-service-price">From $5,000 / year</p>
+      </div>
+
+      <hr class="ext-rule" aria-hidden="true">
+
+      <div class="ext-service" data-animate="fade-up" style="--stagger: 100ms">
+        <h3 class="ext-service-heading">Project co-stewardship</h3>
+        <p class="ext-service-body">
+          We host and work on your project, with dedicated channels, a
+          priority support SLA, and bi-weekly syncs. You own the vision.
+          We handle the mechanics.
+        </p>
+        <p class="ext-service-price">From $5,000 / quarter</p>
+      </div>
+
+      <hr class="ext-rule" aria-hidden="true">
+
+      <div class="ext-service" data-animate="fade-up" style="--stagger: 200ms">
+        <h3 class="ext-service-heading">Digital commons development</h3>
+        <p class="ext-service-body">
+          We build tools for your community. Self-managed and
+          deliverable focused, with a year of basic support included so
+          the handoff is clean.
+        </p>
+        <p class="ext-service-price">From $5,000 / engagement</p>
+      </div>
+    </div>
+
+    <footer class="ext-footer" data-animate="fade-up">
+      <!-- "See all services" hidden until /services page is ready to launch -->
+      <a href="/services" class="ext-cta ext-cta-primary" hidden>
+        See all services
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"></path><polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .external-services {
+    background: var(--color-green-sage);
+    padding-block: var(--space-xl) var(--space-2xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== Label ===== */
+  .ext-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-cream);
+    margin-block-end: var(--space-md);
+  }
+
+  /* ===== Heading ===== */
+  .ext-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-charcoal);
+    line-height: 1.2;
+    margin-block-end: var(--space-md);
+    max-width: 16ch;
+  }
+
+  /* ===== Lede ===== */
+  .ext-lede {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.68;
+    line-height: 1.7;
+    max-width: 580px;
+    margin-block-end: var(--space-xl);
+  }
+
+  /* ===== Services grid — three columns ===== */
+  .ext-services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .ext-service {
+    /* no padding — column layout handles spacing via grid gap */
+  }
+
+  /* ===== Cream vertical rule between columns ===== */
+  .ext-rule {
+    display: none;
+  }
+
+  /* ===== Service heading ===== */
+  .ext-service-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    line-height: 1.25;
+    margin: 0 0 var(--space-sm);
+  }
+
+  /* ===== Service body ===== */
+  .ext-service-body {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.65;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ===== Service price (own line, subtle addendum) ===== */
+  .ext-service-price {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-charcoal);
+    opacity: 0.55;
+    margin: 0;
+    margin-block-start: var(--space-md);
+    padding-block-start: var(--space-sm);
+    border-block-start: 1px solid rgb(var(--color-charcoal-rgb) / 0.1);
+  }
+
+  /* ===== Footer CTA ===== */
+  .ext-footer {
+    margin-block-start: var(--space-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .ext-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .ext-cta-primary {
+    color: var(--color-cream);
+  }
+
+  .ext-cta-primary:hover {
+    opacity: 0.7;
+  }
+
+  .ext-cta-secondary {
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+
+  .ext-cta-secondary:hover {
+    opacity: 1;
+  }
+
+  /* ===== Stagger animation delay ===== */
+  .ext-service[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .ext-services {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ext-services {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

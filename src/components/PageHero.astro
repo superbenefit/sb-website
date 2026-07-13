@@ -1,0 +1,91 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  overlayGradient: string;
+  backgroundImage?: string;
+  minHeight?: string;
+  showStars?: boolean;
+}
+
+const {
+  title,
+  subtitle,
+  overlayGradient,
+  backgroundImage = '/images/brand-showcase.webp',
+  minHeight = '40vh',
+  showStars = false,
+} = Astro.props;
+---
+
+<section
+  class="page-hero"
+  style={`min-height: ${minHeight}; background-image: url('${backgroundImage}')`}
+>
+  <div
+    class="page-hero-overlay"
+    style={`background: ${overlayGradient}`}
+    aria-hidden="true"
+  ></div>
+  {showStars && <div class="page-hero-stars" aria-hidden="true"></div>}
+  <div class="container page-hero-content">
+    <h1>{title}</h1>
+    {subtitle && <p>{subtitle}</p>}
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    background-color: var(--color-black);
+    background-size: cover;
+    background-position: center;
+    padding-block-start: calc(var(--header-height) + var(--space-2xl));
+    padding-block-end: var(--space-2xl);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .page-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .page-hero-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.5;
+    background:
+      radial-gradient(1px 1px at 10% 30%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 30% 70%, rgba(245,135,44,0.6), transparent),
+      radial-gradient(1px 1px at 50% 20%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 70% 60%, rgba(212,168,67,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 90% 40%, rgba(255,255,255,0.6), transparent);
+  }
+
+  .page-hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .page-hero h1 {
+    color: var(--color-cream);
+    font-size: var(--text-3xl);
+    margin-block-end: var(--space-sm);
+  }
+
+  .page-hero p {
+    color: var(--color-cream);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    font-family: var(--font-serif);
+    font-style: italic;
+    line-height: 1.7;
+    max-width: 56ch;
+  }
+</style>

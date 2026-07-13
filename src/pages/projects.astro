@@ -1,0 +1,295 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionDivider from '../components/SectionDivider.astro';
+import CallToAction from '../components/CallToAction.astro';
+
+/**
+ * Projects data — loaded from mock projects at build time.
+ * Status determines the badge color: Active → green, Incubating → orange, Completed → red.
+ */
+const projects = [
+  {
+    id: 'reimagining-power',
+    title: 'Reimagining Power Project',
+    description: 'Exploring how web3 can redistribute power in philanthropy and social impact — with case studies from All In For Sport, Equality Fund, and the Institute for Community Sustainability.',
+    status: 'Active',
+    link: 'https://knowledge.superbenefit.org/docs/reimagining-power-project/',
+  },
+  {
+    id: 'all-in-for-sport',
+    title: 'All In For Sport',
+    description: 'Applying the Reimagining Power framework to sport organizations — building decentralized governance models for equitable, community-driven sport funding.',
+    status: 'Active',
+    link: 'https://www.allinforsport.org/',
+  },
+  {
+    id: 'dao-primitives',
+    title: 'DAO Primitives Framework',
+    description: 'A conceptual framework for designing purpose-aligned networks of autonomous teams — covering group phase, scale, and state. Modular building blocks for choosing the right coordination patterns.',
+    status: 'Incubating',
+    link: 'https://knowledge.superbenefit.org/docs/dao-primitives/',
+  },
+  {
+    id: 'nft-energy-labeling',
+    title: 'NFT Energy Labeling Experiment',
+    description: 'Using NFTs to create transparent, verifiable energy consumption labels for consumer products — bridging blockchain transparency with sustainability.',
+    status: 'Completed',
+    link: '/updates/nft-energy-labeling-experiment',
+  },
+  {
+    id: 'governance-lab',
+    title: 'Governance Innovation Lab',
+    description: 'An applied research space for testing novel governance mechanisms — from conviction voting to quadratic funding — with partner communities across multiple continents.',
+    status: 'Incubating',
+    link: 'https://governance.superbenefit.org',
+  },
+];
+
+const hero = {
+  title: 'Projects & Initiatives',
+  subtitle: "SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams. We coordinate across cells to share capacity and costs as a collaborative commons.",
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-red) 40%, transparent) 0%,
+    color-mix(in srgb, var(--color-red-deep) 60%, transparent) 50%,
+    color-mix(in srgb, var(--color-charcoal) 95%, transparent) 100%
+  )`,
+};
+
+// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
+// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
+const pageIsDraft = true;
+const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
+---
+
+<BaseLayout
+  title="Projects — SuperBenefit"
+  description="SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams building the commons."
+  noindex={showDraftPlaceholder}
+>
+  {showDraftPlaceholder ? (
+    <section class="draft-placeholder">
+      <div class="container">
+        <span class="section-label">Draft</span>
+        <h1>Coming soon</h1>
+        <p>We're working on this page. Check back soon.</p>
+        <a href="/" class="draft-cta">Back to home</a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <PageHero {...hero} />
+
+  <SectionDivider from="black" to="cream" />
+
+  {/* Projects Grid */}
+  <section class="projects-grid-section">
+    <div class="container">
+      <div class="projects-grid">
+        {projects.map((project, i) => (
+          <article class="project-card" data-animate="fade-up" style={`--stagger: ${i * 80}ms`}>
+            <div class="project-card-body">
+              <div class="project-card-header">
+                <h2 class="project-title">{project.title}</h2>
+                <span class={`project-status status-${project.status.toLowerCase()}`}>
+                  {project.status}
+                </span>
+              </div>
+              <p class="project-description">{project.description}</p>
+              <a
+                href={project.link}
+                class="project-link"
+                {...(project.link.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                Learn more
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+      <CallToAction />
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  /* ===== Section label (used by draft placeholder) ===== */
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
+  .draft-placeholder {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  .draft-placeholder .container {
+    max-width: 640px;
+  }
+  .draft-placeholder h1 {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+  .draft-placeholder p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    margin-block-end: var(--space-xl);
+  }
+  .draft-cta {
+    display: inline-block;
+    padding: 0.9em 2em;
+    border-radius: 50px;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .draft-cta:hover {
+    background: var(--color-orange-dark);
+  }
+
+  /* ===== Grid ===== */
+  .projects-grid-section {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 768px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ===== Card ===== */
+  .project-card {
+    background: var(--color-cream-light);
+    border-radius: 12px;
+    border-left: 3px solid var(--color-orange);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition:
+      transform var(--transition-medium),
+      box-shadow var(--transition-medium);
+    animation-delay: var(--stagger);
+  }
+
+  .project-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .project-card-body {
+    padding: var(--space-xl) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .project-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .project-title {
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  /* ===== Status badge ===== */
+  .project-status {
+    display: inline-block;
+    flex-shrink: 0;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.3em 0.8em;
+    border-radius: 50px;
+  }
+
+  .status-active {
+    background: color-mix(in srgb, var(--color-green) 15%, transparent);
+    color: var(--color-green);
+  }
+
+  .status-incubating {
+    background: color-mix(in srgb, var(--color-orange) 15%, transparent);
+    color: var(--color-orange);
+  }
+
+  .status-completed {
+    background: color-mix(in srgb, var(--color-charcoal) 10%, transparent);
+    color: var(--color-charcoal);
+    opacity: 0.6;
+  }
+
+  /* ===== Description ===== */
+  .project-description {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    line-height: 1.7;
+    margin: 0;
+    flex: 1;
+  }
+
+  /* ===== CTA link ===== */
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    align-self: flex-start;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-orange);
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .project-link:hover {
+    opacity: 0.7;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .project-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -17,8 +17,8 @@ const formattedDate = publishedAt.toLocaleDateString('en-US', {
 });
 ---
 
-<article class="blog-card" transition:name={`blog-${id}`}>
-  <a href={`/blog/${id}`} class="card-link">
+<article class="blog-card" transition:name={`update-${id}`}>
+  <a href={`/updates/${id}`} class="card-link">
     {coverImage && (
       <div class="card-image">
         <img src={coverImage} alt={title} loading="lazy" />
@@ -122,7 +122,7 @@ const formattedDate = publishedAt.toLocaleDateString('en-US', {
     display: inline-block;
     font-size: var(--text-xs);
     padding: 0.2em 0.7em;
-    background: rgba(122, 154, 78, 0.15);
+    background: rgb(var(--color-green-rgb) / 0.15);
     color: var(--color-green);
     border-radius: 50px;
     font-weight: 500;

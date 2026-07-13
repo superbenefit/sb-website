@@ -2,13 +2,15 @@
 
 ---
 
-<section class="mission">
+<section id="about" class="mission">
   <div class="container mission-inner">
-    <span class="mission-label" data-animate="fade-up">Our Purpose</span>
-    <h2 class="mission-heading" data-animate="fade-up">
-      We're a community of practice using emerging technologies for systems transformation.
-    </h2>
-    <div class="mission-accent" aria-hidden="true"></div>
+    <div class="mission-intro">
+      <span class="mission-label" data-animate="fade-up">Our Purpose</span>
+      <h2 class="mission-heading" data-animate="fade-up">
+        We're a community of practice using emerging technologies for systems transformation.
+      </h2>
+    </div>
+
     <div class="mission-body-block" data-animate="fade-up">
       <p class="mission-body">
         SuperBenefit's mission is to develop the social and financial flywheels that enable the invention and acceleration of a better world; Strengthening capacities for systems innovation and supporting people to clarify pathways towards shared goals.
@@ -17,7 +19,8 @@
         Our work includes researching and incubating initiatives that harness emerging technologies and practices for decentralized coordination in pursuit of systems transformation.
       </p>
       <p class="mission-link">
-        <a href="/about">Read more about our mission &rarr;</a>
+        <!-- "About" link hidden until /about page is ready to launch -->
+        <a href="/about" hidden>Read more about our mission &rarr;</a>
       </p>
     </div>
   </div>
@@ -25,19 +28,17 @@
 
 <style>
   .mission {
-    background: linear-gradient(
-      168deg,
-      var(--color-cream) 0%,
-      var(--color-cream-light) 50%,
-      var(--color-cream) 100%
-    );
-    padding-block: var(--space-2xl) 140px;
+    background: var(--color-cream);
+    padding-block: var(--space-2xl) 180px;
     position: relative;
     overflow: hidden;
   }
 
   .mission-inner {
-    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: start;
   }
 
   .mission-label {
@@ -51,29 +52,18 @@
   }
 
   .mission-heading {
-    font-size: var(--text-2xl);
+    font-size: clamp(1.75rem, 1.4rem + 1.75vw, 2.625rem);
     color: var(--color-charcoal);
-    line-height: 1.3;
-    max-width: 860px;
-    margin-block-end: var(--space-xl);
-  }
-
-  .mission-accent {
-    width: 48px;
-    height: 3px;
-    background: var(--color-orange);
-    border-radius: 2px;
-    opacity: 0.5;
-    margin-block-end: var(--space-xl);
-    margin-left: auto;
+    line-height: 1.2;
+    text-wrap: balance;
   }
 
   .mission-body-block {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    max-width: 560px;
-    margin-left: auto;
+    padding-left: var(--space-xl);
+    border-left: 1px solid rgb(var(--color-orange-rgb) / 0.3);
   }
 
   .mission-body {
@@ -101,14 +91,24 @@
     opacity: 0.8;
   }
 
-  @media (max-width: 768px) {
-    .mission-body-block {
-      max-width: 100%;
-      margin-left: 0;
+  @media (max-width: 1024px) {
+    .mission-inner {
+      gap: var(--space-lg);
     }
 
-    .mission-accent {
-      margin-left: 0;
+    .mission-body-block {
+      padding-left: var(--space-lg);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .mission-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .mission-body-block {
+      padding-left: 0;
+      border-left: none;
     }
   }
 </style>

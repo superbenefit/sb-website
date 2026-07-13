@@ -7,6 +7,15 @@
     "directory": "./dist",
     "binding": "ASSETS"
   },
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_destination_addresses": ["contact@superbenefit.org"]
+    }
+  ],
+  "vars": {
+    "PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAADtinm8-q80lFVL-"
+  },
   "observability": {
     "enabled": true
   }

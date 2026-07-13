@@ -19,16 +19,101 @@ const currentPath = Astro.url.pathname;
 </header>
 
 <script>
+  import { navigate } from 'astro:transitions/client';
+
   document.addEventListener('astro:page-load', () => {
-    const toggle = document.querySelector('.mobile-toggle');
-    const nav = document.querySelector('.site-nav');
+    const toggle = document.querySelector<HTMLButtonElement>('.mobile-toggle');
+    const nav = document.querySelector<HTMLElement>('.site-nav');
     if (!toggle || !nav) return;
 
+    // The <header> is transition:persist-ed across view transitions, so its
+    // DOM nodes (and this handler) re-fire on every astro:page-load.
+    // Guard against re-attaching listeners to the same persisted nodes.
+    if (toggle.dataset.menuInit === 'true') return;
+    toggle.dataset.menuInit = 'true';
+
+    // Logo link: the view transitions router doesn't reliably intercept
+    // clicks on links inside transition:persist elements. Handle it here.
+    const logoLink = document.querySelector<HTMLAnchorElement>('.logo-link');
+    if (logoLink) {
+      logoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigate('/');
+      });
+    }
+
+    const isOpen = (): boolean =>
+      toggle.getAttribute('aria-expanded') === 'true';
+
+    // Close mobile menu when a homepage section anchor link is clicked.
+    // Anchor links (hrefs containing "/#") scroll to sections on the
+    // current page; the menu should close before the scroll happens.
+    nav.addEventListener('click', (e) => {
+      const link = (e.target as Element).closest('a[href*="/#"]');
+      if (link && isOpen()) {
+        closeMenu();
+      }
+    });
+
+    const setBackgroundInert = (inert: boolean): void => {
+      // <main> and <footer> are not persisted, so querySelector each call
+      // (they're fresh nodes after every view transition).
+      const main = document.querySelector<HTMLElement>('main');
+      const footer = document.querySelector<HTMLElement>('.site-footer');
+      if (inert) {
+        main?.setAttribute('inert', '');
+        footer?.setAttribute('inert', '');
+      } else {
+        main?.removeAttribute('inert');
+        footer?.removeAttribute('inert');
+      }
+    };
+
+    const openMenu = (): void => {
+      toggle.setAttribute('aria-expanded', 'true');
+      nav.classList.add('is-open');
+      document.body.classList.add('nav-open');
+      setBackgroundInert(true);
+      const firstFocusable = nav.querySelector<HTMLElement>('a, button');
+      firstFocusable?.focus();
+    };
+
+    const closeMenu = (returnFocus = true): void => {
+      toggle.setAttribute('aria-expanded', 'false');
+      nav.classList.remove('is-open');
+      document.body.classList.remove('nav-open');
+      setBackgroundInert(false);
+      if (returnFocus) toggle.focus();
+    };
+
     toggle.addEventListener('click', () => {
-      const expanded = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!expanded));
-      nav.classList.toggle('is-open');
-      document.body.classList.toggle('nav-open');
+      isOpen() ? closeMenu() : openMenu();
+    });
+
+    // Escape closes the menu from anywhere on the page.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isOpen()) {
+        event.preventDefault();
+        closeMenu();
+      }
+    });
+
+    // Auto-close before view-transition navigation so the menu doesn't
+    // persist open on the next page (the header itself is persisted).
+    document.addEventListener('astro:before-preparation', () => {
+      if (isOpen()) closeMenu(false);
+    });
+
+    // After a view-transition swap, <main>/<footer> are fresh nodes;
+    // re-apply inert if the menu somehow stayed open across the swap.
+    document.addEventListener('astro:after-swap', () => {
+      if (isOpen()) setBackgroundInert(true);
+    });
+
+    // If the user resizes from mobile to desktop while the menu is open,
+    // the overlay becomes hidden by media query but state would persist.
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && isOpen()) closeMenu(false);
     });
   });
 </script>
@@ -41,7 +126,7 @@ const currentPath = Astro.url.pathname;
     right: 0;
     z-index: 100;
     color: var(--color-cream);
-    background-color: rgba(26, 26, 26, 0.8);
+    background-color: rgb(var(--color-black-rgb) / 0.8);
     backdrop-filter: blur(10px);
     /* Scroll-driven animation in animations.css will further solidify this */
   }
@@ -94,6 +179,12 @@ const currentPath = Astro.url.pathname;
     position: relative;
   }
 
+  .mobile-toggle:focus-visible {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
   .hamburger,
   .hamburger::before,
   .hamburger::after {
@@ -129,6 +220,14 @@ const currentPath = Astro.url.pathname;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    /* Scroll lock while mobile menu is open. Set by JS in openMenu(),
+       cleared by closeMenu(). Note: iOS Safari can be touchy with
+       overflow:hidden on body — consider position:fixed+top:-scrollY
+       if real-device testing reveals scroll bleed. */
+    body.nav-open {
+      overflow: hidden;
     }
   }
 </style>

@@ -2,21 +2,45 @@
 export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
+import CallToAction from '../components/CallToAction.astro';
+
+const hero = {
+  title: 'About SuperBenefit',
+  subtitle: 'A node in the regenerative ecosystem',
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-orange) 70%, transparent) 0%,
+    color-mix(in srgb, var(--color-red) 80%, transparent) 50%,
+    color-mix(in srgb, var(--color-charcoal) 95%, transparent) 100%
+  )`,
+  minHeight: '50vh',
+};
+
+// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
+// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
+const pageIsDraft = true;
+const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 ---
 
 <BaseLayout
   title="About — SuperBenefit"
-  description="A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked."
+  description="About SuperBenefit: a purpose-aligned network using emerging technologies to grow new systems of coordination. Our mission, values, and theory of change."
+  noindex={showDraftPlaceholder}
 >
-  <!-- About Hero -->
-  <section class="about-hero">
-    <div class="about-hero-overlay"></div>
-    <div class="container about-hero-content">
-      <h1>About SuperBenefit</h1>
-      <p class="about-hero-sub">A node in the regenerative ecosystem</p>
-    </div>
-  </section>
+  {showDraftPlaceholder ? (
+    <section class="draft-placeholder">
+      <div class="container">
+        <span class="section-label">Draft</span>
+        <h1>Coming soon</h1>
+        <p>We're working on this page. Check back soon.</p>
+        <a href="/" class="draft-cta">Back to home</a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <PageHero {...hero} />
 
   <SectionDivider from="charcoal" to="cream" />
 
@@ -49,54 +73,123 @@ import SectionDivider from '../components/SectionDivider.astro';
     </div>
   </section>
 
+  <SectionDivider from="cream" to="green" />
+
+  {/* Values */}
+  <section class="about-values">
+    <div class="container">
+      <header class="values-header" data-animate="fade-up">
+        <span class="section-label">Our Values</span>
+        <h2>What guides our work</h2>
+      </header>
+      <div class="values-grid">
+        <div class="value-card" data-animate="fade-up" style="--stagger: 0ms">
+          <span class="value-icon" aria-hidden="true">&darr;</span>
+          <h3>Open Source</h3>
+          <p>Everything we build is open source, licensed for anyone to use, adapt, and fork. Transparency is the foundation of trust.</p>
+        </div>
+        <div class="value-card" data-animate="fade-up" style="--stagger: 80ms">
+          <span class="value-icon" aria-hidden="true">&harr;</span>
+          <h3>Peer-to-Peer</h3>
+          <p>We organize as a network of peers — not a hierarchy. Power is distributed, decisions are made by those affected by them.</p>
+        </div>
+        <div class="value-card" data-animate="fade-up" style="--stagger: 160ms">
+          <span class="value-icon" aria-hidden="true">&olarr;</span>
+          <h3>Regenerative</h3>
+          <p>Our work aims to regenerate social, ecological, and economic systems — creating cycles of value that circulate rather than extract.</p>
+        </div>
+        <div class="value-card" data-animate="fade-up" style="--stagger: 0ms">
+          <span class="value-icon" aria-hidden="true">&sung;</span>
+          <h3>Translocal</h3>
+          <p>We are rooted in specific places and communities while connected globally. Local autonomy, translocal solidarity.</p>
+        </div>
+        <div class="value-card" data-animate="fade-up" style="--stagger: 80ms">
+          <span class="value-icon" aria-hidden="true">&circlearrowleft;</span>
+          <h3>Commons-Based</h3>
+          <p>We build and steward shared resources — knowledge, code, infrastructure, and capital — governed by the communities that rely on them.</p>
+        </div>
+        <div class="value-card" data-animate="fade-up" style="--stagger: 160ms">
+          <span class="value-icon" aria-hidden="true">&weierp;</span>
+          <h3>Systems Thinking</h3>
+          <p>We see the whole system, not isolated parts. Our interventions aim to shift underlying patterns, not just surface symptoms.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <SectionDivider from="green" to="cream" />
+
+  {/* Theory of Change */}
+  <section class="about-toc">
+    <div class="container">
+      <span class="section-label" data-animate="fade-up">Theory of Change</span>
+      <h2 data-animate="fade-up">How we work</h2>
+      <div class="toc-steps">
+        <div class="toc-step" data-animate="fade-up" style="--stagger: 0ms">
+          <div class="step-number">01</div>
+          <div class="step-connector" aria-hidden="true"></div>
+          <h3>Convene</h3>
+          <p>We bring together builders, researchers, and community leaders who are working at the edges of systems change. Through gatherings, salons, and shared spaces, we create the conditions for trust, learning, and collaboration across disciplines and geographies.</p>
+        </div>
+        <div class="toc-step" data-animate="fade-up" style="--stagger: 100ms">
+          <div class="step-number">02</div>
+          <div class="step-connector" aria-hidden="true"></div>
+          <h3>Coordinate</h3>
+          <p>We develop shared infrastructure, capital allocation mechanisms, and governance patterns that enable autonomous teams to work together without centralized control. Our DAO primitives framework provides modular building blocks for designing purpose-aligned networks.</p>
+        </div>
+        <div class="toc-step" data-animate="fade-up" style="--stagger: 200ms">
+          <div class="step-number">03</div>
+          <h3>Catalyze</h3>
+          <p>We launch and support initiatives that create regenerative outcomes — from decentralized governance experiments to community-owned infrastructure. Each initiative produces knowledge, tools, and patterns that feed back into the ecosystem.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <SectionDivider from="cream" to="charcoal" />
 
-  {/* Values, Theory of Change, and Community sections hidden until content is properly written */}
+      <CallToAction />
+    </>
+  )}
 </BaseLayout>
 
 <style>
-  /* ===== About Hero ===== */
-  .about-hero {
-    position: relative;
-    background: var(--color-charcoal);
-    background-image: url('/images/brand-showcase.webp');
-    background-size: cover;
-    background-position: center;
-    padding-block-start: calc(var(--header-height) + var(--space-2xl));
-    padding-block-end: var(--space-2xl);
-    min-height: 50vh;
+  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
+  .draft-placeholder {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+    min-height: 60vh;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    text-align: center;
   }
-
-  .about-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(245, 135, 44, 0.7) 0%,
-      rgba(196, 64, 26, 0.8) 50%,
-      rgba(45, 45, 45, 0.95) 100%
-    );
+  .draft-placeholder .container {
+    max-width: 640px;
   }
-
-  .about-hero-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .about-hero h1 {
-    color: var(--color-cream);
-    font-size: var(--text-3xl);
-    margin-block-end: var(--space-xs);
-  }
-
-  .about-hero-sub {
-    color: var(--color-cream);
-    opacity: 0.8;
-    font-size: var(--text-xl);
+  .draft-placeholder h1 {
     font-family: var(--font-serif);
-    font-style: italic;
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+  .draft-placeholder p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    margin-block-end: var(--space-xl);
+  }
+  .draft-cta {
+    display: inline-block;
+    padding: 0.9em 2em;
+    border-radius: 50px;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .draft-cta:hover {
+    background: var(--color-orange-dark);
   }
 
   /* ===== Section Label ===== */
@@ -290,64 +383,4 @@ import SectionDivider from '../components/SectionDivider.astro';
     line-height: 1.7;
   }
 
-  /* ===== Community ===== */
-  .about-community {
-    background: var(--color-charcoal);
-    padding-block: var(--space-2xl);
-  }
-
-  .community-content {
-    text-align: center;
-    max-width: 640px;
-  }
-
-  .community-content h2 {
-    color: var(--color-cream);
-    margin-block-end: var(--space-md);
-  }
-
-  .community-content > p {
-    color: var(--color-cream);
-    opacity: 0.8;
-    font-size: var(--text-lg);
-    line-height: 1.7;
-    margin-block-end: var(--space-xl);
-    margin-inline: auto;
-  }
-
-  .community-links {
-    display: flex;
-    gap: var(--space-md);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .community-link {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: 0.7em 1.5em;
-    border: 1px solid rgba(237, 221, 200, 0.2);
-    border-radius: 50px;
-    color: var(--color-cream);
-    font-weight: 500;
-    font-size: var(--text-sm);
-    transition:
-      background var(--transition-fast),
-      border-color var(--transition-fast),
-      transform var(--transition-fast),
-      color var(--transition-fast);
-    text-decoration: none;
-  }
-
-  .community-link:hover {
-    background: var(--color-orange);
-    border-color: var(--color-orange);
-    color: var(--color-cream);
-    transform: translateY(-2px);
-  }
-
-  .link-icon {
-    font-size: 1.2em;
-  }
 </style>

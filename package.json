@@ -3,19 +3,24 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.9.0",
   "scripts": {
     "dev": "astro dev",
-    "check": "astro check",
-    "build": "astro build",
+    "check": "wrangler types && astro check",
+    "build": "wrangler types && astro build",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "wrangler types && astro build && wrangler deploy",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.7",
     "@astrojs/cloudflare": "^13.1.1",
     "@astrojs/sitemap": "^3.7.1",
-    "astro": "^6.0.4"
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.0.4",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0",

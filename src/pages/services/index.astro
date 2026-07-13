@@ -1,0 +1,322 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const hero = {
+  title: 'Services',
+  subtitle: 'Community, co-stewardship, and development for aligned organizations and ecosystems',
+  overlayGradient: `linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
+    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
+    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
+  )`,
+  showStars: true,
+};
+
+const services = [
+  {
+    id: 'sensemaking',
+    heading: 'Sensemaking & Network Weaving',
+    summary: 'We connect you to a community of practitioners working at the edge of technology and systems change — peers who help each other see around corners and find paths forward.',
+    body: [
+      'This is our lightest-touch engagement: full access to the SuperBenefit community, a network of people designing, building, and stewarding new systems of coordination. Members share hard-won lessons, surface emerging patterns, and offer support through regular touchpoints and asynchronous channels.',
+      'A 4 hr/mo async support SLA keeps things responsive, and dedicated attention at regular check-ins ensures you\'re never shouting into the void. When we have extra capacity, we sponsor gatherings and online events — bringing the community together around shared questions.',
+    ],
+    deliverables: [
+      'Full community access and async channels',
+      'Dedicated attention at regular touchpoints',
+      '4 hr/mo async support SLA',
+      'Sponsored gatherings (capacity permitting)',
+    ],
+    format: 'Annual retainer; from $5,000/year.',
+  },
+  {
+    id: 'stewardship',
+    heading: 'Project Co-Stewardship',
+    summary: 'We embed alongside your project — providing dedicated support, operational rhythm, and shared infrastructure so you can focus on the work that matters.',
+    body: [
+      'When a project needs more than occasional support, we step into a co-stewardship role. We set up dedicated channels, establish a bi-weekly coordination cadence, and assign committed contacts who understand your context and can move things forward between syncs.',
+      'A 4 hr/wk priority support SLA means you have a reliable operational backbone — someone who can draft proposals, facilitate decisions, document processes, and produce learning artifacts that help the team improve over time. You own the vision; we handle the mechanics.',
+    ],
+    deliverables: [
+      'Dedicated channels and contacts',
+      'Bi-weekly operational rhythm',
+      '4 hr/wk priority support SLA',
+      'Process and learning artifacts',
+    ],
+    format: 'Quarterly engagement; from $5,000/quarter.',
+  },
+  {
+    id: 'development',
+    heading: 'Digital Commons Development',
+    summary: 'We build purpose-fit tools and digital infrastructure for your community — self-managed, deliverable-focused, and designed to outlast the engagement.',
+    body: [
+      'Sometimes a community needs software: a coordination dashboard, a custom governance interface, a knowledge base, a tool for participatory budgeting. We scope the work together, build it, and hand it over — with documentation, training, and a year of basic support so you\'re not left holding something you can\'t maintain.',
+      'Deliverables are open source by default, and we build with the assumption that the code will be maintained by the community after we step back. One year of basic support (4 hr/yr) is included to catch edge cases, handle updates, and answer questions as they come up.',
+    ],
+    deliverables: [
+      'Scoped, delivered software tools',
+      'Documentation and maintenance guides',
+      'Handoff training and onboarding',
+      '1 year basic support (4 hr/yr)',
+    ],
+    format: 'Per engagement; from $5,000.',
+  },
+];
+
+// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
+// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
+const pageIsDraft = true;
+const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
+---
+
+<BaseLayout
+  title="Services — SuperBenefit"
+  description="Community sensemaking, project co-stewardship, and digital commons development for organizations and ecosystems working on regenerative coordination."
+  noindex={showDraftPlaceholder}
+>
+  {showDraftPlaceholder ? (
+    <section class="draft-placeholder">
+      <div class="container">
+        <span class="section-label">Draft</span>
+        <h1>Coming soon</h1>
+        <p>We're working on this page. Check back soon.</p>
+        <a href="/" class="draft-cta">Back to home</a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <PageHero {...hero} />
+
+  <SectionDivider from="black" to="cream" />
+
+  {/* Lede */}
+  <section class="services-lede">
+    <div class="container mission-content" data-animate="fade-up">
+      <span class="section-label">What We Offer</span>
+      <h2>Three tiers of engagement, scaled to your needs.</h2>
+      <p>
+        Offerings start as light-touch engagements and scale to meet specific
+        needs. We convene teams from across our networks — backstopped by the
+        core team — with SLAs that keep support responsive and sustainable.
+        Every engagement is collaborative: we learn as much as we share.
+      </p>
+    </div>
+  </section>
+
+  {/* Service sections */}
+  <section class="services-list">
+    <div class="container">
+      {services.map((service) => (
+        <article class="service-block" id={service.id} data-animate="fade-up">
+          <div class="service-accent" aria-hidden="true"></div>
+          <div class="service-body">
+            <h3>{service.heading}</h3>
+            <p class="service-summary">{service.summary}</p>
+            {service.body.map((para) => (
+              <p class="service-paragraph">{para}</p>
+            ))}
+            <div class="service-deliverables">
+              <span class="deliverables-label">What you get</span>
+              <ul>
+                {service.deliverables.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <p class="service-format">
+              <span class="format-label">Engagement format</span>
+              <span>{service.format}</span>
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <SectionDivider from="cream" to="charcoal" />
+
+      <CallToAction />
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
+  .draft-placeholder {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  .draft-placeholder .container {
+    max-width: 640px;
+  }
+  .draft-placeholder h1 {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    margin-block-end: var(--space-md);
+  }
+  .draft-placeholder p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    margin-block-end: var(--space-xl);
+  }
+  .draft-cta {
+    display: inline-block;
+    padding: 0.9em 2em;
+    border-radius: 50px;
+    background: var(--color-orange);
+    color: var(--color-cream);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .draft-cta:hover {
+    background: var(--color-orange-dark);
+  }
+
+  /* ===== Section label ===== */
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Lede ===== */
+  .services-lede {
+    background: var(--color-cream);
+    padding-block: var(--space-2xl);
+  }
+
+  .services-lede h2 {
+    margin-block-end: var(--space-lg);
+    max-width: 26ch;
+  }
+
+  .services-lede p {
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  /* ===== Service sections ===== */
+  .services-list {
+    background: var(--color-cream);
+    padding-block-end: var(--space-2xl);
+  }
+
+  .service-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    padding-block: var(--space-xl);
+    border-block-start: 1px solid rgb(var(--color-black-rgb) / 0.08);
+  }
+
+  .service-block:first-child {
+    border-block-start: none;
+    padding-block-start: 0;
+  }
+
+  .service-accent {
+    width: 48px;
+    height: 3px;
+    background: var(--color-orange);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  .service-body h3 {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .service-summary {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.85;
+    line-height: 1.7;
+    margin: 0 0 var(--space-md);
+    max-width: 65ch;
+  }
+
+  .service-paragraph {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    line-height: 1.7;
+    margin: 0 0 var(--space-md);
+    max-width: 65ch;
+  }
+
+  .service-deliverables,
+  .service-format {
+    margin-block-start: var(--space-md);
+  }
+
+  .deliverables-label,
+  .format-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-xs);
+  }
+
+  .service-deliverables ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  @media (min-width: 768px) {
+    .service-deliverables ul { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .service-deliverables li {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.75;
+    line-height: 1.6;
+    padding-inline-start: 1.2em;
+    position: relative;
+  }
+
+  .service-deliverables li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-orange);
+    font-weight: 600;
+  }
+
+  .service-format {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin-block-start: var(--space-lg);
+  }
+</style>

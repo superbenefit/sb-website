@@ -1,0 +1,185 @@
+---
+/**
+ * InternalServices — charcoal section with 2x2 grid of peer support
+ * services that SuperBenefit provides to its projects and cells.
+ *
+ * Four supports: people, shared infrastructure, funding support, admin and
+ * paperwork. Decision-making lives inside the people offering.
+ */
+---
+
+<section id="support" class="internal-services">
+  <div class="container">
+    <span class="services-label" data-animate="fade-up">Peer Support</span>
+    <h2 class="services-heading" data-animate="fade-up">
+      Internal services for projects &amp; cells
+    </h2>
+    <p class="services-lede" data-animate="fade-up">
+      Projects here run their own work, but they share the people, tools, and
+      practical support that keep things moving. Bring your own organization,
+      anchor in our DAO, or pass through. Leave anytime.
+    </p>
+    <div class="services-accent" aria-hidden="true" data-animate="fade-up"></div>
+
+    <div class="services-grid">
+      <div class="service-item" data-animate="fade-up" style="--stagger: 0ms">
+        <h3 class="service-item-heading">People to work with</h3>
+        <p class="service-item-body">
+          Find facilitators, contributors, and stewards to plug into your
+          project. Get help with coordination, decision-making, and the
+          day-to-day work of keeping a small team moving.
+        </p>
+      </div>
+
+      <div class="service-item" data-animate="fade-up" style="--stagger: 100ms">
+        <h3 class="service-item-heading">Shared infrastructure</h3>
+        <p class="service-item-body">
+          Use the DAO, shared tooling, and templates other projects already
+          rely on. Take what you need, contribute what you build, and keep
+          what you make.
+        </p>
+      </div>
+
+      <div class="service-item" data-animate="fade-up" style="--stagger: 200ms">
+        <h3 class="service-item-heading">Funding support</h3>
+        <p class="service-item-body">
+          Work with others on grant applications. Connect with fiscal hosts in
+          the network who can move funds where they're needed. Share reporting
+          approaches so no one figures it out alone.
+        </p>
+      </div>
+
+      <div class="service-item" data-animate="fade-up" style="--stagger: 300ms">
+        <h3 class="service-item-heading">Admin and paperwork</h3>
+        <p class="service-item-body">
+          Use our DAO and existing entity arrangements when you need them. We
+          help with the admin, filings, and coordination that keep a project
+          running.
+        </p>
+      </div>
+    </div>
+
+    <footer class="services-footer" data-animate="fade-up">
+      <!-- "See peer support details" hidden until /support page is ready to launch -->
+      <a href="/support" class="services-cta" hidden>
+        See peer support details
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"></path><polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .internal-services {
+    background: var(--color-charcoal);
+    padding-block: var(--space-xl) var(--space-2xl);
+    position: relative;
+  }
+
+  /* ===== Label ===== */
+  .services-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  /* ===== Heading ===== */
+  .services-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-cream);
+    line-height: 1.2;
+    margin-block-end: var(--space-md);
+  }
+
+  /* ===== Lede ===== */
+  .services-lede {
+    font-size: var(--text-base);
+    color: var(--color-cream);
+    opacity: 0.75;
+    line-height: 1.7;
+    max-width: 620px;
+    margin-block-end: var(--space-lg);
+  }
+
+  /* ===== Accent bar (MissionStatement pattern) ===== */
+  .services-accent {
+    width: 48px;
+    height: 3px;
+    background: var(--color-orange);
+    border-radius: 2px;
+    opacity: 0.5;
+    margin-block-end: var(--space-lg);
+  }
+
+  /* ===== 2x2 services grid ===== */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg) var(--space-md);
+    align-items: start;
+  }
+
+  /* ===== Service item ===== */
+  .service-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .service-item-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--color-cream);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .service-item-body {
+    font-size: var(--text-sm);
+    color: var(--color-cream);
+    opacity: 0.6;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ===== Stagger animation delay ===== */
+  .service-item[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  /* ===== Footer CTA ===== */
+  .services-footer {
+    margin-block-start: var(--space-lg);
+  }
+
+  .services-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-orange);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: opacity var(--transition-fast);
+  }
+
+  .services-cta:hover {
+    opacity: 0.7;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
