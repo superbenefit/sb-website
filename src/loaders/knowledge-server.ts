@@ -5,7 +5,7 @@ interface KnowledgeServerOptions {
   endpoint?: string;
 }
 
-export function knowledgeServerLoader(options: KnowledgeServerOptions = {}): Loader {
+export function knowledgeServerLoader(options: KnowledgeServerOptions = {}) {
   return {
     name: 'knowledge-server-loader',
 
@@ -94,5 +94,5 @@ export function knowledgeServerLoader(options: KnowledgeServerOptions = {}): Loa
 
       logger.info(`Loaded ${MOCK_UPDATES.length} mock posts (dev mode)`);
     },
-  };
+  } satisfies Loader;
 }

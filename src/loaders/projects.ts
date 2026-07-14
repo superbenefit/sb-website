@@ -7,7 +7,7 @@ interface ProjectsLoaderOptions {
 
 const ALLOWED_HOSTS = ['knowledge.superbenefit.org'];
 
-export function projectsLoader(options: ProjectsLoaderOptions = {}): Loader {
+export function projectsLoader(options: ProjectsLoaderOptions = {}) {
   return {
     name: 'projects-loader',
 
@@ -94,5 +94,5 @@ export function projectsLoader(options: ProjectsLoaderOptions = {}): Loader {
 
       logger.info(`Loaded ${MOCK_PROJECTS.length} mock projects (dev mode)`);
     },
-  };
+  } satisfies Loader;
 }
