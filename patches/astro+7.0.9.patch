@@ -1,0 +1,38 @@
+diff --git a/node_modules/astro/types/content.d.ts b/node_modules/astro/types/content.d.ts
+index 25d3e2b..0445741 100644
+--- a/node_modules/astro/types/content.d.ts
++++ b/node_modules/astro/types/content.d.ts
+@@ -17,33 +17,4 @@ declare module 'astro:content' {
+ 	 * in Astro 7. Use `import { z } from 'astro/zod'` instead.
+ 	 */
+ 	export const z = zod.z;
+-
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getEntryBySlug: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getDataEntryById: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getCollection: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getEntry: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getEntries: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const reference: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export type CollectionKey = any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export type CollectionEntry<C> = any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export type ContentCollectionKey = any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export type DataCollectionKey = any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export type ContentConfig = any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const render: (entry: any) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getLiveCollection: (...args: any[]) => any;
+-	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+-	export const getLiveEntry: (...args: any[]) => any;
+ }

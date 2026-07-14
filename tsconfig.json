@@ -10,6 +10,6 @@
       "@loaders/*": ["src/loaders/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.astro"],
+  "include": [".astro/types.d.ts", "src/**/*.ts", "src/**/*.astro"],
   "exclude": ["node_modules", "dist"]
 }

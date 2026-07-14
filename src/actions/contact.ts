@@ -1,5 +1,5 @@
 import { defineAction, ActionError } from 'astro:actions';
-import { z } from 'astro:schema';
+import { z } from 'astro/zod';
 import { env } from 'cloudflare:workers';
 
 const SENDER = 'submissions@mail.superbenefit.org';
@@ -15,12 +15,7 @@ export const contact = defineAction({
       .trim()
       .min(1, 'Name is required')
       .max(120, 'Name must be 120 characters or fewer'),
-    email: z
-      .string()
-      .trim()
-      .toLowerCase()
-      .email('Please enter a valid email address')
-      .max(200, 'Email must be 200 characters or fewer'),
+    email: z.email({ message: 'Please enter a valid email address' }).trim().toLowerCase().max(200, 'Email must be 200 characters or fewer'),
     subject: z
       .string()
       .trim()

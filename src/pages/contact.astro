@@ -40,7 +40,7 @@ const hero = {
     <div class="container">
       <div class="contact-banner contact-banner-success" role="status" hidden>
         <strong>Thanks — your message is on its way.</strong>
-        We'll be in touch within a few days.
+        {" "}We'll be in touch within a few days.
       </div>
 
       <div class="contact-banner contact-banner-error" role="alert" hidden></div>
@@ -56,7 +56,7 @@ const hero = {
             say hello — the form is the fastest path.
           </p>
           <p class="contact-aside-meta">
-            Prefer email? Reach us at
+            Prefer email? Reach us at{" "}
             <a href="mailto:contact@superbenefit.org">contact@superbenefit.org</a>.
           </p>
         </aside>
@@ -184,7 +184,7 @@ const hero = {
         for (const [field, messages] of Object.entries(error.fields)) {
           const p = document.createElement('p');
           p.className = 'contact-field-error';
-          p.textContent = messages.join(', ');
+          p.textContent = (messages ?? []).join(', ');
 
           if (field === 'cf-turnstile-response') {
             form.querySelector('.contact-turnstile')?.appendChild(p);
