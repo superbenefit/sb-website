@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import icon from '../assets/sb-icon.jpg';
 import Nav from './Nav.astro';
 
 const currentPath = Astro.url.pathname;
@@ -7,7 +9,7 @@ const currentPath = Astro.url.pathname;
 <header class="site-header" transition:persist>
   <div class="header-inner">
     <a href="/" class="logo-link" aria-label="SuperBenefit home">
-      <img src="/images/sb-icon.jpg" alt="" class="logo-icon" width="36" height="36" />
+      <Image src={icon} alt="" class="logo-icon" width={36} height={36} />
       <span class="logo-text">SuperBenefit</span>
     </a>
     <Nav currentPath={currentPath} />
