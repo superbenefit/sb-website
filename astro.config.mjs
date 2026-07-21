@@ -18,6 +18,14 @@ export default defineConfig({
         ].some((draftPath) => page.startsWith(draftPath)),
     }),
   ],
+  build: {
+    // Inline all component CSS into the HTML response. Total CSS is ~10 KB
+    // (well under the 4 KB default auto-inlining threshold exceeded by
+    // BaseLayout.css), so eliminating the render-blocking round-trip is
+    // the largest single FCP win available. See:
+    // https://docs.astro.build/en/reference/configuration-reference/#buildinlinestylesheets
+    inlineStylesheets: 'always',
+  },
   adapter: cloudflare({
     imageService: 'compile',
     prerenderEnvironment: 'node',

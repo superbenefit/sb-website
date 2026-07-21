@@ -20,6 +20,13 @@ interface Props {
   authorUrl?: string;
   coverImage?: string;
   dateModified?: Date;
+  /**
+   * Origins to preconnect to from the document <head>. Should be limited to
+   * pages that actually fetch resources from these origins — emitting
+   * preconnects on every page triggers a "Unused preconnect" Lighthouse
+   * warning and wastes connection setup time on pages that don't need it.
+   */
+  preconnect?: string[];
 }
 
 const {
@@ -34,6 +41,7 @@ const {
   authorUrl,
   coverImage,
   dateModified,
+  preconnect = [],
 } = Astro.props;
 
 const siteUrl = Astro.site?.href ?? 'https://superbenefit.org/';
@@ -81,7 +89,7 @@ const websiteSchema = isHomepage
     <SEO title={title} description={description} ogImage={ogImage} type={type} publishedAt={publishedAt} noindex={noindex} authorName={authorName} authorUrl={authorUrl} coverImage={coverImage} dateModified={dateModified} />
     <link rel="manifest" href="/manifest.json" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="preconnect" href="https://challenges.cloudflare.com" />
+    {preconnect.map((origin) => <link rel="preconnect" href={origin} />)}
     <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
     {websiteSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
     <Font cssVariable="--font-playfair" preload />
