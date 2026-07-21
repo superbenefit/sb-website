@@ -1,6 +1,8 @@
 ---
-
+import { Image } from 'astro:assets';
+import icon from '../assets/sb-icon.jpg';
 ---
+
 
 <section class="hero">
   <div class="starfield" aria-hidden="true">
@@ -12,14 +14,14 @@
   <div class="hero-content">
     <div class="hero-icon-wrap">
       <div class="icon-glow" aria-hidden="true"></div>
-      <img
-        src="/images/sb-icon.jpg"
+      <Image
+        src={icon}
         alt="SuperBenefit"
         class="hero-icon"
-        width="160"
-        height="160"
-        fetchpriority="high"
+        width={160}
+        height={160}
         loading="eager"
+        fetchpriority="high"
       />
     </div>
 

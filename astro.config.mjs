@@ -27,8 +27,10 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   adapter: cloudflare({
-    imageService: 'compile',
     prerenderEnvironment: 'node',
+    // Use Sharp at build time for prerendered pages;
+    // Cloudflare Images binding handles any on-demand routes
+    imageService: { build: 'compile', runtime: 'cloudflare-binding' },
   }),
   session: { driver: sessionDrivers.lruCache() },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
