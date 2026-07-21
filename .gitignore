@@ -33,17 +33,21 @@ Thumbs.db
 worker-configuration.d.ts
 
 # temp / OS artifacts
+.tmp/
 tmp/
+temp/
+.temp/
 *.stackdump
 
 # Claude Code local config (machine-specific)
 .claude/settings.local.json
 .claude/typecheck.log
 
-# Claude Code agent skills/commands (machine-specific, not project source)
-.claude/commands/
-.claude/skills/openspec-*/
-.od-skills/
-
-# Agent working directory (machine-specific)
+# Agent working directories (harness-specific)
 .opencode/
+.od-skills/
+.claude/
+.gemini/
+.codex/
+.cursor/
+.antigravity/

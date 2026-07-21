@@ -70,7 +70,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     <article class="updates-post" transition:name={`update-${post.id}`}>
     {post.data.coverImage && (
       <div class="post-cover">
-        <img src={post.data.coverImage} alt={post.data.title} />
+        <img src={post.data.coverImage} alt={post.data.title} width="1200" height="675" />
       </div>
     )}
 
@@ -165,6 +165,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     width: 100%;
     max-height: 420px;
     overflow: hidden;
+    aspect-ratio: 16 / 9;
   }
 
   .post-cover img {
