@@ -121,11 +121,9 @@ const websiteSchema = isHomepage
           }
         }
 
-        // Links inside .site-nav (nav links + mobile contact CTA)
-        document.querySelectorAll<HTMLAnchorElement>('.site-nav a').forEach(setActive);
-
-        // Desktop contact CTA (outside .site-nav, inside .header-inner)
-        document.querySelectorAll<HTMLAnchorElement>('.header-cta').forEach(setActive);
+        // Links inside .site-nav (desktop nav links + CTA) and .mobile-nav
+        // (mobile menu links + Contact).
+        document.querySelectorAll<HTMLAnchorElement>('.site-nav a, .mobile-nav a').forEach(setActive);
       }
       document.addEventListener('astro:page-load', updateNavActive);
 

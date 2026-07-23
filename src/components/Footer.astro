@@ -29,7 +29,7 @@ const year = new Date().getFullYear();
 
     <div class="footer-right">
       <a href="https://ethereum.org" target="_blank" rel="noopener noreferrer" class="footer-badge">
-        <Image src={builtOnEth} alt="Built on Ethereum" width={160} height={48} loading="lazy" />
+        <Image src={builtOnEth} alt="Built on Ethereum" loading="lazy" />
       </a>
     </div>
   </div>
@@ -133,7 +133,7 @@ const year = new Date().getFullYear();
   }
 
   .footer-badge {
-    display: block;
+    display: inline-block;
     opacity: 0.7;
     transition: opacity var(--transition-fast);
   }
@@ -163,15 +163,46 @@ const year = new Date().getFullYear();
     text-align: center;
   }
 
-  /* Mobile: stack to single column */
-  @media (max-width: 640px) {
+  /* Mobile: stack to single column and enlarge brand elements */
+  @media (max-width: 768px) {
     .footer-inner {
       grid-template-columns: 1fr;
-      gap: var(--space-lg);
+      gap: 2.5rem;
+      text-align: center;
+    }
+
+    .footer-brand {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .footer-icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .footer-name {
+      font-size: 1.25rem;
+    }
+
+    .footer-social {
+      margin-inline-start: 0;
+      gap: var(--space-sm);
+    }
+
+    .footer-social a svg {
+      width: 24px;
+      height: 24px;
     }
 
     .footer-right {
-      align-items: flex-start;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .footer-badge img {
+      height: 52px;
     }
   }
 </style>

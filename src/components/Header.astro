@@ -2,8 +2,14 @@
 import { Image } from 'astro:assets';
 import icon from '../assets/sb-icon.jpg';
 import Nav from './Nav.astro';
+import { mainNavLinks, contactNavLink } from '../data/nav';
+import { isNavLinkActive } from '../utils/nav';
 
 const currentPath = Astro.url.pathname;
+
+const links = mainNavLinks;
+const contact = contactNavLink;
+const contactActive = isNavLinkActive(currentPath, contact.href);
 ---
 
 <header class="site-header" transition:persist>
@@ -13,11 +19,44 @@ const currentPath = Astro.url.pathname;
       <span class="logo-text">SuperBenefit</span>
     </a>
     <Nav currentPath={currentPath} />
-    <button class="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+    <button class="mobile-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
       <span class="hamburger"></span>
     </button>
   </div>
   <div class="header-rainbow"></div>
+
+  <dialog class="mobile-nav-dialog" id="mobile-nav" aria-label="Mobile navigation">
+    <form method="dialog" class="mobile-nav-close-form">
+      <button class="mobile-nav-close" aria-label="Close menu" type="submit">×</button>
+    </form>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <ul class="mobile-nav-links">
+        {links.map(({ href, label }) => {
+          const active = isNavLinkActive(currentPath, href);
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={['mobile-nav-link', { active }]}
+                aria-current={active ? 'page' : undefined}
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })}
+        <li>
+          <a
+            href={contact.href}
+            class:list={['mobile-nav-link mobile-nav-contact', { active: contactActive }]}
+            aria-current={contactActive ? 'page' : undefined}
+          >
+            {contact.label}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </dialog>
 </header>
 
 <script>
@@ -25,8 +64,8 @@ const currentPath = Astro.url.pathname;
 
   document.addEventListener('astro:page-load', () => {
     const toggle = document.querySelector<HTMLButtonElement>('.mobile-toggle');
-    const nav = document.querySelector<HTMLElement>('.site-nav');
-    if (!toggle || !nav) return;
+    const dialog = document.querySelector<HTMLDialogElement>('#mobile-nav');
+    if (!toggle || !dialog) return;
 
     // The <header> is transition:persist-ed across view transitions, so its
     // DOM nodes (and this handler) re-fire on every astro:page-load.
@@ -44,78 +83,43 @@ const currentPath = Astro.url.pathname;
       });
     }
 
-    const isOpen = (): boolean =>
-      toggle.getAttribute('aria-expanded') === 'true';
+    const isOpen = (): boolean => dialog.open;
+
+    const openMenu = (): void => {
+      dialog.showModal();
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('nav-open');
+    };
+
+    const closeMenu = (): void => {
+      dialog.close();
+    };
+
+    // The dialog emits a close event when dismissed via the form button,
+    // backdrop click, or Escape key — keep ARIA and body lock in sync.
+    dialog.addEventListener('close', () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('nav-open');
+    });
 
     // Close mobile menu when a homepage section anchor link is clicked.
     // Anchor links (hrefs containing "/#") scroll to sections on the
     // current page; the menu should close before the scroll happens.
-    nav.addEventListener('click', (e) => {
+    dialog.addEventListener('click', (e) => {
       const link = (e.target as Element).closest('a[href*="/#"]');
       if (link && isOpen()) {
         closeMenu();
       }
     });
 
-    const setBackgroundInert = (inert: boolean): void => {
-      // <main> and <footer> are not persisted, so querySelector each call
-      // (they're fresh nodes after every view transition).
-      const main = document.querySelector<HTMLElement>('main');
-      const footer = document.querySelector<HTMLElement>('.site-footer');
-      if (inert) {
-        main?.setAttribute('inert', '');
-        footer?.setAttribute('inert', '');
-      } else {
-        main?.removeAttribute('inert');
-        footer?.removeAttribute('inert');
-      }
-    };
-
-    const openMenu = (): void => {
-      toggle.setAttribute('aria-expanded', 'true');
-      nav.classList.add('is-open');
-      document.body.classList.add('nav-open');
-      setBackgroundInert(true);
-      const firstFocusable = nav.querySelector<HTMLElement>('a, button');
-      firstFocusable?.focus();
-    };
-
-    const closeMenu = (returnFocus = true): void => {
-      toggle.setAttribute('aria-expanded', 'false');
-      nav.classList.remove('is-open');
-      document.body.classList.remove('nav-open');
-      setBackgroundInert(false);
-      if (returnFocus) toggle.focus();
-    };
-
     toggle.addEventListener('click', () => {
       isOpen() ? closeMenu() : openMenu();
-    });
-
-    // Escape closes the menu from anywhere on the page.
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && isOpen()) {
-        event.preventDefault();
-        closeMenu();
-      }
     });
 
     // Auto-close before view-transition navigation so the menu doesn't
     // persist open on the next page (the header itself is persisted).
     document.addEventListener('astro:before-preparation', () => {
-      if (isOpen()) closeMenu(false);
-    });
-
-    // After a view-transition swap, <main>/<footer> are fresh nodes;
-    // re-apply inert if the menu somehow stayed open across the swap.
-    document.addEventListener('astro:after-swap', () => {
-      if (isOpen()) setBackgroundInert(true);
-    });
-
-    // If the user resizes from mobile to desktop while the menu is open,
-    // the overlay becomes hidden by media query but state would persist.
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 768 && isOpen()) closeMenu(false);
+      if (isOpen()) closeMenu();
     });
   });
 </script>
@@ -215,6 +219,99 @@ const currentPath = Astro.url.pathname;
   .mobile-toggle[aria-expanded="true"] .hamburger::after {
     top: 0;
     transform: rotate(-45deg);
+  }
+
+  .mobile-nav-dialog {
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    background: var(--color-black);
+    color: var(--color-cream);
+    overflow: hidden;
+  }
+
+  .mobile-nav-dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-nav-dialog::backdrop {
+    background: rgb(var(--color-black-rgb) / 0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  .mobile-nav-close-form {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-nav-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    font-size: var(--text-2xl);
+    line-height: 1;
+    color: var(--color-cream);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .mobile-nav-close:focus-visible {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block-start: var(--space-2xl);
+    padding-block-end: var(--space-2xl);
+    padding-inline: var(--space-lg);
+  }
+
+  .mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    list-style: none;
+  }
+
+  .mobile-nav-link {
+    color: var(--color-cream);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: var(--color-orange);
+  }
+
+  .mobile-nav-contact {
+    color: var(--color-orange);
+  }
+
+  .mobile-nav-contact:hover,
+  .mobile-nav-contact.active {
+    color: var(--color-cream);
   }
 
   @media (max-width: 768px) {
