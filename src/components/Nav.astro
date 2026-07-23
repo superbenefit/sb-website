@@ -1,5 +1,7 @@
 ---
 import { isNavLinkActive } from '../utils/nav';
+import { mainNavLinks, contactNavLink } from '../data/nav';
+import type { NavLink } from '../data/nav';
 
 interface Props {
   currentPath: string;
@@ -7,15 +9,9 @@ interface Props {
 
 const { currentPath } = Astro.props;
 
-const links = [
-  { href: '/#about', label: 'About' },
-  { href: '/#support', label: 'Support' },
-  { href: '/#services', label: 'Services' },
-];
-
-const ctaHref = '/contact';
-const ctaLabel = 'Contact';
-const ctaActive = isNavLinkActive(currentPath, ctaHref);
+const links: NavLink[] = mainNavLinks;
+const cta = contactNavLink;
+const ctaActive = isNavLinkActive(currentPath, cta.href);
 ---
 
 <nav class="site-nav" aria-label="Main navigation">
@@ -36,11 +32,11 @@ const ctaActive = isNavLinkActive(currentPath, ctaHref);
     })}
   </ul>
   <a
-    href={ctaHref}
+    href={cta.href}
     class:list={['nav-cta', { active: ctaActive }]}
     aria-current={ctaActive ? 'page' : undefined}
   >
-    {ctaLabel}
+    {cta.label}
   </a>
 </nav>
 
@@ -95,7 +91,6 @@ const ctaActive = isNavLinkActive(currentPath, ctaHref);
     color: var(--color-orange);
   }
 
-  /* Contact CTA — pushed to the right edge of the nav with margin-inline-start: auto */
   .nav-cta {
     margin-inline-start: auto;
     display: inline-flex;
@@ -133,45 +128,7 @@ const ctaActive = isNavLinkActive(currentPath, ctaHref);
 
   @media (max-width: 768px) {
     .site-nav {
-      position: fixed;
-      top: var(--header-height);
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgb(var(--color-black-rgb) / 0.97);
-      backdrop-filter: blur(16px);
-      flex-direction: column;
-      justify-content: center;
-      align-items: stretch;
-      gap: 0;
-      padding: var(--space-xl) var(--space-lg);
-      opacity: 0;
-      visibility: hidden;
-      transition:
-        opacity var(--transition-medium),
-        visibility var(--transition-medium);
-    }
-
-    .site-nav.is-open {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .site-nav-links {
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-xl);
-    }
-
-    .nav-link {
-      font-size: var(--text-xl);
-    }
-
-    .nav-cta {
-      margin: var(--space-2xl) auto 0;
-      padding: var(--space-md) var(--space-xl);
-      font-size: var(--text-base);
-      justify-content: center;
+      display: none;
     }
   }
 </style>
