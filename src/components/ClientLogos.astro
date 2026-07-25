@@ -1,0 +1,48 @@
+---
+/**
+ * ClientLogos — compact row of client logo placeholders.
+ *
+ * Placeholder blocks are rendered as semi-transparent white overlays,
+ * so they lighten whatever section background they sit on without
+ * needing color variants. No real logos or client names are rendered yet.
+ */
+
+const PLACEHOLDER_COUNT = 7;
+---
+
+<div class="client-logos" role="group" aria-label="Past client logo placeholders">
+  {
+    Array.from({ length: PLACEHOLDER_COUNT }).map((_, index) => (
+      <div
+        class="logo-placeholder"
+        data-animate="fade-up"
+        style={`--stagger: ${index * 50}ms`}
+      >
+        <span class="sr-only">Client logo placeholder</span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .client-logos {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-md);
+    place-items: center;
+    width: 100%;
+    margin-block-start: var(--space-lg);
+  }
+
+  .logo-placeholder {
+    width: 100%;
+    max-width: 80px;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.12);
+  }
+
+  .logo-placeholder[data-animate] {
+    animation-delay: var(--stagger);
+  }
+</style>

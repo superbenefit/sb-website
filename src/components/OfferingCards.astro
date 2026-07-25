@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import OfferingCard from './OfferingCard.astro';
+
+const offerings = await getCollection('offerings');
+offerings.sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="offerings-section" aria-labelledby="offerings-heading">
+  <div class="container">
+    <span class="section-label" data-animate="fade-up">What We Offer</span>
+    <h2 id="offerings-heading" class="section-heading" data-animate="fade-up">
+      Three tiers of engagement, scaled to your needs.
+    </h2>
+    <p class="section-lede" data-animate="fade-up">
+      Offerings start as light-touch engagements and scale up to meet specific
+      needs. We convene teams from across our networks — backstopped by the
+      core team — to help you move from signal to action.
+    </p>
+
+    <div class="offerings-grid">
+      {
+        offerings.map((offering, index) => (
+          <OfferingCard
+            title={offering.data.title}
+            summary={offering.data.summary}
+            price={offering.data.price}
+            stagger={index * 100}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .offerings-section {
+    background: var(--color-green-sage);
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-red-deep);
+    margin-block-end: var(--space-sm);
+  }
+
+  .section-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-charcoal);
+    line-height: 1.15;
+    margin-block-end: var(--space-sm);
+    max-width: 26ch;
+  }
+
+  .section-lede {
+    font-size: var(--text-base);
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    line-height: 1.7;
+    max-width: 620px;
+    margin-block-end: var(--space-xl);
+  }
+
+  .offerings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4rem;
+    align-items: stretch;
+  }
+
+  @media (max-width: 1024px) {
+    .offerings-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .offerings-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>
