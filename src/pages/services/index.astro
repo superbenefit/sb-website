@@ -62,7 +62,7 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
           </p>
         </div>
         <div class="container client-logos-row" data-animate="fade-up">
-          <span class="section-label">Trusted by</span>
+          <span class="section-label client-logos-label">Trusted by</span>
           <h2 class="visually-hidden">Organizations we've worked with</h2>
           <ClientLogos />
         </div>
@@ -136,7 +136,8 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
   /* ===== Lede ===== */
   .services-lede {
     background: var(--color-cream);
-    padding-block: var(--space-2xl);
+    padding-block-start: var(--space-lg);
+    padding-block-end: var(--space-2xl);
   }
 
   .services-lede h2 {
@@ -158,7 +159,25 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 
   /* ===== Client logos row (inside lede) ===== */
   .client-logos-row {
-    margin-block-start: var(--space-xl);
+    margin-block-start: var(--space-lg);
+  }
+
+  .client-logos-label {
+    display: block;
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgb(var(--color-charcoal-rgb) / 0.5);
+    margin-block-end: var(--space-xs);
+  }
+
+  @media (max-width: 480px) {
+    .client-logos-row {
+      padding-inline: var(--space-sm);
+    }
+
+    .services-lede {
+      padding-block: var(--space-xl) 6rem;
+    }
   }
 
   .visually-hidden {
