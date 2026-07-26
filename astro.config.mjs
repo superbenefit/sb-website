@@ -12,7 +12,6 @@ export default defineConfig({
         ![
           'https://superbenefit.org/about/',
           'https://superbenefit.org/projects/',
-          'https://superbenefit.org/services/',
           'https://superbenefit.org/support/',
           'https://superbenefit.org/updates/',
         ].some((draftPath) => page.startsWith(draftPath)),
