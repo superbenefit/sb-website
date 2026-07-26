@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+
+const services = await getCollection('services');
+services.sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="services-section" aria-labelledby="services-heading">
+  <div class="container">
+    <span class="section-label" data-animate="fade-up">What We Do</span>
+    <h2 id="services-heading" class="section-heading" data-animate="fade-up">
+      Our services
+    </h2>
+    <p class="section-lede" data-animate="fade-up">
+      The core services we deliver inside each engagement tier.
+    </p>
+
+    <div class="services-grid">
+      {
+        services.map((service, index) => (
+          <article
+            class="service-card"
+            data-animate="fade-up"
+            style={`--stagger: ${index * 100}ms`}
+          >
+            <h3 class="service-title">{service.data.title}</h3>
+            <p class="service-summary">{service.data.summary}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-section {
+    background: var(--color-charcoal);
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .section-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-orange);
+    margin-block-end: var(--space-sm);
+  }
+
+  .section-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    color: var(--color-cream);
+    line-height: 1.15;
+    margin-block-end: var(--space-sm);
+  }
+
+  .section-lede {
+    font-size: var(--text-base);
+    color: var(--color-cream);
+    opacity: 0.75;
+    line-height: 1.7;
+    max-width: 620px;
+    margin-block-end: var(--space-xl);
+  }
+
+  /* ===== Services gallery — 2x2 grid ===== */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .service-card[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  .service-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--color-cream);
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .service-summary {
+    font-size: var(--text-sm);
+    color: var(--color-cream);
+    opacity: 0.75;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+  }
+</style>

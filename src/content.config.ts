@@ -1,4 +1,5 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
+import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { knowledgeServerLoader } from './loaders/knowledge-server';
 import { projectsLoader } from './loaders/projects';
@@ -33,4 +34,30 @@ const projects = defineCollection({
   schema: contentSchema,
 });
 
-export const collections = { updates, projects };
+const offeringsSchema = z.object({
+  title: z.string(),
+  tag: z.string(),
+  summary: z.string(),
+  description: z.string(),
+  price: z.string(),
+  order: z.number(),
+});
+
+const offerings = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/offerings' }),
+  schema: offeringsSchema,
+});
+
+const servicesSchema = z.object({
+  title: z.string(),
+  summary: z.string(),
+  offerings: z.array(reference('offerings')),
+  order: z.number(),
+});
+
+const services = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/services' }),
+  schema: servicesSchema,
+});
+
+export const collections = { updates, projects, offerings, services };

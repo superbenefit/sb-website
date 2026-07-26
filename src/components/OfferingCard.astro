@@ -1,0 +1,72 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  price: string;
+  stagger?: number;
+}
+
+const { title, summary, price, stagger = 0 } = Astro.props;
+---
+
+<article
+  class="offering-card"
+  data-animate="fade-up"
+  style={`--stagger: ${stagger}ms`}
+>
+  <div class="card-body">
+    <h3 class="card-heading">{title}</h3>
+    <p class="card-summary">{summary}</p>
+  </div>
+  <div class="card-price-wrap">
+    <p class="card-price">{price}</p>
+  </div>
+</article>
+
+<style>
+  .offering-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: var(--space-sm);
+  }
+
+  .card-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--color-charcoal);
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .card-summary {
+    font-size: var(--text-sm);
+    color: var(--color-charcoal);
+    opacity: 0.8;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .card-price-wrap {
+    margin-block-start: var(--space-md);
+    padding-block-start: var(--space-xs);
+    border-block-start: 1px solid rgb(var(--color-charcoal-rgb) / 0.12);
+  }
+
+  .card-price {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-red-deep);
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .offering-card[data-animate] {
+    animation-delay: var(--stagger);
+  }
+</style>

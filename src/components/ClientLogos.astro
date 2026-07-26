@@ -1,0 +1,95 @@
+---
+/**
+ * ClientLogos — normalized row of past client logos.
+ *
+ * All logos are exported to a consistent 400×200 px transparent PNG
+ * with 20% outer negative space, so they share the same canvas size,
+ * file format, and visual padding.
+ */
+
+const logos = [
+  { src: '/images/clients/logo-krause-house.png', alt: 'Krause House' },
+  { src: '/images/clients/logo-windfall.png', alt: 'Windfall Centre' },
+  { src: '/images/clients/logo-women-win.png', alt: 'Women Win' },
+  { src: '/images/clients/logo-equality-fund.png', alt: 'Equality Fund' },
+  { src: '/images/clients/logo-nrcan.png', alt: 'Natural Resources Canada' },
+];
+---
+
+<div class="client-logos" role="group" aria-label="Organizations we have worked with">
+  {
+    logos.map((logo, index) => (
+      <div
+        class="logo-item"
+        data-animate="fade-up"
+        style={`--stagger: ${index * 50}ms`}
+      >
+        <img
+          src={logo.src}
+          alt={logo.alt}
+          width="400"
+          height="200"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .client-logos {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-md);
+    place-items: center;
+    width: 100%;
+    margin-block-start: var(--space-lg);
+  }
+
+  .logo-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .logo-item img {
+    width: 100%;
+    height: auto;
+    max-height: 120px;
+    object-fit: contain;
+  }
+
+  .logo-item[data-animate] {
+    animation-delay: var(--stagger);
+  }
+
+  @media (max-width: 768px) {
+    .client-logos {
+      gap: var(--space-sm);
+    }
+
+    .logo-item img {
+      max-height: 72px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .client-logos {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-xs);
+    }
+
+    .logo-item {
+      flex: 0 0 auto;
+      width: calc(33.333% - 0.25rem);
+    }
+
+    .logo-item img {
+      max-height: none;
+    }
+  }
+</style>
