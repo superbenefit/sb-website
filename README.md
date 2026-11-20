@@ -11,7 +11,7 @@ Public website for [SuperBenefit](https://superbenefit.org) — a community expl
 
 ## Prerequisites
 
-- Node.js ≥ 22
+- Node.js ≥ 22.23.4 (`.nvmrc` selects 24)
 - npm ≥ 10
 
 ## Setup

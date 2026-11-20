@@ -67,7 +67,7 @@ All scroll-driven — no JavaScript animation libraries:
 ### TypeScript
 - Strict mode with `strictNullChecks`
 - Path aliases: `@components/*`, `@layouts/*`, `@styles/*`, `@loaders/*`
-- Requires Node.js >= 22
+- Requires Node.js >= 22.23.4 (Astro 7.4 minimum); `.nvmrc` selects Node 24
 
 ### Security
 - `src/utils/sanitize.ts` strips dangerous HTML from update content before rendering with `set:html` (`src/pages/updates/[...slug].astro`)
