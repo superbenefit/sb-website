@@ -37,8 +37,6 @@ npm run build    # compile to dist/
 npm run deploy   # build + wrangler deploy to Cloudflare Workers
 ```
 
-Workers Builds is connected to this repository: `main` deploys to production, and every other branch gets a preview URL.
-
 ## Environment Variables
 
 | Variable | Required | Description |
@@ -46,7 +44,7 @@ Workers Builds is connected to this repository: `main` deploys to production, an
 | `KNOWLEDGE_API_URL` | No | HTTPS endpoint for the SuperBenefit knowledge server (host must be `knowledge.superbenefit.org`). Omit to use bundled mock data. |
 | `CONTACT_EMAIL` | Production | Recipient of the `/contact` form. A Worker secret in production (`wrangler secret put CONTACT_EMAIL`). |
 | `TURNSTILE_SECRET_KEY` | Production | Turnstile secret for the `/contact` form. A Worker secret in production; local dev uses the always-pass test key. |
-| `PUBLIC_TURNSTILE_SITE_KEY` | No | Turnstile site key, fixed at build time. `.env` sets the test key for local dev; other builds take the production key from `vars` in `wrangler.jsonc`. |
+| `PUBLIC_TURNSTILE_SITE_KEY` | No | Overrides the Turnstile site key for local dev. |
 
 See `.env.example` for a template.
 

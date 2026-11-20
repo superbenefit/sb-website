@@ -1,8 +1,6 @@
 # SuperBenefit web relaunch: brief
 
-Last updated 2026-11-20. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
-
-Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `design-handoff.md` (prompt for the design session), `planning-prompt.md` (the five planning stages).
+Last updated 2026-11-20. Source: owner's kickoff brief plus a recon session.
 
 ## Goal
 Get SuperBenefit's Cloudflare web properties complete, consistent and launched under one brand, starting with superbenefit.org (this repo).
@@ -22,11 +20,11 @@ Each gets a feature card and an overview page:
 - Institute for Community Sustainability (London, Ontario)
 
 ## Accelerator/supports vs services
-- **Accelerator and supports are the same thing and share one page.** The Nonprofit DAO Accelerator is the offer to cells; the supports (peer support: organizing, admin support, shared infrastructure) are what it consists of. Internal, no prices or SLAs. URL is `/accelerator/`, with `/support` and `/supports` redirecting.
+- **Accelerator and supports are the same thing and share one page.** The Nonprofit DAO Accelerator is the offer to cells; the supports (peer support: organizing, admin support, shared infrastructure) are what it consists of. Internal, no prices or SLAs. URL not yet confirmed; working assumption is `/accelerator/` with `/support` and `/supports` redirecting.
 - **Services page** (external, pairs with Local Capacity Building): deliverable- and SLA-focused work; training, experiment facilitation and similar. Pared down from the current three tiers.
 
 ## Content management
-Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. Set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`.
+Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. Set up exactly as the official Cloudflare deployment docs describe; see `emdash-notes.md`.
 
 ## Design
 A SuperBenefit design system exists at `superbenefit/design-system`. The current styling predates it and is due for a redesign, run as a separate design session whose mockups feed back into the plan.
@@ -40,8 +38,8 @@ Overhaul all copy to remove AI slop and make real points directly.
 - No "not X, but Y", no rhythm triplets, no em dashes.
 - Agent-drafted copy gets a human edit before publish.
 
-## Stack facts (`feature/relaunch`, after PR #18)
-Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScript 6, Node 24. `output: 'server'`, all pages prerendered; the Worker runs only the contact action (Turnstile + Cloudflare Email Service). Live on `main`: `/` and `/contact/`; other routes are noindexed "Coming soon" drafts. Workers Builds deploys `main` and previews every branch. No tests, lint or PR check.
+## Stack facts (at b643382)
+Astro 7.0.9, @astrojs/cloudflare 14, Tailwind 4, Wrangler 4. `output: 'server'`, all pages prerendered; the Worker runs only the contact action (Turnstile + Cloudflare Email Service). Live: `/` and `/contact/`; other routes are noindexed "Coming soon" drafts. No tests, lint or CI.
 
 ## Fleet
 | Property | Worker | Notes |
@@ -58,17 +56,16 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 2. Report real errors only. Do not flag wording or choices that are not wrong.
 3. Write plainly: specific names, numbers, dates and links.
 4. Keep these docs few and short. Update one instead of adding another.
-5. Worker domain and Access settings are configured by a human in the Cloudflare dashboard. Agents do not put them in config files or change them through the API.
 
-## Answered (2026-11-20)
-- The Cloudflare account is on Workers Paid.
-- Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays.
-- Editors sign in with GitHub through Cloudflare Access: org members as Contributors, the "Web Admins" team as Admins. Editors use the EmDash admin, so no developer is needed to publish.
-- `.dev` is the preview domain.
+## Answered
+- The SuperBenefit Cloudflare account is on Workers Paid (2026-11-20).
 
 ## Open questions
 - Which services survive the cut, and are the $5,000 tiers and hour-based SLAs real?
 - What is Pacto, and what can be said publicly while the application is pending?
+- `/accelerator/` or `/supports/` as the page URL?
+- Who edits content after launch, and do they need a non-developer interface?
 - Canonical channels: which Discord invite, Paragraph or Mirror, X handle?
 - What are `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serving, and which are in scope?
+- Should the `.dev` domains be staging behind Access, or retired?
 - AI-crawler policy across the fleet: block, allow, or allow with attribution?

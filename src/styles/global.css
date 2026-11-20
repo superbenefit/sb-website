@@ -40,7 +40,7 @@
   );
   --gradient-warm: linear-gradient(135deg, var(--color-orange), var(--color-red), var(--color-gold));
 
-  /* Typography — references the CSS variables set by the `fonts` config in astro.config.mjs */
+  /* Typography — references Astro experimental fonts CSS variables */
   --font-serif: var(--font-playfair);
   --font-sans: var(--font-inter);
 

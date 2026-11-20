@@ -41,7 +41,7 @@ export const contact = defineAction({
   }),
   handler: async (input, context) => {
     // ── Resolve runtime bindings ────────────────────────────────────
-    // `Astro.locals.runtime.env` no longer exists. Use `env` from
+    // Astro v6 removed `Astro.locals.runtime.env`. Use `env` from
     // `cloudflare:workers` (shimmed in dev by the Cloudflare adapter).
     // The shape is declared in `src/env.d.ts`.
 

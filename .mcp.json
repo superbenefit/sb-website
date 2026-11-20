@@ -1,15 +1,12 @@
 {
   "mcpServers": {
     "cloudflare-docs": {
-      "type": "http",
-      "url": "https://docs.mcp.cloudflare.com/mcp"
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/cloudflare-docs-mcp@latest"]
     },
     "context7": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp@latest"
-      ]
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     }
   }
 }
