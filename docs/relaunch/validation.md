@@ -7,16 +7,18 @@ Versions tested: astro 7.4.13, @astrojs/cloudflare 14.4.9, wrangler 4.166.0, emd
 ## What changes the plan
 
 1. **Upgrade first, as one step.** astro 7.0.9 → 7.4.13, adapter 14.1.3 → 14.4.9 (peers astro ^7.4, wrangler ^4.125), wrangler → ≥4.135 (needed for Worker Previews), sharp ≥0.35.5, Node engine ≥22.23.4. Build and `astro check` pass on the upgraded set. [adapter changelog](https://raw.githubusercontent.com/withastro/astro/main/packages/integrations/cloudflare/CHANGELOG.md)
-2. **`prerenderEnvironment: 'node'` must go, but only after the upgrade.** EmDash's D1/R2 adapters import `cloudflare:workers` and fail to build under `node`. On the pinned 14.1.3, removing it makes every page build as the 15-byte string `[object Object]` with exit code 0 (tested). On 14.4.9 the default `workerd` builds all 14 pages correctly (tested). [docs](https://docs.astro.build/en/guides/integrations-guide/cloudflare/#prerenderenvironment)
-3. **Build-time D1 works (EmDash question 1: resolved by test).** With `workerd`, prerendered pages and `getStaticPaths` read D1 at build. Limits: CI starts with an empty local D1, so the binding needs `"remote": true` plus `CLOUDFLARE_API_TOKEN`; an empty DB builds empty pages with no error; a remote build would run migrations and auto-seed against production unless `EMDASH_MIGRATIONS_MODE` is `check`/`manual`. ❓ A successful remote read and Workers Builds token scope were not testable without credentials. [remote bindings](https://developers.cloudflare.com/workers/local-development/#remote-bindings)
-4. **Publish-triggered rebuild is possible (question 2: resolved by source).** Workers Builds has Deploy Hooks (POST URL, no auth, free plan). EmDash fires `content:afterPublish/afterUnpublish/afterDelete`; a small trusted in-process plugin can POST the hook on Workers Free. The first-party webhook-notifier plugin is the wrong tool: it fires on save, not publish. Latency is a full build (minutes). [deploy hooks](https://developers.cloudflare.com/workers/ci-cd/builds/deploy-hooks/) · [hooks](https://docs.emdashcms.com/reference/hooks/)
-5. **Draft preview needs on-demand routes.** Signed `?_preview` tokens are verified per request, so any collection route editors preview cannot be prerendered. This pushes content routes to on-demand + route cache (option B/C). [preview](https://docs.emdashcms.com/guides/preview/)
-6. **Route cache has costs.** `cacheCloudflare()` is experimental. Enabling Workers Cache makes every request billable, static assets included (100k/day on Free). Purges are limited to 5/min; revision restores and media changes do not purge; each deploy starts cold. [Workers Cache](https://developers.cloudflare.com/workers/cache/) · [EmDash route caching](https://docs.emdashcms.com/deployment/route-caching/)
-7. **Auth (question 3: resolved by source).** The Access adapter exists and works by email identity, but it replaces passkeys entirely, must cover all of `/_emdash/*`, and then blocks public media/search unless Bypass apps are added (❓ untested). The SIWE bridge is not viable for launch: spruceid/siwe-oidc last changed 2024-07-30, builds with Wrangler v1, and returns no email or groups, which Access and EmDash both key on. EmDash has no wallet auth. Simplest secure option: built-in passkeys with `EMDASH_SITE_URL` set before setup, two admins, invites for editors. [auth guide](https://docs.emdashcms.com/guides/authentication/) · [siwe-oidc](https://github.com/spruceid/siwe-oidc)
-8. **EmDash has no singleton type.** "Page singletons" become entries in a `pages` collection, or Site Settings/Menus. Seed files apply once; later schema changes go through admin or `emdash schema`. [field types](https://docs.emdashcms.com/reference/field-types/) · [schema evolution](https://docs.emdashcms.com/deployment/schema-evolution/)
-9. **Even a fully prerendered EmDash site needs the Worker at runtime.** Media is served from `/_emdash/api/media/file/*` via the R2 binding (tested).
-10. **EmDash sign-in uses Astro sessions on KV.** The repo's `sessionDrivers.lruCache()` override would keep admin sessions per isolate; remove it. [cloudflare deploy](https://docs.emdashcms.com/deployment/cloudflare/)
-11. **docs.emdashcms.com tracks unreleased main**, 80 commits ahead of 1.5.0. Releases land every 1 to 2 weeks. Pin exact versions and check behaviour against the installed tag.
+2. **Use the EmDash Cloudflare setup exactly as documented.** [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/):
+   - `astro.config.mjs`: `output: "server"`, `adapter: cloudflare()` with no options, `react()`, `emdash({ database: d1({ binding: "DB" }), storage: r2({ binding: "MEDIA" }) })`.
+   - `wrangler.jsonc`: `main: ./src/worker.ts`, `d1_databases` `DB` and `r2_buckets` `MEDIA` by name (Wrangler creates both on first deploy), `triggers.crons: ["* * * * *"]`.
+   - `src/worker.ts`: the documented entry from `@emdash-cms/cloudflare/worker` with `createScheduledHandler()`.
+   - Pages call `getEmDashCollection` / `getEmDashEntry` and render on the Worker at request time. Migrations apply on first request.
+3. **Repo settings that conflict with that and go:** `prerenderEnvironment: 'node'`, the custom `imageService` object, the `sessionDrivers.lruCache()` override (EmDash sign-in uses the adapter's `SESSION` KV binding), the `assets` block in `wrangler.jsonc` (the adapter generates it), and `public/robots.txt` (it shadows EmDash's managed `/robots.txt`).
+4. **Caching: Workers Cache, as documented.** `cache: { provider: cacheCloudflare() }` plus one `routeRules` entry per public route, tagged with the collection names it renders. Pages pass `cacheHint` to `Astro.cache.set()`. EmDash purges those tags on publish, so edits show within seconds and cache hits do not run the Worker. Enable `revisions` on collections and set `toolbar: "client"`. [Route caching](https://docs.emdashcms.com/deployment/route-caching/)
+5. **Auth: Cloudflare Access, as documented.** One Access application and policy on `superbenefit.org/_emdash/*`; AUD tag stored with `wrangler secret put CF_ACCESS_AUDIENCE`; `auth: access({ teamDomain, audienceEnvVar: "CF_ACCESS_AUDIENCE", roleMapping })`. Access is then the only sign-in method in production; `astro dev` falls back to passkeys. Users are created on first login; `defaultRole` is 30 (Author, can publish own content). No SIWE. [Authentication](https://docs.emdashcms.com/guides/authentication/#cloudflare-access)
+6. **Preview and staging: Worker Previews**, with their own D1, R2 and KV in a `previews` block, never production bindings. [Preview deployments](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)
+7. **Content model: EmDash has no singleton type.** "Page singletons" become entries in a `pages` collection, or Site Settings and Menus. The seed file applies once; later schema changes go through admin or `emdash schema`. [field types](https://docs.emdashcms.com/reference/field-types/) · [schema evolution](https://docs.emdashcms.com/deployment/schema-evolution/)
+8. **Workers Paid (confirmed by owner 2026-11-20)** removes the Free-plan CPU and request limits as a concern and allows Email Sending to arbitrary recipients and sandboxed plugins.
+9. **docs.emdashcms.com tracks unreleased main**, 80 commits ahead of npm 1.5.0. Pin exact versions and check behaviour against the installed tag.
 
 ## Findings register
 
@@ -48,20 +50,16 @@ Versions tested: astro 7.4.13, @astrojs/cloudflare 14.4.9, wrangler 4.166.0, emd
 
 ## Best practice where the repo differs
 
-- `output: 'static'` + adapter is the documented form for a mostly prerendered site; actions still work. [docs](https://docs.astro.build/en/guides/on-demand-rendering/)
 - Trailing slashes: the 307 comes from Workers assets `html_handling`. Link to `/path/` and set `trailingSlash: 'always'`. [docs](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)
 - CSP: Astro `security.csp` emits a `<meta>` tag, does not support `<ClientRouter />` (used in BaseLayout), and cannot set `frame-ancestors`. Choose: drop ClientRouter, or a header CSP with `'unsafe-inline'` styles. [docs](https://docs.astro.build/en/reference/configuration-reference/#securitycsp)
 - `not_found_handling: '404-page'` is unsafe once any route is on-demand: browser navigations skip the Worker. [docs](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/)
 - www: redirect rule plus proxied originless DNS record. [docs](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)
-- Passkeys bind to the site hostname and its subdomains, so staging should be `staging.superbenefit.org`, not `.dev`. [docs](https://docs.emdashcms.com/guides/change-domain/)
-- Email: code uses the current API. Sending to arbitrary recipients is Workers Paid; on Free the recipient must be a verified destination. [pricing](https://developers.cloudflare.com/email-service/platform/pricing/)
+- Email: the contact action uses the current API. EmDash's own mail uses the documented `cloudflareEmail` plugin on the same `EMAIL` binding. [docs](https://docs.emdashcms.com/deployment/cloudflare/#email)
 - CI: Workers Builds for deploy plus a PR job (`npm ci`, `check`, `build`, `audit`) and Dependabot. `compatibility_date` is a year old. [docs](https://developers.cloudflare.com/workers/ci-cd/builds/)
 
 ## Could not verify
 
-- Anything in the Cloudflare account: plan (Free vs Paid), zone rules, DNS for www, Email Service onboarding, what `sb-auth` is.
-- Remote D1 read during a real CI build, and the token scope it needs.
-- Whether EmDash admin, SSR and cron fit Workers Free limits (10 ms CPU, 50 subrequests).
-- Access Bypass behaviour for public `/_emdash` routes; Zero Trust free seat count.
+- Anything in the Cloudflare account other than the plan: zone rules, DNS for www, Email Service onboarding, the Zero Trust team domain, what `sb-auth` is.
+- The documented setup was read, not deployed. First deploy should follow the docs' own checklist: public page, `/_emdash/admin` sign-in through Access, media upload and retrieval, cron in `wrangler tail`.
 - GitHub security advisories for emdash (API blocked; npm shows none).
 - Related repos (`design-system`, `knowledge-garden`, `governance-site`) were not read: this session's GitHub scope is `sb-website` only.

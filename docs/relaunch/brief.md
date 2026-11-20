@@ -24,7 +24,7 @@ Each gets a feature card and an overview page:
 - **Services page** (external, pairs with Local Capacity Building): deliverable- and SLA-focused work; training, experiment facilitation and similar. Pared down from the current three tiers.
 
 ## Content management
-Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. EmDash does not require SSR for site pages; see `emdash-notes.md`.
+Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. Set up exactly as the official Cloudflare deployment docs describe; see `emdash-notes.md`.
 
 ## Design
 A SuperBenefit design system exists at `superbenefit/design-system`. The current styling predates it and is due for a redesign, run as a separate design session whose mockups feed back into the plan.
@@ -57,13 +57,15 @@ Astro 7.0.9, @astrojs/cloudflare 14, Tailwind 4, Wrangler 4. `output: 'server'`,
 3. Write plainly: specific names, numbers, dates and links.
 4. Keep these docs few and short. Update one instead of adding another.
 
+## Answered
+- The SuperBenefit Cloudflare account is on Workers Paid (2026-11-20).
+
 ## Open questions
 - Which services survive the cut, and are the $5,000 tiers and hour-based SLAs real?
 - What is Pacto, and what can be said publicly while the application is pending?
 - `/accelerator/` or `/supports/` as the page URL?
 - Who edits content after launch, and do they need a non-developer interface?
 - Canonical channels: which Discord invite, Paragraph or Mirror, X handle?
-- Is the SuperBenefit Cloudflare account on Workers Paid?
 - What are `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serving, and which are in scope?
 - Should the `.dev` domains be staging behind Access, or retired?
 - AI-crawler policy across the fleet: block, allow, or allow with attribution?

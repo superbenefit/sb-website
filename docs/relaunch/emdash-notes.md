@@ -8,15 +8,8 @@ Verified 2026-11-20 against EmDash docs and source at commit a8c417f. That commi
 - Middleware has explicit `context.isPrerendered` branches (packages/core/src/astro/middleware.ts).
 - Templates and the "existing project" guide default to `output: "server"`; that is a default, not a requirement.
 
-## Options
-- A. Prerender: static HTML as today; edits appear after rebuild + deploy.
-- B. On demand + route cache: `cacheCloudflare()` from `@astrojs/cloudflare/cache`, `routeRules` with collection-name tags; EmDash purges `[collection, id]` tags on publish; cache hits do not run the Worker.
-- C. Mixed per route (likely choice).
-
-## Spike questions: resolved in `validation.md` (2026-11-20)
-- Build-time D1: works with the default `workerd` prerender on adapter 14.4.9; fails under `prerenderEnvironment: 'node'`. CI needs a remote binding and token.
-- Publish-to-rebuild: custom plugin on `content:afterPublish` posting to a Workers Builds Deploy Hook.
-- Cloudflare Access adapter works; the SIWE OIDC bridge is not viable for launch.
+## Chosen pattern (official docs, 2026-11-20)
+Follow [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) as written: `output: "server"`, `cloudflare()` with no options, `d1({ binding: "DB" })`, `r2({ binding: "MEDIA" })`, `src/worker.ts` with `createScheduledHandler()`. Pages render on demand behind Workers Cache (`cacheCloudflare()` + `routeRules` tagged by collection); EmDash purges on publish. Admin auth is Cloudflare Access on `/_emdash/*` with `access({ teamDomain, audienceEnvVar })`. No SIWE, no build-time D1, no rebuild hooks. Details in `validation.md`.
 
 ## Other integration facts
 - Needs `@astrojs/react` (admin UI), D1 `DB`, R2 `MEDIA`, KV `SESSION` (Astro sessions), `src/live.config.ts` with `emdashLoader()`. `EMDASH_ENCRYPTION_KEY` is only needed for plugin secrets. Set `EMDASH_SITE_URL` before setup.
