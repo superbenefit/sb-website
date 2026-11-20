@@ -15,7 +15,7 @@ const contactActive = isNavLinkActive(currentPath, contact.href);
 <header class="site-header" transition:persist>
   <div class="header-inner">
     <a href="/" class="logo-link" aria-label="SuperBenefit home">
-      <Image src={icon} alt="" class="logo-icon" width={36} height={36} />
+      <Image src={icon} alt="" class="logo-icon" width={36} height={36} densities={[2, 3]} />
       <span class="logo-text">SuperBenefit</span>
     </a>
     <Nav currentPath={currentPath} />

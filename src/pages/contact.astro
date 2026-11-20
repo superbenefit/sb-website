@@ -110,11 +110,7 @@ const hero = {
           </div>
 
           <div class="contact-turnstile">
-            <div
-              class="cf-turnstile"
-              data-sitekey={siteKey}
-              data-theme="light"
-            ></div>
+            <div id="turnstile-widget" data-sitekey={siteKey}></div>
           </div>
 
           <button type="submit" class="contact-submit">
@@ -147,79 +143,128 @@ const hero = {
 <script>
   import { actions, isInputError } from 'astro:actions';
 
-  const form = document.querySelector('.contact-form') as HTMLFormElement | null;
-  if (!form) {
-    throw new Error('Contact form not found');
-  }
-
-  const container = form.closest('.container');
-  const successBanner = container?.querySelector('.contact-banner-success');
-  const errorBanner = container?.querySelector('.contact-banner-error');
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    // Clear previous state
-    form.querySelectorAll('.contact-field-error').forEach((el) => el.remove());
-    successBanner?.setAttribute('hidden', '');
-    errorBanner?.setAttribute('hidden', '');
-
-    const submitBtn = form.querySelector('.contact-submit') as HTMLButtonElement;
-    const originalHTML = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
-
-    try {
-      const formData = new FormData(form);
-      const { data, error } = await actions.contact(formData);
-
-      if (data?.ok) {
-        successBanner?.removeAttribute('hidden');
-        form.reset();
-        // Reset Turnstile widget so a fresh challenge is shown if the
-        // user fills in the form again.
-        if (window.turnstile) {
-          window.turnstile.reset();
-        }
-      } else if (isInputError(error)) {
-        for (const [field, messages] of Object.entries(error.fields)) {
-          const p = document.createElement('p');
-          p.className = 'contact-field-error';
-          p.textContent = (messages ?? []).join(', ');
-
-          if (field === 'cf-turnstile-response') {
-            form.querySelector('.contact-turnstile')?.appendChild(p);
-          } else {
-            const input = form.querySelector(`[name="${CSS.escape(field)}"]`);
-            input?.closest('.contact-field')?.appendChild(p);
-          }
-        }
-      } else if (error) {
-        if (errorBanner) {
-          errorBanner.innerHTML = error.message;
-          errorBanner.removeAttribute('hidden');
-        }
-      }
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalHTML;
-    }
-  });
-
-  // Needed for Turnstile widget global types
+  // Explicit rendering, as Cloudflare recommends for pages reached through
+  // client-side navigation:
+  // https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/#explicit-rendering
+  // This module runs once per visit, so everything that touches the page is
+  // done from `astro:page-load`, which <ClientRouter /> fires on the first
+  // load and after every navigation:
+  // https://docs.astro.build/en/guides/view-transitions/#script-behavior-with-view-transitions
   declare global {
     interface Window {
-      turnstile?: { reset: () => void };
+      turnstile?: {
+        render: (
+          container: string | HTMLElement,
+          options: { sitekey: string; theme?: 'auto' | 'light' | 'dark' },
+        ) => string;
+        reset: (widgetId: string) => void;
+        remove: (widgetId: string) => void;
+      };
     }
   }
+
+  let widgetId: string | undefined;
+
+  function renderWidget() {
+    const container = document.querySelector<HTMLElement>('#turnstile-widget');
+    const sitekey = container?.dataset.sitekey;
+    // Not the contact page, the Turnstile script has not loaded yet (the
+    // `turnstile:load` event below covers that), or already rendered.
+    if (!container || !sitekey || !window.turnstile || widgetId) return;
+    widgetId = window.turnstile.render(container, { sitekey, theme: 'light' });
+  }
+
+  function removeWidget() {
+    if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
+    widgetId = undefined;
+  }
+
+  // Tokens are single use. After the server has seen one, ask for another.
+  function resetWidget() {
+    if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
+  }
+
+  function setupForm() {
+    const form = document.querySelector<HTMLFormElement>('.contact-form');
+    if (!form || form.dataset.contactInit === 'true') return;
+    form.dataset.contactInit = 'true';
+
+    const container = form.closest('.container');
+    const successBanner = container?.querySelector('.contact-banner-success');
+    const errorBanner = container?.querySelector('.contact-banner-error');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // Clear previous state
+      form.querySelectorAll('.contact-field-error').forEach((el) => el.remove());
+      successBanner?.setAttribute('hidden', '');
+      errorBanner?.setAttribute('hidden', '');
+
+      const submitBtn = form.querySelector('.contact-submit') as HTMLButtonElement;
+      const originalHTML = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      try {
+        const formData = new FormData(form);
+        const { data, error } = await actions.contact(formData);
+
+        if (data?.ok) {
+          successBanner?.removeAttribute('hidden');
+          form.reset();
+          resetWidget();
+        } else if (isInputError(error)) {
+          for (const [field, messages] of Object.entries(error.fields)) {
+            const p = document.createElement('p');
+            p.className = 'contact-field-error';
+            p.textContent = (messages ?? []).join(', ');
+            if (field === 'cf-turnstile-response') {
+              form.querySelector('.contact-turnstile')?.appendChild(p);
+            } else {
+              const input = form.querySelector(`[name="${CSS.escape(field)}"]`);
+              input?.closest('.contact-field')?.appendChild(p);
+            }
+          }
+        } else if (error) {
+          if (errorBanner) {
+            errorBanner.textContent = error.message;
+            errorBanner.removeAttribute('hidden');
+          }
+          resetWidget();
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHTML;
+      }
+    });
+  }
+
+  function init() {
+    setupForm();
+    renderWidget();
+  }
+
+  document.addEventListener('astro:page-load', init);
+  // Fired by the `onload` callback below when the Turnstile script is ready.
+  document.addEventListener('turnstile:load', renderWidget);
+  // The old page's widget goes away with its DOM; remove it first.
+  document.addEventListener('astro:before-swap', removeWidget);
+  // Covers the case where this module first runs after `astro:page-load`.
+  init();
 </script>
 
-<!-- Turnstile widget loader. is:inline so Astro does not try to bundle it.
-     Cloudflare's CDN is the canonical source. The widget auto-injects a
-     hidden input named `cf-turnstile-response` into the form on success. -->
+<!-- Turnstile loader with explicit rendering and an onload callback:
+     https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/#explicit-rendering
+     is:inline so Astro does not bundle either script. The widget adds a
+     hidden input named `cf-turnstile-response` to the form on success. -->
+<script is:inline>
+  window.onTurnstileLoad = function () {
+    document.dispatchEvent(new Event('turnstile:load'));
+  };
+</script>
 <script
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-  async
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"
   defer
   is:inline
 ></script>

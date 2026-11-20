@@ -6,7 +6,7 @@ Versions tested: astro 7.4.13, @astrojs/cloudflare 14.4.9, wrangler 4.166.0, emd
 
 ## What changes the plan
 
-1. **Upgrade first, as one step.** astro 7.0.9 → 7.4.13, adapter 14.1.3 → 14.4.9 (peers astro ^7.4, wrangler ^4.125), wrangler → ≥4.135 (needed for Worker Previews), sharp ≥0.35.5, Node engine ≥22.23.4. Build and `astro check` pass on the upgraded set. [adapter changelog](https://raw.githubusercontent.com/withastro/astro/main/packages/integrations/cloudflare/CHANGELOG.md)
+1. **Dependencies are upgraded** (PR `chore/dependency-upgrade`): astro 7.4.13, @astrojs/cloudflare 14.4.9, wrangler 4.166.0, sharp 0.35.5, TypeScript 6.0.3, Node 24. `npm audit` reports 0 advisories. Version ranges are caret ranges with a committed lockfile, as in Astro's and EmDash's own templates.
 2. **Use the EmDash Cloudflare setup exactly as documented.** [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/):
    - `astro.config.mjs`: `output: "server"`, `adapter: cloudflare()` with no options, `react()`, `emdash({ database: d1({ binding: "DB" }), storage: r2({ binding: "MEDIA" }) })`.
    - `wrangler.jsonc`: `main: ./src/worker.ts`, `d1_databases` `DB` and `r2_buckets` `MEDIA` by name (Wrangler creates both on first deploy), `triggers.crons: ["* * * * *"]`.
@@ -18,14 +18,14 @@ Versions tested: astro 7.4.13, @astrojs/cloudflare 14.4.9, wrangler 4.166.0, emd
 6. **Preview and staging: Worker Previews**, with their own D1, R2 and KV in a `previews` block, never production bindings. [Preview deployments](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)
 7. **Content model: EmDash has no singleton type.** "Page singletons" become entries in a `pages` collection, or Site Settings and Menus. The seed file applies once; later schema changes go through admin or `emdash schema`. [field types](https://docs.emdashcms.com/reference/field-types/) · [schema evolution](https://docs.emdashcms.com/deployment/schema-evolution/)
 8. **Workers Paid (confirmed by owner 2026-11-20)** removes the Free-plan CPU and request limits as a concern and allows Email Sending to arbitrary recipients and sandboxed plugins.
-9. **docs.emdashcms.com tracks unreleased main**, 80 commits ahead of npm 1.5.0. Pin exact versions and check behaviour against the installed tag.
+9. **docs.emdashcms.com tracks unreleased main**, 80 commits ahead of npm 1.5.0. Check doc-derived behaviour against the installed version.
 
 ## Findings register
 
 | ID | Verdict | Note |
 | --- | --- | --- |
 | S1 | ✅ | `_headers` works for prerendered pages and would work if restored. It does not apply to Worker responses (actions, EmDash routes); those need middleware or a zone rule. Draft pages also lost their `X-Robots-Tag`. [docs](https://developers.cloudflare.com/workers/static-assets/headers/) |
-| S2 | 🔁 | 16 advisories confirmed. The critical one is a Sharp/AVIF RCE fixed in astro 7.2.8 ([GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)), not the `<=7.4.6` range. Not exploitable today (local images only); it becomes real with CMS media. |
+| S2 | 🔁 fixed | 16 advisories confirmed; 0 after the upgrade. The critical one is a Sharp/AVIF RCE fixed in astro 7.2.8 ([GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)), not the `<=7.4.6` range. Not exploitable today (local images only); it becomes real with CMS media. |
 | S3 | ✅ | All four bypasses reproduce. EmDash's Portable Text renderer sanitizes its own HTML blocks, so the regex sanitizer can be deleted with the loaders. |
 | S4 | 🔁 | No lorem body is public, but mock titles and the fake author "Alex Chen" are in live page heads. Production build should fail without a content source. |
 | S5 | ✅ | superbenefit.dev and the workers.dev URL serve unprotected copies. |
@@ -40,7 +40,7 @@ Versions tested: astro 7.4.13, @astrojs/cloudflare 14.4.9, wrangler 4.166.0, emd
 ## New findings
 
 - **N1 High with CMS:** JSON-LD is rendered with `set:html={JSON.stringify(...)}` (`SEO.astro:111`, `updates/[...slug].astro:48`). A title containing `</script>` breaks out. Escape `<` before any CMS feeds these. [set:html](https://docs.astro.build/en/reference/directives-reference/#sethtml)
-- **N2:** Images on live pages are not resized (adapter bug with `node` + `compile`, fixed in 14.2.0). [PR](https://github.com/withastro/astro/pull/17347)
+- **N2 (fixed by the upgrade):** Images on live pages were not resized (adapter bug with `node` + `compile`, fixed in 14.2.0). [PR](https://github.com/withastro/astro/pull/17347)
 - **N3:** Turnstile: server ignores `action` and `hostname`; widget is not reset after a failed submit, so retries fail; `.env.example` test site key is not a valid test key. [docs](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
 - **N4:** The comment that prerendered pages cannot read wrangler `vars` is wrong; the adapter loads them at build (tested). The wrangler var is the live source of the site key.
 - **N5:** `wrangler.jsonc` `assets.directory: ./dist` is ignored; the adapter generates `dist/server/wrangler.json` pointing at `dist/client`.
