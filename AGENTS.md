@@ -2,6 +2,14 @@
 
 Public website for SuperBenefit — an Astro 7 site deployed to Cloudflare Workers. Presents SuperBenefit's work across governance, DAOs, and systems innovation through a scroll-animated homepage and a contact form.
 
+## Relaunch in progress
+
+The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `feature/relaunch` branch, not `main`. Read `docs/relaunch/brief.md` (goal and working rules), `architecture.md` (decided design) and `findings.md` (issue register) before changing anything. Two rules from the brief apply to every task:
+- Claims about Astro, EmDash or Cloudflare come from current official docs or source, with a link.
+- Worker domain and Cloudflare Access settings are configured by a human in the dashboard. Do not put them in config files or change them through the API.
+
+The sections below describe the code as it is today, before EmDash is installed.
+
 ## Commands
 
 **Setup** (first time):
@@ -16,7 +24,7 @@ cp .env.example .env   # optional; leave KNOWLEDGE_API_URL blank to use mock dat
 - `npm run preview` — Preview built site locally
 - `npm run deploy` — Build + deploy to Cloudflare Workers via Wrangler
 
-No test runner or linter is configured.
+No test runner or linter is configured. Workers Builds builds every branch and posts a preview URL on pull requests; `main` deploys to production.
 
 ## Gotchas
 
@@ -46,14 +54,15 @@ Hero → SectionDivider → MissionStatement → SectionDivider → InternalServ
 ### Contact Form (src/pages/contact.astro, src/actions/contact.ts)
 - An Astro server action validates the form, verifies the Cloudflare Turnstile token with `TURNSTILE_SECRET_KEY`, and sends the message through the `EMAIL` send-email binding to `CONTACT_EMAIL`
 - In production, `CONTACT_EMAIL` and `TURNSTILE_SECRET_KEY` are Worker secrets (`wrangler secret put …`); the recipient must also be listed in `send_email` in `wrangler.jsonc`
-- `contact.astro` is prerendered, so it ships the production Turnstile site key; `wrangler.jsonc` vars do not reach it (see `.env.example`)
+- `contact.astro` is prerendered, so the Turnstile site key is fixed at build time: `PUBLIC_TURNSTILE_SITE_KEY` from `.env` locally, otherwise from `vars` in `wrangler.jsonc`
+- Turnstile uses explicit rendering. The widget is rendered and the form handler attached on `astro:page-load`, and the widget is removed on `astro:before-swap`, because `<ClientRouter />` runs a page's bundled script only once per visit
 
 ### Styling Approach
 - **Design tokens** in `src/styles/global.css` are the single source of truth — all colors, typography, spacing, shadows, and transitions derive from CSS custom properties in `:root`.
 - **Custom properties** in component-scoped `<style>` blocks remain the preferred pattern for site-layout Astro components where they provide better readability than utility classes.
 - **Tailwind CSS v4** (through `@tailwindcss/vite`) is available; its utilities read from the same `:root` token block via `@theme inline`. `clsx` and `tailwind-merge` are installed for composing classes.
 - **RGB channel variants** (`--color-black-rgb`, `--color-orange-rgb`, etc.) enable alpha compositing: `rgb(var(--color-black-rgb) / 0.8)`. Prefer these over hardcoded `rgba()` values.
-- **fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) via Astro experimental fonts. CSS vars `--font-playfair` and `--font-inter` also available.
+- **fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) via Astro's `fonts` config. CSS vars `--font-playfair` and `--font-inter` also available.
 - **Fluid typography**: `clamp()`-based scale from `--text-xs` to `--text-hero`.
 
 ### Animations (src/styles/animations.css)
