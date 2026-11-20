@@ -1,9 +1,17 @@
-# Stage 2 architecture (proposed 2026-11-20)
+# Architecture (decided 2026-11-20)
 
-One page. Every choice follows the official docs linked; `validation.md` has the evidence. Owner decisions were made on 2026-11-20 and are recorded at the end.
+The design the relaunch builds. Every choice follows the official docs linked. Owner decisions are recorded at the end. Nothing here is deployed yet; see First-deploy checks.
 
 ## Stack
-Astro 7.4 + `@astrojs/cloudflare` 14.4 on Workers Paid, EmDash on D1 (`DB`) + R2 (`MEDIA`) + KV (`SESSION`), set up exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes: `output: "server"`, `cloudflare()` with no options, `src/worker.ts` with the scheduled handler, every-minute cron.
+Astro 7.4 + `@astrojs/cloudflare` 14.4 on Workers Paid, with EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`). Set up exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes:
+- `astro.config.mjs`: `output: "server"`, `adapter: cloudflare()` with no options, `react()`, `emdash({ database: d1({ binding: "DB" }), storage: r2({ binding: "MEDIA" }) })`.
+- `wrangler.jsonc`: `main: ./src/worker.ts`, the `DB` and `MEDIA` bindings by name (Wrangler creates both on first deploy), `triggers.crons: ["* * * * *"]`.
+- `src/worker.ts`: the documented entry from `@emdash-cms/cloudflare/worker` with `createScheduledHandler()`.
+- `src/live.config.ts` with `emdashLoader()`. `EMDASH_SITE_URL` is set before first setup.
+
+Current settings that conflict with this and are removed: `prerenderEnvironment: 'node'`, the custom `imageService` object, the `sessionDrivers.lruCache()` override (EmDash sign-in uses the adapter's KV sessions), the `assets` block in `wrangler.jsonc`, `@astrojs/sitemap` and `public/robots.txt`.
+
+docs.emdashcms.com tracks unreleased `main`, ahead of the npm release (1.5.0 on 2026-11-20). Check doc-derived behaviour against the installed version.
 
 ## Rendering per route
 | Route | Mode | Content source |
@@ -39,9 +47,16 @@ EmDash has no singleton type, so each fixed page is one `pages` entry looked up 
 
 ## Auth
 [Cloudflare Access](https://docs.emdashcms.com/guides/authentication/#cloudflare-access) with GitHub as the identity provider.
-- In code: `access({ teamDomain, audienceEnvVar: "CF_ACCESS_AUDIENCE", defaultRole: 20 })`. No `roleMapping`.
-- Who gets in is the Access policy, set by the owner in the dashboard.
-- Roles are managed inside EmDash, which is the documented default (`syncRoles: false`): the first person to sign in becomes Admin, everyone after starts as Contributor (drafts only), and an Admin promotes them to Editor in the admin panel.
+
+| Who | Gets in because | EmDash role |
+| --- | --- | --- |
+| Members of the SuperBenefit GitHub org (not outside collaborators) | Access policy | Contributor (20): writes drafts, cannot publish |
+| Members of the "Web Admins" GitHub team | Access policy | Admin (50) |
+
+- In code: `access({ teamDomain, audienceEnvVar: "CF_ACCESS_AUDIENCE", defaultRole: 20, roleMapping: { "Web Admins": 50 } })`.
+- The Access application, its GitHub identity provider and the policy are owner dashboard items. Access policies can match GitHub organizations and teams through the Identity provider group selector ([policies](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/)).
+- Admins promote Contributors to Editor inside EmDash; with the default `syncRoles: false` those changes stick.
+- To verify on first deploy: that Access passes the GitHub team to EmDash under the name `Web Admins`. EmDash matches `roleMapping` keys against the group names Access returns, and Cloudflare's docs do not show that format for GitHub. If the name differs, the key in `roleMapping` changes to match. Either way the first person to sign in becomes Admin.
 
 ## Security headers
 - EmDash's middleware already sets `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options: SAMEORIGIN` on every public route, and a strict CSP on `/_emdash/*` (source: `packages/core/src/astro/middleware.ts`, `middleware/csp.ts`). The site adds nothing on top.
@@ -65,10 +80,10 @@ Copy, the services that survive, what to say about Pacto, canonical social links
 The setup above is taken from the docs and source, not yet deployed. The first preview deploy runs the docs' own checklist: a public page, admin sign-in through Access, a media upload shown on a public page while signed out, and the cron in `wrangler tail`.
 
 ## Owner decisions (2026-11-20)
-1. Editors sign in through Access with GitHub.
+1. Editors sign in through Access with GitHub. Org members are Contributors; the "Web Admins" team are Admins.
 2. The accelerator page lives at `/accelerator/`; `/support` and `/supports` redirect to it.
 3. Updates are written in EmDash.
 4. `/about/` stays.
 5. `.dev` is the preview domain, set up by the owner. Domain and Access settings are dashboard-only (see Ownership).
 
-Owner dashboard items, each written into the issue that needs it: Access application on `/_emdash/*` with the GitHub identity provider and policy, the AUD tag as the `CF_ACCESS_AUDIENCE` secret, the Zero Trust team domain (a value for `astro.config.mjs`), HSTS, the www redirect, `.dev` preview domain, and Turnstile widget hostnames.
+Owner dashboard items, each written into the issue that needs it: the Access application on `/_emdash/*` with the GitHub identity provider and policy, the AUD tag as the `CF_ACCESS_AUDIENCE` secret, the Zero Trust team domain (a value for `astro.config.mjs`), HSTS, the www redirect, the `.dev` preview domain, and Turnstile widget hostnames.

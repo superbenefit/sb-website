@@ -6,12 +6,10 @@ import CallToAction from '../components/CallToAction.astro';
 
 export const prerender = true;
 
-// Hardcoded to the production site key because contact.astro is prerendered:
-// the value is baked into the static HTML at build time, and
-// `wrangler.jsonc [vars]` are runtime-only (not visible to Vite/Astro during
-// the build). `import.meta.env` override remains available for local dev.
-// Per the contact-form policy in .opencode/context/.../contact-form.md,
-// this page must never silently fall back to a visible test key.
+// The page is prerendered, so the site key is fixed at build time. It comes
+// from PUBLIC_TURNSTILE_SITE_KEY: `.env` in local development, otherwise the
+// `vars` block in wrangler.jsonc, which the Cloudflare adapter loads during
+// the build. The literal below is the production key, as a last fallback.
 const siteKey =
   import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADtinm8-q80lFVL-';
 
