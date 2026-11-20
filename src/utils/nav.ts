@@ -11,9 +11,8 @@
  * Special case for the root: `/` is active only on `/`, never on a child
  * (since every path starts with `/`, which would otherwise match).
  *
- * Note: This function is duplicated in `BaseLayout.astro` for client-side
- * re-evaluation on every `astro:page-load`. Keep both copies in sync so they
- * cannot drift between them.
+ * Also imported by the script in `BaseLayout.astro`, which re-evaluates the
+ * active link on every `astro:page-load`.
  */
 export function isNavLinkActive(currentPath: string, href: string): boolean {
   // Anchor links (#fragment) are never "active" — they scroll to homepage sections

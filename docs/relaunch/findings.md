@@ -1,41 +1,64 @@
-# Findings register (recon, 2026-11-20)
+# Findings register
 
-Commit b643382. Read-only recon, not a full code audit. Validated in `validation.md` (2026-11-20), which corrects S2, S4, S7 and C7 and adds N1 to N8.
+Recon at commit b643382 (2026-11-20), then validated the same day against current official docs, package source, local builds and the live site. Status is as of `feature/relaunch` after PR #18. "CMS build" means the item disappears when the page or file is rebuilt on EmDash, as `architecture.md` describes.
 
-## Security
-- S1 High: no security headers live; `public/_headers` deleted in 185e9a0 (Astro 7 upgrade).
-- S2 High: `npm audit --omit=dev` shows 16 advisories (1 critical: astro <= 7.4.6, pinned 7.0.9; 14 high incl. wrangler, vite, zod, undici, sharp, devalue).
-- S3 Medium (High with CMS): `src/utils/sanitize.ts` regex sanitizer bypassed by `<img/onerror=...>`, unquoted `href=javascript:`, `<form action>`, nested `<scr<script></script>ipt>`.
-- S4 Medium: lorem-ipsum mock posts built to public URLs (`/updates/governance-primitives-web3/` etc.).
-- S5 Medium: superbenefit.dev and knowledge.superbenefit.dev are unprotected public copies.
-- S6 Low: `errorBanner.innerHTML = error.message` in contact.astro.
-- S7 Low: contact subject not stripped of CR/LF; no rate limit beyond Turnstile.
-- S8 Low: `.mcp.json` references nonexistent npm package `@anthropic-ai/cloudflare-docs-mcp`.
-- Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protections.
+## Open
 
-## Code
-- C1/C2: draft gating duplicated across six pages and again in the sitemap filter.
-- C3/C4: duplicate loaders; silent fallback to mock data in production builds.
-- C5: projects.astro hardcodes projects, ignores the collection.
-- C6: unused components KnowledgeSpotlight, UpdatesSection, ProjectsGrid.
-- C7: stale comments (Astro v6, .opencode reference, nav.ts duplication note).
-- C9: fictional SearchAction in WebSite schema.
-- C10: "Schedule an onboarding call" links to `#`.
-- C11: compatibility_date 2025-12-01; no CI, tests, lint, dependency automation.
+### Security
+| ID | Finding | Resolved by |
+| --- | --- | --- |
+| S1 | No security headers are live; `public/_headers` was deleted in 185e9a0. `_headers` only covers static assets, not Worker responses ([docs](https://developers.cloudflare.com/workers/static-assets/headers/)). | CMS build: EmDash's middleware sets them on every public route. HSTS is an owner dashboard item. |
+| S3 | `src/utils/sanitize.ts` is bypassed by `<img/onerror=…>`, unquoted `href=javascript:`, `<form action>` and nested `<scr<script></script>ipt>` (all reproduced). | CMS build: file deleted; EmDash renders Portable Text. |
+| S4 | Mock update titles and the fake author "Alex Chen" are in the `<head>` of public pages such as `/updates/governance-primitives-web3/`. | CMS build: loaders and mock data deleted. |
+| S5 | superbenefit.dev, knowledge.superbenefit.dev and the workers.dev URL serve unprotected public copies. | Owner: `.dev` becomes the preview domain. |
+| S6 | Server misconfiguration messages, including a `wrangler secret put` hint, are shown to visitors. | Own issue. |
+| S7 | Contact `subject` and `name` keep CR/LF; no rate limit beyond Turnstile. No classic header injection, because the email API takes structured fields. | Own issue: strip CR/LF, add a [`ratelimits` binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/). |
+| N1 | JSON-LD uses `set:html={JSON.stringify(…)}` (`SEO.astro:111`, `updates/[...slug].astro:48`). A title containing `</script>` breaks out ([docs](https://docs.astro.build/en/reference/directives-reference/#sethtml)). | CMS build: `<EmDashHead>` writes the JSON-LD. Must land before CMS content reaches these pages. |
 
-## SEO
-- No `<h1>` on homepage; title "Make Better Faster"; two-URL sitemap.
-- 307 redirects from extensionless to trailing-slash URLs; internal links use the redirecting form.
-- www.superbenefit.org returns 522.
-- Hidden links to noindexed drafts on homepage.
-- governance.superbenefit.org canonical points to governance.superbenefit.dev.
-- Brand query "SuperBenefit DAO" surfaces Notion, Flowershow, knowledge-garden-c1o.pages.dev and Goverland, not superbenefit.org.
-- No analytics beacon found.
+Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protections.
 
-## Content
-- Old messaging throughout; no accelerator, local capacity, Pacto or ICS.
-- Likely invented: "Governance Innovation Lab"; "NFT Energy Labeling Experiment" description; mock authors; possibly the service SLAs and $5,000 tiers.
-- Inconsistent: Discord invites (q95fFXGu67 vs d2EeszTvVm), Mirror vs Paragraph, knowledge .org vs .dev links, dead Knowledge Garden doc links.
+### Code
+| ID | Finding | Resolved by |
+| --- | --- | --- |
+| C1, C2 | Draft gating is duplicated across six pages and again in the sitemap filter. | CMS build: EmDash draft status. |
+| C3, C4 | Two near-identical loaders; a production build with no content source silently ships mock data. | CMS build. |
+| C5 | `projects.astro` hardcodes its projects and ignores the collection. | CMS build. |
+| C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
+| C9 | `WebSite` schema has a `SearchAction` for a search that does not exist. | CMS build. |
+| C10 | "Schedule an onboarding call" links to `#`. | Content. |
+| C11 | `compatibility_date` is 2025-12-01. No PR check, tests, lint or Dependabot. Workers Builds does build and preview every branch. | Hygiene issue. |
+| N5 | The `assets` block in `wrangler.jsonc` is ignored; the adapter generates its own. | CMS build. |
+| N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
+
+### SEO
+- No `<h1>` on the homepage; title is "Make Better Faster".
+- Sitemap lists two URLs.
+- Extensionless URLs 307 to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)); internal links use the redirecting form.
+- www.superbenefit.org returns 522. Owner: redirect rule to the apex.
+- Homepage has hidden links to noindexed drafts.
+- governance.superbenefit.org's canonical points to governance.superbenefit.dev (fleet).
+- `robots.txt` comments claim a Content-Signal that the file does not contain (N7).
+- No analytics.
+- Not checked: the claim that the brand query "SuperBenefit DAO" surfaces Notion, Flowershow and Goverland ahead of superbenefit.org.
+
+### Content
+- Old messaging throughout; nothing on the accelerator, local capacity building, Pacto or ICS.
+- Owner to confirm or cut: "Governance Innovation Lab", the "NFT Energy Labeling Experiment" description, the service SLAs and $5,000 tiers.
+- Links to `www.allinforsport.org`, which does not resolve, in `about.astro` and `projects.astro` (N6). Use the apex.
+- Links are consistent inside this repo (one Discord invite, Paragraph only). Across the fleet they are not: two Discord invites, Mirror and Paragraph, knowledge `.org` and `.dev`.
+
+## Fixed
+| ID | Finding | Fixed in |
+| --- | --- | --- |
+| S2 | 16 `npm audit` advisories, one critical (Sharp/AVIF, [GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)). | PR #18: all dependencies upgraded, 0 advisories. |
+| S6 (part) | `errorBanner.innerHTML = error.message`. | PR #18. |
+| S8 | `.mcp.json` named an npm package that does not exist. | Now the [documented](https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/) HTTP server. |
+| C7 | Stale comments: `.opencode` reference, `nav.ts` duplication note, "Astro v6". | Comments corrected. |
+| N2 | Images were shipped unresized (adapter bug, fixed in 14.2.0). | PR #18. |
+| N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |
+| N4 | Comments said prerendered pages cannot read `wrangler.jsonc` vars. They can: the adapter loads them at build (tested). | Comments and docs corrected. |
+| N8 (part) | `AGENTS.md` called the fonts API experimental. | Corrected. |
 
 ## Withdrawn
-- Footer entity wording ("Worker Self-Directed Non-Profit Digital LLC") is correct as written. Not a finding; do not re-raise.
+- Footer entity wording ("Worker Self-Directed Non-Profit Digital LLC") is correct as written. Do not re-raise.
+- Checking Turnstile's `action` and `hostname` on the server. Cloudflare's docs show it as optional; it is not a defect.

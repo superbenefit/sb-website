@@ -1,8 +1,10 @@
 # Planning session prompt
 
+Progress: Stage 1 done (`findings.md`). Stage 2 done (`architecture.md`). Stage 3 done (`design-handoff.md`); waiting on mockups. Dependency upgrade and Turnstile fix merged in PR #18.
+
 You are planning the relaunch of superbenefit.org. This session produces a plan, not code. Do not change application code. Write plan outputs to `docs/relaunch/` on this branch.
 
-Read first: `docs/relaunch/brief.md`, `findings.md` and `emdash-notes.md`, then `AGENTS.md`. Related repos: `superbenefit/design-system`, `superbenefit/knowledge-garden`, `superbenefit/governance-site`.
+Read first: `docs/relaunch/brief.md`, `architecture.md` and `findings.md`, then `AGENTS.md`. Related repos: `superbenefit/design-system`, `superbenefit/knowledge-garden`, `superbenefit/governance-site`.
 
 Work through five stages. Stop at the end of each and wait for my go-ahead.
 
