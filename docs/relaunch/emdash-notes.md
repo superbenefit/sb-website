@@ -1,6 +1,6 @@
 # EmDash notes
 
-Verified 2026-11-20 against EmDash docs and source at commit a8c417f (npm `emdash` 1.5.0). Re-verify against current docs before relying on any of it.
+Verified 2026-11-20 against EmDash docs and source at commit a8c417f. That commit is unreleased main; npm `emdash` 1.5.0 is tag 549c6b5, and the docs site tracks main. Re-verify against current docs before relying on any of it.
 
 ## Rendering: EmDash does not require SSR for site pages
 - A prerendered page runs `getEmDashCollection` / `getEmDashEntry` at build time; a server-rendered page runs it per request. (docs: concepts/architecture, guides/querying-content, why-emdash)
@@ -13,13 +13,13 @@ Verified 2026-11-20 against EmDash docs and source at commit a8c417f (npm `emdas
 - B. On demand + route cache: `cacheCloudflare()` from `@astrojs/cloudflare/cache`, `routeRules` with collection-name tags; EmDash purges `[collection, id]` tags on publish; cache hits do not run the Worker.
 - C. Mixed per route (likely choice).
 
-## Unverified, test in a spike
-- Build-time access to D1 content for prerendered pages. This repo sets `prerenderEnvironment: 'node'`, where the D1 binding is absent; a workerd prerender sees local D1 unless remote bindings are enabled. No EmDash doc found on this.
-- No documented publish-to-rebuild hook for option A.
-- Cloudflare Access auth adapter with the SIWE OIDC bridge.
+## Spike questions: resolved in `validation.md` (2026-11-20)
+- Build-time D1: works with the default `workerd` prerender on adapter 14.4.9; fails under `prerenderEnvironment: 'node'`. CI needs a remote binding and token.
+- Publish-to-rebuild: custom plugin on `content:afterPublish` posting to a Workers Builds Deploy Hook.
+- Cloudflare Access adapter works; the SIWE OIDC bridge is not viable for launch.
 
 ## Other integration facts
-- Needs `@astrojs/react` (admin UI), D1 `DB`, R2 `MEDIA`, `src/live.config.ts` with `emdashLoader()`, `EMDASH_ENCRYPTION_KEY`.
+- Needs `@astrojs/react` (admin UI), D1 `DB`, R2 `MEDIA`, KV `SESSION` (Astro sessions), `src/live.config.ts` with `emdashLoader()`. `EMDASH_ENCRYPTION_KEY` is only needed for plugin secrets. Set `EMDASH_SITE_URL` before setup.
 - Cloudflare template sets `main: src/worker.ts` with a `scheduled` handler plus a cron trigger for scheduled publishing.
 - First person to finish the setup wizard becomes admin; passkeys are bound to the setup hostname.
 - Sandboxed plugins need Dynamic Workers (Workers Paid).

@@ -1,6 +1,6 @@
 # Findings register (recon, 2026-11-20)
 
-Commit b643382. Read-only recon, not a full code audit. Each item needs validating against current docs before it becomes an issue.
+Commit b643382. Read-only recon, not a full code audit. Validated in `validation.md` (2026-11-20), which corrects S2, S4, S7 and C7 and adds N1 to N8.
 
 ## Security
 - S1 High: no security headers live; `public/_headers` deleted in 185e9a0 (Astro 7 upgrade).
