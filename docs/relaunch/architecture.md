@@ -38,14 +38,17 @@ Defined once in `seed/seed.json` ([seed files](https://docs.emdashcms.com/themes
 EmDash has no singleton type, so each fixed page is one `pages` entry looked up by slug. Site title, tagline, social handles and the AI-training opt-out live in [Site Settings](https://docs.emdashcms.com/guides/site-settings/); header and footer links in [Menus](https://docs.emdashcms.com/guides/menus/). Rich text is Portable Text rendered by EmDash's components, so `src/utils/sanitize.ts`, both loaders and the mock JSON are deleted.
 
 ## Auth
-[Cloudflare Access](https://docs.emdashcms.com/guides/authentication/#cloudflare-access) with GitHub as the identity provider. In code: `access({ teamDomain, audienceEnvVar: "CF_ACCESS_AUDIENCE", roleMapping })` with `defaultRole: 20` (Contributor), so nobody can publish without being mapped to Editor or Admin. The Access application on `/_emdash/*`, its policy and the GitHub identity provider are created by the owner in the dashboard (see Ownership).
+[Cloudflare Access](https://docs.emdashcms.com/guides/authentication/#cloudflare-access) with GitHub as the identity provider.
+- In code: `access({ teamDomain, audienceEnvVar: "CF_ACCESS_AUDIENCE", defaultRole: 20 })`. No `roleMapping`.
+- Who gets in is the Access policy, set by the owner in the dashboard.
+- Roles are managed inside EmDash, which is the documented default (`syncRoles: false`): the first person to sign in becomes Admin, everyone after starts as Contributor (drafts only), and an Admin promotes them to Editor in the admin panel.
 
 ## Security headers
-`_headers` does not apply to Worker responses ([docs](https://developers.cloudflare.com/workers/static-assets/headers/)), and every page is now a Worker response. So:
-- Astro middleware sets HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and `frame-ancestors` on public routes. `/_emdash/*` is left to EmDash.
-- `public/_headers` sets `X-Content-Type-Options` for static assets.
-- CSP through Astro's [`security.csp`](https://docs.astro.build/en/reference/configuration-reference/#securitycsp), allowing `challenges.cloudflare.com` for Turnstile. It does not support `<ClientRouter />`, so ClientRouter is removed and page transitions use the browser-native CSS `@view-transition`, which the [Astro docs](https://docs.astro.build/en/guides/view-transitions/) describe as the alternative. This also removes the class of bug behind the Turnstile fix.
+- EmDash's middleware already sets `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options: SAMEORIGIN` on every public route, and a strict CSP on `/_emdash/*` (source: `packages/core/src/astro/middleware.ts`, `middleware/csp.ts`). The site adds nothing on top.
+- HSTS is a zone setting, so it is an owner dashboard item.
+- No custom CSP on public pages at launch. EmDash's inline toolbar and bootstrap scripts need hashes under a strict policy ([configuration](https://docs.emdashcms.com/reference/configuration/)), so a public CSP is its own later issue, not part of the relaunch. `<ClientRouter />` stays.
 - JSON-LD comes from `<EmDashHead>`, which removes the unescaped `set:html` blocks (finding N1).
+- Images render through `<Image>` from `emdash/ui`. EmDash's image endpoint reads R2 directly, so images work for visitors even though `/_emdash/*` is behind Access ([`images` option](https://docs.emdashcms.com/reference/configuration/#images)).
 
 ## Environments and CI
 - `main` deploys to superbenefit.org through Workers Builds (already connected). Branches get Worker Previews with their own D1, R2 and KV in the `previews` block ([docs](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)). `superbenefit.dev` is the preview domain.
@@ -58,9 +61,8 @@ All Worker domain and Access settings are configured by a human in the Cloudflar
 ## Not decided by this page
 Copy, the services that survive, what to say about Pacto, canonical social links and the AI-crawler policy are content decisions for Stage 4. Fleet fixes (governance canonical, unidentified Workers) are last in the order.
 
-## Could not verify before building
-- Whether EmDash's admin sets its own CSP, and the exact hashes the toolbar needs.
-- Access in front of public media under `/_emdash/api/media/file/*`. The docs say image transforms keep working behind Access; a first-deploy check confirms it.
+## First-deploy checks
+The setup above is taken from the docs and source, not yet deployed. The first preview deploy runs the docs' own checklist: a public page, admin sign-in through Access, a media upload shown on a public page while signed out, and the cron in `wrangler tail`.
 
 ## Owner decisions (2026-11-20)
 1. Editors sign in through Access with GitHub.
@@ -69,4 +71,4 @@ Copy, the services that survive, what to say about Pacto, canonical social links
 4. `/about/` stays.
 5. `.dev` is the preview domain, set up by the owner. Domain and Access settings are dashboard-only (see Ownership).
 
-Still open: which GitHub org or teams map to Editor and Admin, and the Zero Trust team domain. Both are needed when the auth issue is built, not before.
+Owner dashboard items, each written into the issue that needs it: Access application on `/_emdash/*` with the GitHub identity provider and policy, the AUD tag as the `CF_ACCESS_AUDIENCE` secret, the Zero Trust team domain (a value for `astro.config.mjs`), HSTS, the www redirect, `.dev` preview domain, and Turnstile widget hostnames.
