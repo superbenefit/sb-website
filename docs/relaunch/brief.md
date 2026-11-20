@@ -20,7 +20,7 @@ Each gets a feature card and an overview page:
 - Institute for Community Sustainability (London, Ontario)
 
 ## Accelerator/supports vs services
-- **Accelerator and supports are the same thing and share one page.** The Nonprofit DAO Accelerator is the offer to cells; the supports (peer support: organizing, admin support, shared infrastructure) are what it consists of. Internal, no prices or SLAs. URL not yet confirmed; working assumption is `/accelerator/` with `/support` and `/supports` redirecting.
+- **Accelerator and supports are the same thing and share one page.** The Nonprofit DAO Accelerator is the offer to cells; the supports (peer support: organizing, admin support, shared infrastructure) are what it consists of. Internal, no prices or SLAs. URL is `/accelerator/`, with `/support` and `/supports` redirecting.
 - **Services page** (external, pairs with Local Capacity Building): deliverable- and SLA-focused work; training, experiment facilitation and similar. Pared down from the current three tiers.
 
 ## Content management
@@ -56,16 +56,16 @@ Astro 7.0.9, @astrojs/cloudflare 14, Tailwind 4, Wrangler 4. `output: 'server'`,
 2. Report real errors only. Do not flag wording or choices that are not wrong.
 3. Write plainly: specific names, numbers, dates and links.
 4. Keep these docs few and short. Update one instead of adding another.
+5. Worker domain and Access settings are configured by a human in the Cloudflare dashboard. Agents do not put them in config files or change them through the API.
 
 ## Answered
 - The SuperBenefit Cloudflare account is on Workers Paid (2026-11-20).
+- Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays. Editors sign in with GitHub through Access. `.dev` is the preview domain. See `architecture.md`.
 
 ## Open questions
 - Which services survive the cut, and are the $5,000 tiers and hour-based SLAs real?
 - What is Pacto, and what can be said publicly while the application is pending?
-- `/accelerator/` or `/supports/` as the page URL?
 - Who edits content after launch, and do they need a non-developer interface?
 - Canonical channels: which Discord invite, Paragraph or Mirror, X handle?
 - What are `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serving, and which are in scope?
-- Should the `.dev` domains be staging behind Access, or retired?
 - AI-crawler policy across the fleet: block, allow, or allow with attribution?
