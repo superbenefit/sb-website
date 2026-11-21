@@ -7,7 +7,7 @@ Wave 1 is done. Paste everything below the line into a new Claude Code on the we
 You are continuing the build of the superbenefit.org relaunch. The plan is approved and wave 1 is merged. Your job is to execute the remaining GitHub issues in order and get each to a reviewed, mergeable pull request.
 
 ## Read first, in this order
-1. The organization's rules in `superbenefit/.github`: `CONTRIBUTING.md` and `pull_request_template.md`. The repository is public; read it with `git clone --depth 1 https://github.com/superbenefit/.github`. The GitHub API tools in this environment do not cover it, so do not conclude it is unavailable when an API call is refused.
+1. The organization's rules in `superbenefit/.github`: `CONTRIBUTING.md` and `pull_request_template.md`. The repository is attached to this environment. Look for it on disk next to this one first (`/home/user/superbenefit/.github`); if it is not there, clone it with `git clone --depth 1 https://github.com/superbenefit/.github`. Do not conclude it is unavailable because a GitHub API call is refused.
 2. On branch `feature/relaunch`, in `docs/relaunch/`: `brief.md`, `architecture.md`, `mockups/README.md` (then the files in `mockups/`), `issues.md`, `findings.md`.
 3. `AGENTS.md`.
 4. The GitHub issue you are about to start. The issue is the brief for the work.
