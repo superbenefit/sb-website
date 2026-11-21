@@ -2,7 +2,7 @@
 
 Last updated 2026-11-20. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
 
-Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `design-handoff.md` (prompt for the design session), `issues.md` (the work, broken into issues), `planning-prompt.md` (the five planning stages).
+Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `mockups/` (the owner's design; start with its README), `issues.md` (the work, broken into issues), `design-handoff.md` (the prompt the design session was given), `session-handoff.md` (prompt to continue planning in a new session), `planning-prompt.md` (the five planning stages).
 
 ## Goal
 Get SuperBenefit's Cloudflare web properties complete, consistent and launched under one brand, starting with superbenefit.org (this repo).
@@ -29,7 +29,7 @@ Each gets a feature card and an overview page:
 Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. Set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`.
 
 ## Design
-A SuperBenefit design system exists at `superbenefit/design-system`. The current styling predates it and is due for a redesign, run as a separate design session whose mockups feed back into the plan.
+A SuperBenefit design system exists at `superbenefit/design-system`. The owner's mockups for the relaunch are in `mockups/` and are the design instructions: pages are built to match them.
 
 ## Content standard
 Overhaul all copy to remove AI slop and make real points directly.

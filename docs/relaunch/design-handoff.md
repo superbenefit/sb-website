@@ -1,6 +1,8 @@
-# Design session prompt
+# Design session prompt (used; mockups received 2026-11-21)
 
-Paste everything below the line into a new design session. The planning session could not read `superbenefit/design-system`, so the prompt tells the design session to read it first and to report anything that conflicts with what is written here.
+Kept as a record of what the design session was asked. The result is in `mockups/`, and the mockups, not this prompt, are the design instructions.
+
+Correction: this prompt told the design session "no carousels". That was not an owner requirement and should not have been in it. The owner's design includes an auto-advancing project selector on the home page, and it is built as designed.
 
 ---
 
@@ -48,7 +50,7 @@ Every page at 390 px and 1440 px wide. Content comes from a CMS (EmDash), so eac
 - **Tokens**: use the design system's tokens only. If a design needs a value that has no token, propose the token by name and value in your notes instead of using a one-off value.
 - **Accessibility**: WCAG 2.2 AA. Text contrast at least 4.5:1 (3:1 for large text). Visible keyboard focus on every interactive element. Pointer targets at least 24 × 24 px. One `<h1>` per page and no skipped heading levels. Nothing conveyed by colour alone, including project status. Every image has an alt text field.
 - **Motion**: CSS only. No JavaScript animation libraries. Scroll-driven effects use CSS `animation-timeline`, must degrade to a static page where it is unsupported, and must be off under `prefers-reduced-motion`.
-- **Performance**: at most two font families. No autoplaying video, no carousels, no background video. Every image has a fixed aspect ratio so the page does not shift while loading. Above-the-fold content must be readable without JavaScript.
+- **Performance**: at most two font families. No autoplaying video, no background video. Every image has a fixed aspect ratio so the page does not shift while loading. Above-the-fold content must be readable without JavaScript.
 - **Breakpoints**: 480, 768 and 1024 px, unless the design system defines its own.
 - **Caching**: pages are cached and shared between visitors. Do not design anything that differs per visitor, such as greetings, "recently viewed" or personalised recommendations.
 - **Content standard** (from `brief.md`): no values grids, no unattributed pull quotes, no decorative statistics. Do not design sections that only work with marketing filler.

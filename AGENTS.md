@@ -4,7 +4,7 @@ Public website for SuperBenefit — an Astro 7 site deployed to Cloudflare Worke
 
 ## Relaunch in progress
 
-The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `feature/relaunch` branch, not `main`. Read `docs/relaunch/brief.md` (goal and working rules), `architecture.md` (decided design) and `findings.md` (issue register) before changing anything. Two rules from the brief apply to every task:
+The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `feature/relaunch` branch, not `main`. Read `docs/relaunch/brief.md` (goal and working rules), `architecture.md` (decided design), `mockups/README.md` (the owner's design, which pages are built to match) and `issues.md` (the work) before changing anything. Two rules from the brief apply to every task:
 - Claims about Astro, EmDash or Cloudflare come from current official docs or source, with a link.
 - Worker domain and Cloudflare Access settings are configured by a human in the dashboard. Do not put them in config files or change them through the API.
 
