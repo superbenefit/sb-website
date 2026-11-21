@@ -11,8 +11,8 @@ Four things only a person can do or provide. Agents do not change Cloudflare dom
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
-| A5 | Protect this Worker's previews with Cloudflare Access (Previews only). The preview secrets are already set. | Previews on `superbenefit.dev` are public and indexable (checked 2026-11-21). The owner's first attempt in the dashboard failed with `access.api.error.conflict: a cloudflare connection already exists`. | must be done before B2 |
-| B3 | An Access application for `superbenefit.org/_emdash/*` with a policy for GitHub org members. The AUD tag of that application as the production secret `CF_ACCESS_AUDIENCE`, and the AUD tag of the previews application (A5) as the preview base secret of the same name. The Zero Trust team domain. | CMS sign-in goes through Access. The GitHub identity provider already exists. | B4 |
+| A5 | Confirm that a test message sends from the contact form on a preview created after the preview secrets were set. | Access on previews is on (previews redirect to sign-in, checked 2026-11-21) and the secrets are set. A preview that existed before the secrets were set does not receive them, so an older preview shows "CONTACT_EMAIL is not set". | C9 testing |
+| B3 | An Access application for `superbenefit.org/_emdash/*` with a policy for GitHub org members. The AUD tag of that application as the production secret `CF_ACCESS_AUDIENCE`, and the AUD tag of the previews application (A5) as the preview base secret of the same name. | CMS sign-in goes through Access. The GitHub identity provider already exists. The Zero Trust team domain is `superbenefit.cloudflareaccess.com` (seen in the Access sign-in redirect, 2026-11-21). | B4 |
 | D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
 | D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
 
@@ -53,7 +53,7 @@ Created at the owner's request. All previews share them. They go in the `preview
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
 | A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |
-| A5 | Owner: previews are behind Access. (Preview secrets: done.) | A signed-out visit to a preview URL asks for sign-in. A test message sends from the contact form on a preview. | none | Owner |
+| A5 | Owner: a test message sends from the contact form on a new preview. (Access on previews: done. Preview secrets: done.) | The message arrives. | none | Owner |
 
 ## B. CMS
 | # | Outcome | Accept when | Depends on | Size |
