@@ -18,7 +18,7 @@ Then `AGENTS.md` for the code as it stands.
 
 ## State
 - Merged into `feature/relaunch`: dependency upgrade and Turnstile fix (PR #18), architecture and design prompt (PR #19).
-- Check whether PR #20 (Stage 4 list, mockups, this file) is merged. If it is open, ask the owner before doing anything else.
+- PR #20 merged the first draft of the Stage 4 list. The mockups, the final list and this file came in the PR after it. Confirm `docs/relaunch/mockups/` exists on `feature/relaunch`; if it does not, that PR is still open, so ask the owner before doing anything else.
 - `main` still runs the old site. Nothing from the relaunch is in production.
 - No GitHub issues exist yet for this work.
 
