@@ -39,7 +39,9 @@ Then `AGENTS.md` for the code as it stands.
 - **Keep docs few and current.** Update an existing file instead of adding one. When a decision changes, fix every file that states the old one.
 
 ## Facts that are easy to get wrong
-- The Cloudflare account is on Workers Paid. R2 was not enabled on it on 2026-11-21.
+- The Cloudflare account is on Workers Paid, with R2 enabled.
+- Branch previews are Worker Previews on the owner's preview domain: `<branch-name>.superbenefit.dev`. `wrangler.jsonc` needs its `previews` block for them. HSTS is on and the preview hostname is allowed on the Turnstile widget.
+- Read the account before stating its condition. The Cloudflare tools can list D1, KV, R2 and Workers; a single failed call is not evidence that something is switched off.
 - Do not give the owner setup steps for things you cannot see. Ask what already exists first. The GitHub identity provider for Access already exists.
 - Workers Builds is connected: `main` deploys to production, every other branch gets a Version URL that runs against the production resources. The owner wants no preview-specific Cloudflare resources; do not add a `previews` block, switch to Worker Previews, or add Durable Objects (see `architecture.md`, Environments and CI). The production Turnstile key refuses preview hostnames until the owner allows them.
 - The Turnstile site key reaches the prerendered contact page from `vars` in `wrangler.jsonc` at build time.

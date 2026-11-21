@@ -18,5 +18,16 @@
   },
   "observability": {
     "enabled": true
+  },
+  // Settings for Worker Previews (branch builds). Previews do not use the
+  // top-level bindings, so the ones the Worker reads at runtime are repeated:
+  // https://developers.cloudflare.com/workers/previews/configuration/
+  "previews": {
+    "send_email": [
+      {
+        "name": "EMAIL",
+        "allowed_destination_addresses": ["contact@superbenefit.org"]
+      }
+    ]
   }
 }

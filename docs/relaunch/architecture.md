@@ -98,4 +98,4 @@ The setup above is taken from the docs and source, not yet deployed. The first b
 6. No preview-specific Cloudflare resources (2026-11-21). See Environments and CI.
 7. AI crawlers: block training, allow everything else. Projects awaiting acceptance are marked "Applicant".
 
-Owner items still open are listed at the top of `issues.md`: enabling R2, HSTS, the Turnstile preview hostname, the `.dev` preview domain, and the Access application with its AUD secret and team domain. The GitHub identity provider already exists, and www already redirects to the apex.
+Owner items still open are listed at the top of `issues.md`. Already in place: the GitHub identity provider, the www redirect, HSTS, the `.dev` preview domain and the Turnstile preview hostname.
