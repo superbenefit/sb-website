@@ -7,10 +7,11 @@ Nothing here has been created on GitHub yet. Each item is one outcome.
 - **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
 
 ## Needs the owner
-Three things only a person can do or provide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
+Four things only a person can do or provide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
+| B1 | The site's one database, bucket and session namespace, created once, with their IDs posted in the issue: `npx wrangler d1 create sb-website`, `npx wrangler r2 bucket create sb-website-media`, `npx wrangler kv namespace create sb-website-session`. | These are the site's permanent resources, not preview copies. Worker Previews bind to resources by ID, and Wrangler only creates them automatically on a production deploy, which does not happen until launch. | B2 |
 | B3 | Once the CMS is on a branch URL: an Access application for `/_emdash/*` on superbenefit.org and the preview hostname, with a policy allowing members of the GitHub org; its AUD tag saved with `npx wrangler secret put CF_ACCESS_AUDIENCE`; the team domain (`<name>.cloudflareaccess.com`) posted in the issue. The GitHub identity provider is already set up. | Sign-in to the CMS goes through Access. The planning session cannot see Zero Trust settings; if any of these already exist, say so in the issue. | B4 |
 | D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
 | D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
@@ -23,7 +24,7 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 - **Discord:** `https://discord.gg/DMezXT7UAt` everywhere. Already changed in the current code.
 - **AI crawlers:** block training, allow all other bots. In EmDash this is the "Disallow AI training" setting, on.
 - **Other Workers:** `docs` and `sb-auth` are for later and out of scope. `regen-toolkit` and `slc-advisor` have moved elsewhere.
-- **Preview resources:** none. One database, bucket and namespace for the site; branch builds use Version URLs. Details and trade-offs in `architecture.md`, Environments and CI.
+- **Preview resources:** none. One database, bucket and namespace for the site; Worker Previews bind to them by ID. Details and trade-offs in `architecture.md`, Environments and CI.
 - **GitHub sign-in:** the GitHub OAuth app and the Zero Trust identity provider already exist.
 - **Done by the owner in the dashboard (checked 2026-11-21):** HSTS is on (`max-age=15552000`); `superbenefit.dev` is the preview domain, so a branch preview is served at `<branch-name>.superbenefit.dev`; the preview hostname is allowed on the Turnstile widget. R2 is enabled on the account.
 
@@ -47,7 +48,8 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 ## B. CMS
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with one D1 database, R2 bucket and KV namespace and no `previews` block or Durable Object (see `architecture.md`, Environments and CI). Conflicting settings are removed. | Branch Version URL: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. Whether Wrangler provisioned the resources on `versions upload` is recorded in `architecture.md`. | none | L |
+| B1 | Owner: the site's database, bucket and session namespace exist, and their IDs are in the issue. | IDs posted. | none | Owner |
+| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with one D1 database, R2 bucket and KV namespace. The `previews` block binds the same three by ID (see `architecture.md`, Environments and CI). Conflicting settings are removed. | Branch preview at `<branch-name>.superbenefit.dev`: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. | B1 | L |
 | B3 | Owner: see "Needs the owner". | Values posted; visiting `/_emdash/admin` signed out redirects to GitHub. | B2 | Owner |
 | B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form recorded in `architecture.md`. | B3 | M |
 | B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | The admin shows all five content types with the fields in `architecture.md`. | B2 | M |
@@ -90,7 +92,7 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 
 ## Order
 1. Now, in parallel: A1 to A4, E1, E3, and the owner item D1.
-2. B2, then B5. B3 and B4 as soon as B2 is on a branch Version URL.
+2. B1, B2, then B5. B3 and B4 as soon as B2 is on a branch preview.
 3. C1, then C2. Then C3 to C10 in parallel. B6 after C1.
 4. C11, B7, D2 to D6.
 5. D7.

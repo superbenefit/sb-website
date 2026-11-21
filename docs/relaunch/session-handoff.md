@@ -43,7 +43,7 @@ Then `AGENTS.md` for the code as it stands.
 - Branch previews are Worker Previews on the owner's preview domain: `<branch-name>.superbenefit.dev`. `wrangler.jsonc` needs its `previews` block for them. HSTS is on and the preview hostname is allowed on the Turnstile widget.
 - Read the account before stating its condition. The Cloudflare tools can list D1, KV, R2 and Workers; a single failed call is not evidence that something is switched off.
 - Do not give the owner setup steps for things you cannot see. Ask what already exists first. The GitHub identity provider for Access already exists.
-- Workers Builds is connected: `main` deploys to production, every other branch gets a Version URL that runs against the production resources. The owner wants no preview-specific Cloudflare resources; do not add a `previews` block, switch to Worker Previews, or add Durable Objects (see `architecture.md`, Environments and CI). The production Turnstile key refuses preview hostnames until the owner allows them.
+- Workers Builds is connected: `main` deploys to production; every other branch is a Worker Preview at `<branch-name>.superbenefit.dev`. The owner wants no preview-specific Cloudflare resources, so previews bind to the site's one database, bucket and namespace by ID (see `architecture.md`).
 - The Turnstile site key reaches the prerendered contact page from `vars` in `wrangler.jsonc` at build time.
 - npm 11.19 blocks dependency install scripts until approved with `npm install-scripts approve`. `esbuild` and `workerd` are approved, pinned by version; a version bump needs re-approval.
 - docs.emdashcms.com describes unreleased `main`, ahead of npm. Check behaviour against the installed version.
