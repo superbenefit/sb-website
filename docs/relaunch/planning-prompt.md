@@ -1,6 +1,6 @@
 # Planning session prompt
 
-Progress: Stages 1 to 4 done. The 32 issues are on GitHub as superbenefit/sb-website issues 23 to 54, in the order of `issues.md` (A1 is 23, E3 is 54). Stage 5 not started. `session-handoff.md` continues from here.
+Progress: all five stages are done. The 32 issues are GitHub issues 23 to 54. The build is run from `execution-prompt.md`.
 
 You are planning the relaunch of superbenefit.org. This session produces a plan, not code. Do not change application code. Write plan outputs to `docs/relaunch/` on this branch.
 
