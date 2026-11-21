@@ -14,13 +14,15 @@ export const contact = defineAction({
       .string()
       .trim()
       .min(1, 'Name is required')
-      .max(120, 'Name must be 120 characters or fewer'),
+      .max(120, 'Name must be 120 characters or fewer')
+      .refine(hasNoLineBreak, 'Name cannot contain line breaks'),
     email: z.email({ message: 'Please enter a valid email address' }).trim().toLowerCase().max(200, 'Email must be 200 characters or fewer'),
     subject: z
       .string()
       .trim()
       .min(1, 'Subject is required')
-      .max(200, 'Subject must be 200 characters or fewer'),
+      .max(200, 'Subject must be 200 characters or fewer')
+      .refine(hasNoLineBreak, 'Subject cannot contain line breaks'),
     message: z
       .string()
       .trim()
@@ -47,28 +49,21 @@ export const contact = defineAction({
 
     // Production fail-fast: silently falling back to a default recipient
     // or test secret is a footgun (form appears to work, but mail goes to
-    // the wrong place and siteverify rejects real tokens). Throwing here
-    // surfaces the misconfiguration at request time, not silently in
-    // deployed traffic.
+    // the wrong place and siteverify rejects real tokens). Failing here
+    // surfaces the misconfiguration at request time. The detail goes to the
+    // Worker log; the visitor sees only GENERIC_FAULT.
     const recipient = env.CONTACT_EMAIL;
     if (!recipient) {
-      throw new ActionError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message:
-          'Server misconfiguration: CONTACT_EMAIL is not set. ' +
-          'Run `wrangler secret put CONTACT_EMAIL`.',
-      });
+      throw serverFault(
+        'CONTACT_EMAIL is not set. Run `wrangler secret put CONTACT_EMAIL`.',
+      );
     }
 
-    // ── Turnstile verification ──────────────────────────────────────
     const turnstileSecret = env.TURNSTILE_SECRET_KEY;
     if (!turnstileSecret) {
-      throw new ActionError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message:
-          'Server misconfiguration: TURNSTILE_SECRET_KEY is not set. ' +
-          'Run `wrangler secret put TURNSTILE_SECRET_KEY`.',
-      });
+      throw serverFault(
+        'TURNSTILE_SECRET_KEY is not set. Run `wrangler secret put TURNSTILE_SECRET_KEY`.',
+      );
     }
 
     const clientIp =
@@ -76,6 +71,25 @@ export const contact = defineAction({
       context.request.headers.get('x-forwarded-for') ??
       undefined;
 
+    // ── Rate limit per client IP ────────────────────────────────────
+    // `ratelimits` binding, configured in wrangler.jsonc (top level and
+    // `previews`). Counts are per Cloudflare location and approximate:
+    // https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
+    if (!env.CONTACT_RATE_LIMITER) {
+      throw serverFault('CONTACT_RATE_LIMITER binding is missing.');
+    }
+    const { success: underLimit } = await env.CONTACT_RATE_LIMITER.limit({
+      key: clientIp ?? 'unknown-ip',
+    });
+    if (!underLimit) {
+      throw new ActionError({
+        code: 'TOO_MANY_REQUESTS',
+        message:
+          'Too many messages from your network. Please wait a minute and try again.',
+      });
+    }
+
+    // ── Turnstile verification ──────────────────────────────────────
     const verifyBody = new URLSearchParams();
     verifyBody.set('secret', turnstileSecret);
     verifyBody.set('response', input['cf-turnstile-response']);
@@ -115,10 +129,7 @@ export const contact = defineAction({
 
     // ── Email send via Cloudflare Email Service ─────────────────────
     if (!env.EMAIL) {
-      throw new ActionError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Email service is not configured on this deployment.',
-      });
+      throw serverFault('EMAIL send_email binding is missing.');
     }
 
     const text = [
@@ -158,6 +169,21 @@ export const contact = defineAction({
     }
   },
 });
+
+/** Shown to visitors for any fault on our side; the detail is logged. */
+const GENERIC_FAULT =
+  'Something went wrong on our side. Please try again later or email us directly at contact@superbenefit.org.';
+
+/** Logs a server fault and returns the generic error for the visitor. */
+function serverFault(detail: string): ActionError {
+  console.error('[contact action] server fault:', detail);
+  return new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: GENERIC_FAULT });
+}
+
+/** CR or LF are not allowed in single-line fields (name, subject). */
+function hasNoLineBreak(s: string): boolean {
+  return !/[\r\n]/.test(s);
+}
 
 /** Minimal HTML escape for trusted internal interpolation. */
 function escapeHtml(s: string): string {

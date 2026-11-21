@@ -19,12 +19,12 @@ cp .env.example .env   # optional; leave KNOWLEDGE_API_URL blank to use mock dat
 ```
 
 - `npm run dev` — Start dev server (localhost:4321)
-- `npm run build` — Generate Worker types (`wrangler types`), then build to `dist/`
+- `npm run build` — Generate Worker types (`wrangler types`), type-check (`astro check`), then build to `dist/`. A type error fails the build
 - `npm run check` — Generate Worker types, then TypeScript and Astro validation
 - `npm run preview` — Preview built site locally
 - `npm run deploy` — Build + deploy to Cloudflare Workers via Wrangler
 
-No test runner or linter is configured. Workers Builds builds every branch and posts a preview URL on pull requests; `main` deploys to production.
+No test runner or linter is configured. Workers Builds is the only CI: it runs `npm run build` (which type-checks) on every branch and posts a preview URL on pull requests; `main` deploys to production.
 
 ## Gotchas
 
@@ -35,6 +35,7 @@ No test runner or linter is configured. Workers Builds builds every branch and p
 
 ### Rendering & Deployment
 - **Output mode**: `server` (SSR via Cloudflare Workers, with per-page `prerender` opt-in)
+- **URLs**: `trailingSlash: 'always'`. Internal links end in `/` (`/contact/`, not `/contact`); Workers static assets 307 the extensionless form to it
 - **Adapter**: `@astrojs/cloudflare`; Sharp optimizes images for prerendered pages at build time, and the Cloudflare Images binding serves any on-demand route
 - **Static assets**: Served from `dist` through the `ASSETS` binding (`wrangler.jsonc`). No custom security headers are set: there is no `public/_headers` file
 - **Every page is prerendered** (`export const prerender = true`), so the Worker only runs server actions such as the contact form
@@ -54,6 +55,9 @@ Hero → SectionDivider → MissionStatement → SectionDivider → InternalServ
 ### Contact Form (src/pages/contact.astro, src/actions/contact.ts)
 - An Astro server action validates the form, verifies the Cloudflare Turnstile token with `TURNSTILE_SECRET_KEY`, and sends the message through the `EMAIL` send-email binding to `CONTACT_EMAIL`
 - In production, `CONTACT_EMAIL` and `TURNSTILE_SECRET_KEY` are Worker secrets (`wrangler secret put …`); the recipient must also be listed in `send_email` in `wrangler.jsonc`
+- `name` and `subject` must not contain CR or LF; a line break returns a field error
+- The `CONTACT_RATE_LIMITER` [`ratelimits` binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/) allows 5 posts per client IP (`CF-Connecting-IP`) per 60 seconds and returns `TOO_MANY_REQUESTS` after that. Cloudflare counts per location and approximately. It is declared at the top level and again in `previews` (own `namespace_id`), because previews inherit no bindings
+- Server faults (an unset secret, a missing binding) show visitors one generic message; the detail is logged with `console.error`. Do not put configuration detail in an `ActionError` message: Astro sends it to the browser as is
 - `contact.astro` is prerendered, so the Turnstile site key is fixed at build time: `PUBLIC_TURNSTILE_SITE_KEY` from `.env` locally, otherwise from `vars` in `wrangler.jsonc`
 - Turnstile uses explicit rendering. The widget is rendered and the form handler attached on `astro:page-load`, and the widget is removed on `astro:before-swap`, because `<ClientRouter />` runs a page's bundled script only once per visit
 
@@ -81,7 +85,7 @@ All scroll-driven — no JavaScript animation libraries:
 ### Security
 - `src/utils/sanitize.ts` strips dangerous HTML from update content before rendering with `set:html` (`src/pages/updates/[...slug].astro`)
 - Loaders validate endpoint URLs (HTTPS, host allowlist)
-- The contact form is protected by Turnstile and length limits on every field
+- The contact form is protected by Turnstile, length limits on every field, a CR/LF check on `name` and `subject`, and a per-IP rate limit
 
 ## Code Style
 

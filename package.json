@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "astro dev",
     "check": "wrangler types && astro check",
-    "build": "wrangler types && astro build",
+    "build": "wrangler types && astro check && astro build",
     "preview": "astro preview",
-    "deploy": "wrangler types && astro build && wrangler deploy",
+    "deploy": "npm run build && wrangler deploy",
     "astro": "astro"
   },
   "dependencies": {

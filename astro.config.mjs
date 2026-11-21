@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
+  trailingSlash: 'always',
   integrations: [
     sitemap({
       filter: (page) =>

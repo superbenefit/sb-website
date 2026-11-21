@@ -9,4 +9,4 @@ export const mainNavLinks: NavLink[] = [
   { href: '/#services', label: 'Services' },
 ];
 
-export const contactNavLink: NavLink = { href: '/contact', label: 'Contact' };
+export const contactNavLink: NavLink = { href: '/contact/', label: 'Contact' };
