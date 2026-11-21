@@ -7,30 +7,34 @@ Nothing here has been created on GitHub yet. Each item is one outcome.
 - **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
 
 ## Needs the owner
-Six things only a person can do or provide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
+Five things only a person can do or provide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
-| A5 | In the Cloudflare dashboard: redirect www.superbenefit.org to the apex (301); turn on HSTS; attach `superbenefit.dev` as the preview domain; add the preview hostname to the Turnstile widget's allowed hostnames. | www returns 522 today. No security header is live. Turnstile refuses preview hostnames (error 110200), so the contact form cannot be tested before production. | C9 testing, D7 |
-| B3 | In Zero Trust: add GitHub as an identity provider; create an Access application for `/_emdash/*` on superbenefit.org and the preview hostname, with a policy allowing members of the GitHub org; save its AUD tag with `npx wrangler secret put CF_ACCESS_AUDIENCE`; post the team domain (`<name>.cloudflareaccess.com`) in the issue. | Sign-in to the CMS goes through Access. The team domain is a value in `astro.config.mjs`. | B4 |
-| D1a | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
-| D1b | One publishable sentence each for Pacto and Social Lean Canvas. | Both appear as projects with status "Applicant". | D4 |
-| D1c | The X handle (the site uses `SuperBenefitDAO`), and the URL for "Book an onboarding call" on the contact page, which links nowhere today. | They go in the footer and the contact page. | D2 |
+| B0 | Enable R2 on the Cloudflare account (dashboard, R2, one-time opt-in). | Listing the account's buckets on 2026-11-21 returned "Please enable R2 through the Cloudflare Dashboard". EmDash stores media in R2. | B2 |
+| A5 | Set HSTS to a real duration (SSL/TLS, Edge Certificates). Add the branch preview hostname to the Turnstile widget's allowed hostnames. Attach `superbenefit.dev` as the preview domain and report the hostname. | The site sends `strict-transport-security: max-age=0`, which tells browsers HSTS is off. Turnstile refuses preview hostnames (error 110200), so the contact form cannot be tested before production. | C9 testing, D7 |
+| B3 | Once the CMS is on a branch URL: an Access application for `/_emdash/*` on superbenefit.org and the preview hostname, with a policy allowing members of the GitHub org; its AUD tag saved with `npx wrangler secret put CF_ACCESS_AUDIENCE`; the team domain (`<name>.cloudflareaccess.com`) posted in the issue. The GitHub identity provider is already set up. | Sign-in to the CMS goes through Access. The planning session cannot see Zero Trust settings; if any of these already exist, say so in the issue. | B4 |
+| D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
 | D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
 
 Also needed later, with no decision involved: a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
 
 ## Answered by the owner (2026-11-21)
-- **Services:** the three in the mockups are real; the owner is redoing the offerings (D1a).
-- **Projects:** five. All In For Sport, DAO Primitives and the Institute for Community Sustainability are active. [Pacto](https://covenant-gov.github.io/pacto-app/) and [Social Lean Canvas](https://socialleancanvas.com/) are applicants.
-- **Discord:** `https://discord.gg/DMezXT7UAt` everywhere.
+- **Services:** the three in the mockups are real; the owner is redoing the offerings (D1).
+- **Projects:** five. All In For Sport, DAO Primitives and the Institute for Community Sustainability are active. [Pacto](https://covenant-gov.github.io/pacto-app/) and [Social Lean Canvas](https://socialleancanvas.com/) are applicants. Status values are active, applicant and past.
+- **Discord:** `https://discord.gg/DMezXT7UAt` everywhere. Already changed in the current code.
 - **AI crawlers:** block training, allow all other bots. In EmDash this is the "Disallow AI training" setting, on.
 - **Other Workers:** `docs` and `sb-auth` are for later and out of scope. `regen-toolkit` and `slc-advisor` have moved elsewhere.
 - **Preview resources:** none. One database, bucket and namespace for the site; branch builds use Version URLs. Details and trade-offs in `architecture.md`, Environments and CI.
+- **GitHub sign-in:** the GitHub OAuth app and the Zero Trust identity provider already exist.
 
 ## Decided, no input needed
 - The home page project selector is built as designed: it advances every 7 seconds with pause, previous and next. See `mockups/README.md`.
-- States the mockups do not show (form error, submitting, success, server error; empty lists) are built from the mockup tokens and components, and shown on the PR preview for review.
+- www.superbenefit.org returns 301 to the apex and keeps the path (checked 2026-11-21; it returned 522 on 2026-11-20). Nothing left to do.
+- The X handle stays `SuperBenefitDAO`, as on the current site.
+- "Book an onboarding call" has no URL. Its link is a CMS field, and the button is not rendered while the field is empty.
+- Pacto and Social Lean Canvas summaries are drafted from each project's own site and edited by a person with the rest of the copy (D3, D4).
+- States the mockups do not show (form error, submitting, success, server error; empty lists) are built from the mockup tokens and components, and shown on the branch preview for review.
 - The home page headings differ between the 1440 and 390 px mockups. Copy is settled in D3; the layout is the same.
 
 ## A. Hygiene and security
@@ -40,12 +44,13 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
 | A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |
-| A5 | Owner: see "Needs the owner". | `curl -I` shows 301 on www and the HSTS header on the apex. Turnstile issues a token on the preview. | none | Owner |
+| A5 | Owner: see "Needs the owner". | `curl -I` on the apex shows `strict-transport-security` with a non-zero `max-age`. Turnstile issues a token on the preview. | none | Owner |
 
 ## B. CMS
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with one D1 database, R2 bucket and KV namespace and no `previews` block or Durable Object (see `architecture.md`, Environments and CI). Conflicting settings are removed. | Branch Version URL: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. Whether Wrangler provisioned the resources on `versions upload` is recorded in `architecture.md`. | none | L |
+| B0 | Owner: R2 is enabled on the account. | Listing R2 buckets succeeds. | none | Owner |
+| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with one D1 database, R2 bucket and KV namespace and no `previews` block or Durable Object (see `architecture.md`, Environments and CI). Conflicting settings are removed. | Branch Version URL: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. Whether Wrangler provisioned the resources on `versions upload` is recorded in `architecture.md`. | B0 | L |
 | B3 | Owner: see "Needs the owner". | Values posted; visiting `/_emdash/admin` signed out redirects to GitHub. | B2 | Owner |
 | B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form recorded in `architecture.md`. | B3 | M |
 | B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | The admin shows all five content types with the fields in `architecture.md`. | B2 | M |
@@ -57,7 +62,7 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 | --- | --- | --- | --- | --- | --- |
 | C1 | Base layout and shared parts: new tokens, header, mobile menu, stripe, footer with both menus, closing band, buttons, status badge, page hero, wave divider. Head tags and JSON-LD come from `<EmDashHead>`. | every page; `mobile-menu-open` | Header, footer and band match at 390 and 1440 px. Menu edits in the admin show on the site. No `set:html` JSON-LD remains. | B5 | L |
 | C2 | Rich text renders every element: headings, lists, quote with attribution, image with caption, inline and block code, table, click-to-load video. | `update` | A test entry using every element matches at both widths. No request goes to the video host before play is pressed. | C1 | M |
-| C3 | Home page, including the project selector exactly as specified in `mockups/README.md`. | `home` | Matches at both widths. One `<h1>`. Selector behaviour matches each point in the README. With JavaScript off, the first project shows and all are reachable. | C1 | L |
+| C3 | Home page, including the project selector exactly as specified in `mockups/README.md`, with five projects. | `home` | Matches at both widths. One `<h1>`. Selector behaviour matches each point in the README. With JavaScript off, the first project shows and all are reachable. | C1 | L |
 | C4 | Accelerator page at `/accelerator/`; `/support` and `/supports` redirect to it. | `accelerator` | Matches. Both old paths return 301. | C1 | S |
 | C5 | Services page with deliverables lists and terms. | `services` | Matches with three services. | C1 | M |
 | C6 | Projects index and project page, with status, optional logo and related updates. | `projects`, `project` | Match. A project with no logo and one with no updates render cleanly. | C1, C2 | M |
@@ -72,7 +77,7 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 ## D. Content and launch
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| D1 | Owner: D1a to D1c in "Needs the owner". | Answers recorded in `brief.md`. | none | Owner |
+| D1 | Owner: the new service offerings (see "Needs the owner"). | Recorded in `brief.md`. | none | Owner |
 | D2 | Site settings, menus and the closing band are filled in, including the AI-training setting. | Footer and band show the canonical links. `/robots.txt` reflects the policy. | B5, D1 | S |
 | D3 | Copy for the six fixed pages is drafted to the content standard and edited by a person. | Each page is published by an Editor or Admin. | C3 to C9, D1 | M |
 | D4 | The five projects (three active, two applicants), the services and the four supports are entered with real logos, covers and alt text. | No placeholder text or image on any page. | C5, C6, D1 | M |

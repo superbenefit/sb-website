@@ -98,4 +98,4 @@ The setup above is taken from the docs and source, not yet deployed. The first b
 6. No preview-specific Cloudflare resources (2026-11-21). See Environments and CI.
 7. AI crawlers: block training, allow everything else. Projects awaiting acceptance are marked "Applicant".
 
-Owner dashboard items, each written into the issue that needs it: the Access application on `/_emdash/*` with the GitHub identity provider and policy, the AUD tag as the `CF_ACCESS_AUDIENCE` secret, the Zero Trust team domain (a value for `astro.config.mjs`), HSTS, the www redirect, the `.dev` preview domain, and Turnstile widget hostnames.
+Owner items still open are listed at the top of `issues.md`: enabling R2, HSTS, the Turnstile preview hostname, the `.dev` preview domain, and the Access application with its AUD secret and team domain. The GitHub identity provider already exists, and www already redirects to the apex.

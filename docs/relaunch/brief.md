@@ -47,7 +47,7 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 ## Fleet
 | Property | Worker | Notes |
 | --- | --- | --- |
-| superbenefit.org | sb-website | www returns 522 |
+| superbenefit.org | sb-website | www redirects to the apex (301) |
 | superbenefit.dev | same build | public copy |
 | knowledge.superbenefit.org / .dev | knowledge-garden | Knowledge Garden |
 | governance.superbenefit.org | governance-site | Starlight, Astro 5; canonical wrongly points to .dev |
@@ -72,7 +72,8 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - AI crawlers: block training, allow all other bots.
 - The three services on the old site are real; the owner is redoing the offerings.
 - Pacto and Social Lean Canvas are shown as applicants.
+- The GitHub OAuth app and Zero Trust identity provider already exist.
+- X handle stays `SuperBenefitDAO`. "Book an onboarding call" has no link yet; the button is hidden until an editor adds one.
 
 ## Open questions
 - The new service offerings (owner is redoing them).
-- X handle, and the "Book an onboarding call" link.

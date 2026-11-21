@@ -34,7 +34,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 - No `<h1>` on the homepage; title is "Make Better Faster".
 - Sitemap lists two URLs.
 - Extensionless URLs 307 to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)); internal links use the redirecting form.
-- www.superbenefit.org returns 522. Owner: redirect rule to the apex.
+- HSTS is switched off: the site sends `strict-transport-security: max-age=0` (checked 2026-11-21). Owner dashboard item.
 - Homepage has hidden links to noindexed drafts.
 - governance.superbenefit.org's canonical points to governance.superbenefit.dev (fleet).
 - `robots.txt` comments claim a Content-Signal that the file does not contain (N7).
