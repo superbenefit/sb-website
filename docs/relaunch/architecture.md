@@ -94,7 +94,7 @@ Two environments under one Worker, as Cloudflare's [Previews](https://developers
   - The setup wizard is still shown on an empty database under Access auth; the first person through Access after setup becomes Admin (`astro/middleware/auth.ts`).
   - Preview names: a `/` in the branch name becomes `-` (observed: branch `docs/stage-4-final` is served at `docs-stage-4-final.superbenefit.dev`). Cloudflare's docs do not state the rule.
   - To confirm on the first CMS preview: that setup succeeds there without `EMDASH_SITE_URL`. EmDash's guide says it fails with `SITE_URL_REQUIRED`; its configuration reference and source say a production build on Cloudflare Workers records its own hostname instead. If it fails, the Preview command passes the URL with `--var`, as the guide shows.
-- `wrangler.jsonc` today has the `previews` block with the `send_email` binding, which is all the current site reads at runtime.
+- `wrangler.jsonc` today has the `previews` block with the `send_email` and `ratelimits` bindings, which are all the current site reads at runtime.
 - GitHub Actions on every PR: `npm ci`, `npm run check`, `npm run build`, `npm audit --omit=dev`. Dependabot weekly for npm.
 - `compatibility_date` moves to the current date.
 

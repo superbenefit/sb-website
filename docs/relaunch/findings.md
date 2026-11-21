@@ -11,8 +11,6 @@ Recon at commit b643382 (2026-11-20), then validated the same day against curren
 | S3 | `src/utils/sanitize.ts` is bypassed by `<img/onerror=…>`, unquoted `href=javascript:`, `<form action>` and nested `<scr<script></script>ipt>` (all reproduced). | CMS build: file deleted; EmDash renders Portable Text. |
 | S4 | Mock update titles and the fake author "Alex Chen" are in the `<head>` of public pages such as `/updates/governance-primitives-web3/`. | CMS build: loaders and mock data deleted. |
 | S5 | Branch previews on `superbenefit.dev` are public and indexable; knowledge.superbenefit.dev is an unprotected public copy. The workers.dev URL is now off. | Owner: protect this Worker's previews with Access (A5). The knowledge copy belongs to the knowledge-garden repo. |
-| S6 | Server misconfiguration messages, including a `wrangler secret put` hint, are shown to visitors. | Own issue. |
-| S7 | Contact `subject` and `name` keep CR/LF; no rate limit beyond Turnstile. No classic header injection, because the email API takes structured fields. | Own issue: strip CR/LF, add a [`ratelimits` binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/). |
 | N1 | JSON-LD uses `set:html={JSON.stringify(…)}` (`SEO.astro:111`, `updates/[...slug].astro:48`). A title containing `</script>` breaks out ([docs](https://docs.astro.build/en/reference/directives-reference/#sethtml)). | CMS build: `<EmDashHead>` writes the JSON-LD. Must land before CMS content reaches these pages. |
 
 Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protections.
@@ -51,6 +49,8 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | --- | --- | --- |
 | S2 | 16 `npm audit` advisories, one critical (Sharp/AVIF, [GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)). | PR #18: all dependencies upgraded, 0 advisories. |
 | S6 (part) | `errorBanner.innerHTML = error.message`. | PR #18. |
+| S6 | Server misconfiguration messages, including a `wrangler secret put` hint, were shown to visitors. | A3 (#25): visitors get a generic message; the detail goes to the Worker log with `console.error`. |
+| S7 | Contact `subject` and `name` kept CR/LF; no rate limit beyond Turnstile. No classic header injection, because the email API takes structured fields. | A3 (#25): CR/LF in either field is a field error; a [`ratelimits` binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/) allows 5 posts per client IP per 60 seconds. |
 | S8 | `.mcp.json` named an npm package that does not exist. | Now the [documented](https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/) HTTP server. |
 | C11 (part) | `compatibility_date` was 2025-12-01. | A2 (#24): 2026-11-17, the newest date the installed local runtime (`workerd` 1.20261117.1, used by `astro preview`) supports. |
 | C7 | Stale comments: `.opencode` reference, `nav.ts` duplication note, "Astro v6". | Comments corrected. |
