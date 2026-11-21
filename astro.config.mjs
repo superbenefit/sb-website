@@ -1,22 +1,24 @@
-import { defineConfig, sessionDrivers, fontProviders } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
-import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import emdash from 'emdash/astro';
+import { d1, r2 } from '@emdash-cms/cloudflare';
 
+// EmDash on Cloudflare, as https://docs.emdashcms.com/deployment/cloudflare/
+// describes. No `siteUrl` here: production sets EMDASH_SITE_URL in
+// wrangler.jsonc `vars`, because a `siteUrl` is built into every preview.
+// No `sandboxRunner`: the site uses no marketplace, registry or sandboxed
+// plugins.
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
   trailingSlash: 'always',
   integrations: [
-    sitemap({
-      filter: (page) =>
-        ![
-          'https://superbenefit.org/about/',
-          'https://superbenefit.org/projects/',
-          'https://superbenefit.org/services/',
-          'https://superbenefit.org/support/',
-          'https://superbenefit.org/updates/',
-        ].some((draftPath) => page.startsWith(draftPath)),
+    react(), // Required: the admin UI is a React app
+    emdash({
+      database: d1({ binding: 'DB' }),
+      storage: r2({ binding: 'MEDIA' }),
     }),
   ],
   build: {
@@ -27,13 +29,7 @@ export default defineConfig({
     // https://docs.astro.build/en/reference/configuration-reference/#buildinlinestylesheets
     inlineStylesheets: 'always',
   },
-  adapter: cloudflare({
-    prerenderEnvironment: 'node',
-    // Use Sharp at build time for prerendered pages;
-    // Cloudflare Images binding handles any on-demand routes
-    imageService: { build: 'compile', runtime: 'cloudflare-binding' },
-  }),
-  session: { driver: sessionDrivers.lruCache() },
+  adapter: cloudflare(),
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   vite: { plugins: [tailwindcss()] },
   fonts: [

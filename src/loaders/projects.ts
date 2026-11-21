@@ -30,7 +30,7 @@ export function projectsLoader(options: ProjectsLoaderOptions = {}) {
           });
 
           if (response.ok) {
-            const projects = await response.json();
+            const projects = (await response.json()) as any[];
             store.clear();
 
             for (const project of projects) {

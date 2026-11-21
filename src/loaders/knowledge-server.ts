@@ -29,7 +29,7 @@ export function knowledgeServerLoader(options: KnowledgeServerOptions = {}) {
           });
 
           if (response.ok) {
-            const posts = await response.json();
+            const posts = (await response.json()) as any[];
             store.clear();
 
             for (const post of posts) {
