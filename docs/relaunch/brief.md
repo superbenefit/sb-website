@@ -42,7 +42,7 @@ Overhaul all copy to remove AI slop and make real points directly.
 - Agent-drafted copy gets a human edit before publish.
 
 ## Stack facts (`feature/relaunch`, after PR #18)
-Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScript 6, Node 24. `output: 'server'`, all pages prerendered; the Worker runs only the contact action (Turnstile + Cloudflare Email Service). Live on `main`: `/` and `/contact/`; other routes are noindexed "Coming soon" drafts. Workers Builds deploys `main` and previews every branch. No tests, lint or PR check.
+Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScript 6, Node 24. `output: 'server'`, all pages prerendered; the Worker runs only the contact action (Turnstile + Cloudflare Email Service). Live on `main`: `/` and `/contact/`; other routes are noindexed "Coming soon" drafts. Workers Builds deploys `main` and previews every branch. No tests or lint. GitHub Actions checks every PR; Dependabot is configured for weekly npm updates (A1) but runs only once `.github/dependabot.yml` is on `main`.
 
 ## Fleet
 | Property | Worker | Notes |

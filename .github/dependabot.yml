@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Version-update PRs go to the relaunch branch. Remove this line when
+    # feature/relaunch merges to main (D7). Dependabot reads this file only
+    # from the default branch (main).
+    target-branch: "feature/relaunch"

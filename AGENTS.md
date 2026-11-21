@@ -24,7 +24,7 @@ cp .env.example .env   # optional; leave KNOWLEDGE_API_URL blank to use mock dat
 - `npm run preview` — Preview built site locally
 - `npm run deploy` — Build + deploy to Cloudflare Workers via Wrangler
 
-No test runner or linter is configured. Workers Builds builds every branch and posts a preview URL on pull requests; `main` deploys to production.
+No test runner or linter is configured. GitHub Actions (`.github/workflows/check.yml`) runs `npm ci`, `npm run check`, `npm run build` and `npm audit --omit=dev` on every pull request, on the Node version in `.nvmrc` and the npm version in `packageManager`. Dependabot is configured (`.github/dependabot.yml`) for weekly npm updates against `feature/relaunch`, but is not running yet: GitHub reads that file only from the default branch (`main`), and it is not there. Workers Builds builds every branch and posts a preview URL on pull requests; `main` deploys to production.
 
 ## Gotchas
 
