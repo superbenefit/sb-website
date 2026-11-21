@@ -26,7 +26,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
 | C9 | `WebSite` schema has a `SearchAction` for a search that does not exist. | CMS build. |
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
-| C11 | `compatibility_date` is 2025-12-01. No PR check, tests, lint or Dependabot. Workers Builds does build and preview every branch. | Hygiene issue. |
+| C11 | No PR check, tests, lint or Dependabot. Workers Builds does build and preview every branch. | Hygiene issue. |
 | N5 | The `assets` block in `wrangler.jsonc` is ignored; the adapter generates its own. | CMS build. |
 | N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
 
@@ -52,6 +52,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | S2 | 16 `npm audit` advisories, one critical (Sharp/AVIF, [GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)). | PR #18: all dependencies upgraded, 0 advisories. |
 | S6 (part) | `errorBanner.innerHTML = error.message`. | PR #18. |
 | S8 | `.mcp.json` named an npm package that does not exist. | Now the [documented](https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/) HTTP server. |
+| C11 (part) | `compatibility_date` was 2025-12-01. | A2 (#24): 2026-11-17, the newest date the installed local runtime (`workerd` 1.20261117.1, used by `astro preview`) supports. |
 | C7 | Stale comments: `.opencode` reference, `nav.ts` duplication note, "Astro v6". | Comments corrected. |
 | N2 | Images were shipped unresized (adapter bug, fixed in 14.2.0). | PR #18. |
 | N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |
