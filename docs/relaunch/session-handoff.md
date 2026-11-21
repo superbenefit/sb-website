@@ -4,7 +4,7 @@ Paste everything below the line into a new session opened on `superbenefit/sb-we
 
 ---
 
-You are continuing the planning of the superbenefit.org relaunch. Stages 1 to 3 are done and Stage 4 is drafted. This session finishes Stage 4 and does Stage 5. It produces GitHub issues and one prompt. It does not write application code.
+You are continuing the planning of the superbenefit.org relaunch. Stages 1 to 3 are done and Stage 4 is drafted. Stage 4 is finished; this session does Stage 5. It produces one prompt. It does not write application code.
 
 ## Read first, in this order
 All on branch `feature/relaunch`, in `docs/relaunch/`:
@@ -17,16 +17,14 @@ All on branch `feature/relaunch`, in `docs/relaunch/`:
 Then `AGENTS.md` for the code as it stands.
 
 ## State
-- Merged into `feature/relaunch`: dependency upgrade and Turnstile fix (PR #18), architecture and design prompt (PR #19), first draft of the Stage 4 list (PR #20).
-- PR #22 holds the mockups, the final issue list, the Worker Previews `previews` block and this file. Confirm `docs/relaunch/mockups/` exists on `feature/relaunch`; if it does not, #22 is still open, so ask the owner before doing anything else.
+- Merged into `feature/relaunch`: dependency upgrade and Turnstile fix (PR #18), architecture and design prompt (PR #19), mockups, issue list and Worker Previews setup (PRs #20 and #22).
+- The owner approved the issue list on 2026-11-21. The 32 issues exist on GitHub as issues 23 to 54, in the order of `issues.md` (A1 is 23, E3 is 54). Do not create them again.
 - `main` still runs the old site. Nothing from the relaunch is in production.
 - Branch previews work: each branch is served at `<branch-name>.superbenefit.dev`.
-- No GitHub issues exist yet for this work. The owner has not yet approved `issues.md`.
-- Open owner items are at the top of `issues.md`.
+- Open owner items are at the top of `issues.md` and in the issues titled "Owner - ...".
 
 ## What to do
-1. **Finish Stage 4.** If the owner has approved `issues.md`, create one GitHub issue per item in `superbenefit/sb-website`. Use the item's id and outcome as the title (for example "C3: Home page"). In the body put the outcome, the mockup files, the acceptance check, how to verify, dependencies as issue links, and size. Label owner items so they are easy to find. For owner items, copy the full row from "Needs the owner" so the issue stands alone. Create them in the order in `issues.md` so dependency links resolve. Report the list of created issues with links.
-2. **Stage 5.** Ask which coding harness the owner uses if it changes the prompt. Then write the prompt for that harness to execute the issues: the order, which can run in parallel, branch and PR conventions, the check that must pass before each issue closes, and when to stop and ask the owner. Put it in `docs/relaunch/` through a PR.
+**Stage 5.** Ask which coding harness the owner uses if it changes the prompt. Then write the prompt for that harness to execute the issues: the order, which can run in parallel, branch and PR conventions, the check that must pass before each issue closes, and when to stop and ask the owner. Put it in `docs/relaunch/` through a PR.
 
 ## Rules the owner has set. Follow them exactly.
 - **Official docs only.** Every claim about Astro, EmDash, Cloudflare or any tool comes from current official docs or source read in the session, with a link. Use the documented pattern. Do not invent rules, pinning strategies or workarounds. If you have not read it, say so.
