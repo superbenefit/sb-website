@@ -2,7 +2,7 @@
 
 Last updated 2026-11-20. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
 
-Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `design-handoff.md` (prompt for the design session), `planning-prompt.md` (the five planning stages).
+Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `design-handoff.md` (prompt for the design session), `issues.md` (the work, broken into issues), `planning-prompt.md` (the five planning stages).
 
 ## Goal
 Get SuperBenefit's Cloudflare web properties complete, consistent and launched under one brand, starting with superbenefit.org (this repo).
