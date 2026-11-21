@@ -1,6 +1,6 @@
 # Stage 4: issue list (2026-11-21)
 
-Nothing here has been created on GitHub yet. Each item is one outcome.
+Approved by the owner on 2026-11-21 and created on GitHub as superbenefit/sb-website issues 23 to 54, in this order (A1 is 23, E3 is 54). Each item is one outcome.
 
 - **Sizes:** S is under half a day, M about a day, L two to three days.
 - **Every code issue** is one branch and one PR into `feature/relaunch`. It closes when `npm run check` and `npm run build` pass and the Workers Builds preview shows the stated result.

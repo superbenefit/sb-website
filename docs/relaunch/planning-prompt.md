@@ -1,6 +1,6 @@
 # Planning session prompt
 
-Progress: Stage 1 done (`findings.md`). Stage 2 done (`architecture.md`). Stage 3 done; mockups received 2026-11-21 and stored in `mockups/`. Stage 4 list is in `issues.md`; issues are not yet created on GitHub. Stage 5 not started. `session-handoff.md` continues from here. Dependency upgrade and Turnstile fix merged in PR #18.
+Progress: Stages 1 to 4 done. The 32 issues are on GitHub as superbenefit/sb-website issues 23 to 54, in the order of `issues.md` (A1 is 23, E3 is 54). Stage 5 not started. `session-handoff.md` continues from here.
 
 You are planning the relaunch of superbenefit.org. This session produces a plan, not code. Do not change application code. Write plan outputs to `docs/relaunch/` on this branch.
 
