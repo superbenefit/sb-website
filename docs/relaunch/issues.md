@@ -7,7 +7,7 @@ Approved by the owner on 2026-11-21 and created on GitHub as superbenefit/sb-web
 - **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
 
 ## Needs the owner
-Four things only a person can do or provide. Agents do not change Cloudflare domain or Access settings.
+Five things only a person can do or decide. Agents do not change Cloudflare domain or Access settings.
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
@@ -15,11 +15,12 @@ Four things only a person can do or provide. Agents do not change Cloudflare dom
 | B3 | An Access application for `superbenefit.org/_emdash/*` with a policy for GitHub org members. The AUD tag of that application as the production secret `CF_ACCESS_AUDIENCE`, and the AUD tag of the previews application (A5) as the preview base secret of the same name. | CMS sign-in goes through Access. The GitHub identity provider already exists. The Zero Trust team domain is `superbenefit.cloudflareaccess.com` (seen in the Access sign-in redirect, 2026-11-21). | B4 |
 | D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
 | D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
+| T1 | Decide how to resolve finding T1: `trailingSlash: 'always'` (A4) breaks every `/_emdash/` URL without a trailing slash, which the EmDash admin uses. Astro's default `'ignore'` worked locally. | Raised by B2 on 2026-11-21; see `findings.md`. | B2 acceptance |
 
 Also needed later, with no decision involved: a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
 
 ## Staging resources for previews (created 2026-11-21)
-Created at the owner's request. All previews share them. They go in the `previews` block of `wrangler.jsonc` when EmDash is installed (B2).
+Created at the owner's request. All previews share them. They are bound in the `previews` block of `wrangler.jsonc` since B2.
 
 | Binding | Kind | Name | ID |
 | --- | --- | --- | --- |

@@ -8,14 +8,14 @@ The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `featu
 - Claims about Astro, EmDash or Cloudflare come from current official docs or source, with a link.
 - Worker domain and Cloudflare Access settings are configured by a human in the dashboard. Do not put them in config files or change them through the API.
 
-The sections below describe the code as it is today, before EmDash is installed.
+EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/` (blocked by `trailingSlash: 'always'` until finding T1 in `docs/relaunch/findings.md` is decided), but the public pages do not read EmDash content yet. The sections below describe the code as it is today.
 
 ## Commands
 
 **Setup** (first time):
 ```bash
 npm install
-cp .env.example .env   # optional; leave KNOWLEDGE_API_URL blank to use mock data; holds local test keys for the contact form
+cp .env.example .env   # leave KNOWLEDGE_API_URL blank to use mock data; holds local test keys for the contact form and the local EMDASH_SITE_URL
 ```
 
 - `npm run dev` — Start dev server (localhost:4321)
@@ -29,16 +29,20 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 ## Gotchas
 
 - **Dev server holds stdin** — Run `npm run dev` in a dedicated background process. Do not chain it with other commands or the shell will appear unresponsive.
-- **Draft pages** — `/about`, `/projects`, `/services`, `/support` and `/updates/*` set `pageIsDraft = true`: they render fully in `npm run dev` but show a "Coming soon" placeholder in production builds, and `astro.config.mjs` leaves them out of the sitemap. To ship one, set `pageIsDraft = false` and remove its path from the sitemap filter. The finished routes are `/`, `/contact`, `/404` and `/500`.
+- **Draft pages** — `/about`, `/projects`, `/services`, `/support` and `/updates/*` set `pageIsDraft = true`: they render fully in `npm run dev` but show a "Coming soon" placeholder in production builds. The finished routes are `/`, `/contact`, `/404` and `/500`.
+- **Local CMS setup** — `wrangler.jsonc` sets `EMDASH_SITE_URL=https://superbenefit.org` and local dev reads it, so `.env` must set `EMDASH_SITE_URL=http://localhost:4321` (as `.env.example` does) or the setup wizard's passkey fails. The local database, bucket and sessions live in `.wrangler/state`.
+- **Generated files** — `wrangler types` writes `worker-configuration.d.ts`; builds write `.emdash/migrations.json`; `npm run dev` writes `emdash-env.d.ts`. None are edited by hand.
 
 ## Architecture
 
 ### Rendering & Deployment
 - **Output mode**: `server` (SSR via Cloudflare Workers, with per-page `prerender` opt-in)
 - **URLs**: `trailingSlash: 'always'`. Internal links end in `/` (`/contact/`, not `/contact`); Workers static assets 307 the extensionless form to it
-- **Adapter**: `@astrojs/cloudflare`; Sharp optimizes images for prerendered pages at build time, and the Cloudflare Images binding serves any on-demand route
-- **Static assets**: Served from `dist` through the `ASSETS` binding (`wrangler.jsonc`). No custom security headers are set: there is no `public/_headers` file
-- **Every page is prerendered** (`export const prerender = true`), so the Worker only runs server actions such as the contact form
+- **Adapter**: `@astrojs/cloudflare` with no options; images are transformed through the Cloudflare Images (`IMAGES`) binding, at build for prerendered pages and on demand otherwise. The adapter also adds the `SESSION` KV binding and the static assets config to the Wrangler config it generates (`dist/server/wrangler.json`)
+- **Worker entry**: `src/worker.ts`, EmDash's documented entry: Astro's handler, the co-editing room classes and the `scheduled` handler for the every-minute Cron Trigger (scheduled publishing, maintenance)
+- **CMS**: EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`), configured in `astro.config.mjs` and `wrangler.jsonc` as `docs/relaunch/architecture.md` describes. Admin and API under `/_emdash/`; `/sitemap.xml` and `/robots.txt` come from EmDash. Branch previews bind the shared staging resources in the `previews` block
+- **Static assets**: Served from `dist/client`. No custom security headers are set: there is no `public/_headers` file
+- **Every page is prerendered** (`export const prerender = true`), so the Worker runs only server actions such as the contact form, and EmDash's admin and API
 - **Styles**: all component CSS is inlined into the HTML (`build.inlineStylesheets: 'always'`)
 
 ### Content Collections & Data Loading
@@ -79,6 +83,7 @@ All scroll-driven — no JavaScript animation libraries:
 
 ### TypeScript
 - Strict mode with `strictNullChecks`
+- Worker runtime and binding types come from `wrangler types` (`worker-configuration.d.ts`, listed in `tsconfig.json` `types`); secrets are declared in `src/env.d.ts`
 - Path aliases: `@components/*`, `@layouts/*`, `@styles/*`, `@loaders/*`
 - Requires Node.js >= 22.23.4 (Astro 7.4 minimum); `.nvmrc` selects Node 24
 

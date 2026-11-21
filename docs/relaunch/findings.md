@@ -18,23 +18,23 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### Code
 | ID | Finding | Resolved by |
 | --- | --- | --- |
-| C1, C2 | Draft gating is duplicated across six pages and again in the sitemap filter. | CMS build: EmDash draft status. |
+| C1, C2 | Draft gating is duplicated across six pages. | CMS build: EmDash draft status. |
 | C3, C4 | Two near-identical loaders; a production build with no content source silently ships mock data. | CMS build. |
 | C5 | `projects.astro` hardcodes its projects and ignores the collection. | CMS build. |
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
 | C9 | `WebSite` schema has a `SearchAction` for a search that does not exist. | CMS build. |
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
 | C11 | No tests, lint or Dependabot. Workers Builds builds, type-checks and previews every branch (A1). | Dependabot: decided at launch. |
-| N5 | The `assets` block in `wrangler.jsonc` is ignored; the adapter generates its own. | CMS build. |
 | N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
+| T1 | With `trailingSlash: 'always'` (A4), the EmDash admin does not work: `/_emdash/admin/` redirects to `/_emdash/admin/setup`, which returns 404, and `/_emdash/api/setup/status` returns 404 while `/_emdash/api/setup/status/` returns 200 (local `astro preview`, EmDash 1.5.0, 2026-11-21). Astro skips its trailing-slash redirect for paths starting with `/_` (`isInternalPath` in `@astrojs/internal-helpers`) but still matches routes against the setting. With Astro's default `trailingSlash: 'ignore'` the wizard, sign-in and a media upload all worked. | Owner decision: change A4's setting, or another fix. Blocks B2 acceptance. |
 
 ### SEO
 - No `<h1>` on the homepage; title is "Make Better Faster".
-- Sitemap lists two URLs.
+- `/sitemap.xml` comes from EmDash since B2 and lists nothing until pages read EmDash content.
 - `404.html` and `500.html` set their canonical to `/404/` and `/500/`, which 307 to `/404` and `/500` (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/) serves a file asset without the slash). The canonical comes from `Astro.url.pathname` in `SEO.astro`; it was the same before A4.
 - Homepage has hidden links to noindexed drafts.
 - governance.superbenefit.org's canonical points to governance.superbenefit.dev (fleet).
-- `robots.txt` comments claim a Content-Signal that the file does not contain (N7).
+- `/robots.txt` comes from EmDash since B2. Until the "Disallow AI training" setting is on (D2) it no longer lists the AI training crawlers the old `public/robots.txt` blocked.
 - No analytics.
 - Not checked: the claim that the brand query "SuperBenefit DAO" surfaces Notion, Flowershow and Goverland ahead of superbenefit.org.
 
@@ -54,6 +54,8 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C11 (part) | `compatibility_date` was 2025-12-01. | A2 (#24): 2026-11-17, the newest date the installed local runtime (`workerd` 1.20261117.1, used by `astro preview`) supports. |
 | C7 | Stale comments: `.opencode` reference, `nav.ts` duplication note, "Astro v6". | Comments corrected. |
 | N2 | Images were shipped unresized (adapter bug, fixed in 14.2.0). | PR #18. |
+| N5 | The `assets` block in `wrangler.jsonc` was ignored; the adapter generates its own. | B2 (#29): block removed. |
+| N7 | `public/robots.txt` comments claimed a Content-Signal the file did not contain. | B2 (#29): file removed; EmDash serves `/robots.txt`. |
 | N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |
 | N4 | Comments said prerendered pages cannot read `wrangler.jsonc` vars. They can: the adapter loads them at build (tested). | Comments and docs corrected. |
 | N8 (part) | `AGENTS.md` called the fonts API experimental. | Corrected. |
