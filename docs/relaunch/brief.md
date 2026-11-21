@@ -18,7 +18,8 @@ Current themes: local impact, local data, local AI, sovereign tech, worker coope
 Each gets a feature card and an overview page:
 - All In For Sport (allinforsport.org)
 - DAO Primitives
-- Pacto (application pending)
+- Pacto (applicant; https://covenant-gov.github.io/pacto-app/)
+- Social Lean Canvas (applicant; https://socialleancanvas.com/)
 - Institute for Community Sustainability (London, Ontario)
 
 ## Accelerator/supports vs services
@@ -51,7 +52,9 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 | knowledge.superbenefit.org / .dev | knowledge-garden | Knowledge Garden |
 | governance.superbenefit.org | governance-site | Starlight, Astro 5; canonical wrongly points to .dev |
 | allinforsport.org | aifs-site | Astro 6 |
-| unidentified hostnames | knowledge-server, governance-server, sb-auth, docs, regen-toolkit, slc-advisor | |
+| other Workers | knowledge-server, governance-server | not identified |
+| out of scope | docs, sb-auth | for later use; ignore for now |
+| moved elsewhere | regen-toolkit, slc-advisor | |
 
 ## Working rules
 1. Verify before asserting. Claims about Astro, EmDash, Cloudflare or any tool come from current official docs or source, with a link. Say plainly what you could not verify.
@@ -64,11 +67,12 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - The Cloudflare account is on Workers Paid.
 - Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays.
 - Editors sign in with GitHub through Cloudflare Access: org members as Contributors, the "Web Admins" team as Admins. Editors use the EmDash admin, so no developer is needed to publish.
-- `.dev` is the preview domain.
+- `.dev` is the preview domain. No preview-specific Cloudflare resources: one database, bucket and namespace for the site.
+- Discord invite everywhere: `https://discord.gg/DMezXT7UAt`.
+- AI crawlers: block training, allow all other bots.
+- The three services on the old site are real; the owner is redoing the offerings.
+- Pacto and Social Lean Canvas are shown as applicants.
 
 ## Open questions
-- Which services survive the cut, and are the $5,000 tiers and hour-based SLAs real?
-- What is Pacto, and what can be said publicly while the application is pending?
-- Canonical channels: which Discord invite, Paragraph or Mirror, X handle?
-- What are `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serving, and which are in scope?
-- AI-crawler policy across the fleet: block, allow, or allow with attribution?
+- The new service offerings (owner is redoing them).
+- X handle, and the "Book an onboarding call" link.

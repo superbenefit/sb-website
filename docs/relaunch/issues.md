@@ -7,20 +7,26 @@ Nothing here has been created on GitHub yet. Each item is one outcome.
 - **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
 
 ## Needs the owner
-Eight things only a person can do or decide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
+Six things only a person can do or provide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
-| A5 | In the Cloudflare dashboard: redirect www.superbenefit.org to the apex (301); turn on HSTS; attach `superbenefit.dev` as the preview domain; add the preview hostname to the Turnstile widget's allowed hostnames. | www returns 522 today. No security header is live. Turnstile refuses preview hostnames (error 110200), so the contact form cannot be tested before it reaches production. | C9 testing, D7 |
-| B1 | Create three preview resources and post their IDs in the issue: `npx wrangler d1 create sb-website-preview`, `npx wrangler r2 bucket create sb-website-media-preview`, `npx wrangler kv namespace create sb-website-preview-session`. | EmDash previews must not use production data. Wrangler needs the IDs in `wrangler.jsonc`. | B2 and everything after it |
-| B3 | In Zero Trust: add GitHub as an identity provider; create an Access application for `superbenefit.org/_emdash/*` (and the preview hostname) with a policy allowing members of the GitHub org; save its AUD tag with `npx wrangler secret put CF_ACCESS_AUDIENCE`; post the team domain (`<name>.cloudflareaccess.com`) in the issue. | Sign-in to the CMS goes through Access. The team domain is a value in `astro.config.mjs`. | B4 |
-| D1a | Confirm or correct the three services and their terms. The mockups show: Sensemaking and network weaving (annual retainer, from $5,000 a year); Project co-stewardship (quarterly, from $5,000 a quarter); Digital commons development (per engagement, from $5,000). | These prices and terms came from the old site and may not be real. They will be published. | D3, D4 |
-| D1b | Say what may be published about Pacto while its application is pending. The mockups list it with status "pending" and no summary. | It appears on the home and projects pages. | D4 |
-| D1c | Give the canonical links: Discord invite (the site uses `discord.gg/q95fFXGu67`; another property uses `d2EeszTvVm`), X handle (the site uses `SuperBenefitDAO`), and the URL for "Book an onboarding call" on the contact page, which links nowhere today. | They go in the footer and the closing band on every page. | D2, E3 |
-| D1d | AI crawlers: allow, or ask them not to train on the site. EmDash has one setting for this; when on, it adds `Content-Signal: search=yes, ai-train=no` and blocks known training crawlers in `robots.txt`. Search engines are unaffected either way. | It is a site setting to fill in before launch. | D2 |
-| E2 | Say what the Workers `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serve, and which are in scope. | They are in the Cloudflare account and nobody has identified them. | E3 |
+| A5 | In the Cloudflare dashboard: redirect www.superbenefit.org to the apex (301); turn on HSTS; attach `superbenefit.dev` as the preview domain; add the preview hostname to the Turnstile widget's allowed hostnames. | www returns 522 today. No security header is live. Turnstile refuses preview hostnames (error 110200), so the contact form cannot be tested before production. | C9 testing, D7 |
+| B3 | In Zero Trust: add GitHub as an identity provider; create an Access application for `/_emdash/*` on superbenefit.org and the preview hostname, with a policy allowing members of the GitHub org; save its AUD tag with `npx wrangler secret put CF_ACCESS_AUDIENCE`; post the team domain (`<name>.cloudflareaccess.com`) in the issue. | Sign-in to the CMS goes through Access. The team domain is a value in `astro.config.mjs`. | B4 |
+| D1a | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
+| D1b | One publishable sentence each for Pacto and Social Lean Canvas. | Both appear as projects with status "Applicant". | D4 |
+| D1c | The X handle (the site uses `SuperBenefitDAO`), and the URL for "Book an onboarding call" on the contact page, which links nowhere today. | They go in the footer and the contact page. | D2 |
+| D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
 
-Also needed from the owner later, with no decision involved: real project logos and cover images with alt text (D4), a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
+Also needed later, with no decision involved: a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
+
+## Answered by the owner (2026-11-21)
+- **Services:** the three in the mockups are real; the owner is redoing the offerings (D1a).
+- **Projects:** five. All In For Sport, DAO Primitives and the Institute for Community Sustainability are active. [Pacto](https://covenant-gov.github.io/pacto-app/) and [Social Lean Canvas](https://socialleancanvas.com/) are applicants.
+- **Discord:** `https://discord.gg/DMezXT7UAt` everywhere.
+- **AI crawlers:** block training, allow all other bots. In EmDash this is the "Disallow AI training" setting, on.
+- **Other Workers:** `docs` and `sb-auth` are for later and out of scope. `regen-toolkit` and `slc-advisor` have moved elsewhere.
+- **Preview resources:** none. One database, bucket and namespace for the site; branch builds use Version URLs. Details and trade-offs in `architecture.md`, Environments and CI.
 
 ## Decided, no input needed
 - The home page project selector is built as designed: it advances every 7 seconds with pause, previous and next. See `mockups/README.md`.
@@ -39,11 +45,10 @@ Also needed from the owner later, with no decision involved: real project logos 
 ## B. CMS
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| B1 | Owner: see "Needs the owner". | IDs posted. | none | Owner |
-| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with the `previews` block. Conflicting settings are removed (list in `architecture.md`). | Preview: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays, the cron appears in `wrangler tail`. | B1 | L |
+| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with one D1 database, R2 bucket and KV namespace and no `previews` block or Durable Object (see `architecture.md`, Environments and CI). Conflicting settings are removed. | Branch Version URL: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. Whether Wrangler provisioned the resources on `versions upload` is recorded in `architecture.md`. | none | L |
 | B3 | Owner: see "Needs the owner". | Values posted; visiting `/_emdash/admin` signed out redirects to GitHub. | B2 | Owner |
 | B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form recorded in `architecture.md`. | B3 | M |
-| B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | A fresh preview database shows all five content types with the fields in `architecture.md`. | B2 | M |
+| B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | The admin shows all five content types with the fields in `architecture.md`. | B2 | M |
 | B6 | Workers Cache is on, with one route rule per public route tagged by collection. | A second request to a page is a cache hit. Publishing an edit shows on the public page within a minute. A draft preview link shows unpublished content. | B5, C1 | M |
 | B7 | Legacy content code is gone: both loaders, mock JSON, `content.config.ts`, `sanitize.ts`, draft-gating flags, `@astrojs/sitemap`, `public/robots.txt`. | `/sitemap.xml` and `/robots.txt` come from EmDash. No mock titles in any page. | C3 to C9 | S |
 
@@ -67,10 +72,10 @@ Also needed from the owner later, with no decision involved: real project logos 
 ## D. Content and launch
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| D1 | Owner: D1a to D1d in "Needs the owner". | Answers recorded in `brief.md`. | none | Owner |
+| D1 | Owner: D1a to D1c in "Needs the owner". | Answers recorded in `brief.md`. | none | Owner |
 | D2 | Site settings, menus and the closing band are filled in, including the AI-training setting. | Footer and band show the canonical links. `/robots.txt` reflects the policy. | B5, D1 | S |
 | D3 | Copy for the six fixed pages is drafted to the content standard and edited by a person. | Each page is published by an Editor or Admin. | C3 to C9, D1 | M |
-| D4 | The four projects, three services and four supports are entered with real logos, covers and alt text. | No placeholder text or image on any page. | C5, C6, D1 | M |
+| D4 | The five projects (three active, two applicants), the services and the four supports are entered with real logos, covers and alt text. | No placeholder text or image on any page. | C5, C6, D1 | M |
 | D5 | At least three real updates are published, or the home page hides the section when there are none. | Home and `/updates/` show real entries. | C7 | S |
 | D6 | Each page has a title and description; the home title carries "Nonprofit DAO Accelerator". Owner: Web Analytics on, sitemap submitted to Search Console. | Titles and descriptions are unique. | D3 | S |
 | D7 | Launch: `feature/relaunch` merges to `main`; EmDash is switched from staging to live; the first-deploy checks in `architecture.md` pass on superbenefit.org with the production Turnstile key. | A real contact message arrives. An edit published in the admin shows on the live site. | all above | M |
@@ -79,13 +84,12 @@ Also needed from the owner later, with no decision involved: real project logos 
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
 | E1 | governance.superbenefit.org's canonical points to itself (`governance-site` repo). | `<link rel="canonical">` on the live site is the `.org` URL. | none | S |
-| E2 | Owner: see "Needs the owner". | Recorded in `brief.md`. | none | Owner |
-| E3 | Links across the fleet use the canonical channels from D1c and the `.org` knowledge domain. | No `.dev` knowledge links or second Discord invite on any property. | D1, E2 | M |
+| E3 | Links across the fleet use `https://discord.gg/DMezXT7UAt` and the `.org` knowledge domain. | No `.dev` knowledge links or other Discord invite on any property. | none | M |
 
 ## Order
-1. Now, in parallel: A1 to A4, and the owner items A5, B1, D1, E2.
-2. B2, then B5. B3 and B4 as soon as B2 is on a preview.
+1. Now, in parallel: A1 to A4, and the owner items A5 and D1.
+2. B2, then B5. B3 and B4 as soon as B2 is on a branch Version URL.
 3. C1, then C2. Then C3 to C10 in parallel. B6 after C1.
 4. C11, B7, D2 to D6.
 5. D7.
-6. E1 any time; E3 after D1 and E2.
+6. E1 and E3 any time.

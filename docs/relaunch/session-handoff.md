@@ -40,7 +40,7 @@ Then `AGENTS.md` for the code as it stands.
 
 ## Facts that are easy to get wrong
 - The Cloudflare account is on Workers Paid.
-- Workers Builds is connected: `main` deploys to production, every other branch gets a preview URL. The production Turnstile key refuses preview hostnames until the owner allows them.
+- Workers Builds is connected: `main` deploys to production, every other branch gets a Version URL that runs against the production resources. The owner wants no preview-specific Cloudflare resources; do not add a `previews` block, switch to Worker Previews, or add Durable Objects (see `architecture.md`, Environments and CI). The production Turnstile key refuses preview hostnames until the owner allows them.
 - The Turnstile site key reaches the prerendered contact page from `vars` in `wrangler.jsonc` at build time.
 - npm 11.19 blocks dependency install scripts until approved with `npm install-scripts approve`. `esbuild` and `workerd` are approved, pinned by version; a version bump needs re-approval.
 - docs.emdashcms.com describes unreleased `main`, ahead of npm. Check behaviour against the installed version.

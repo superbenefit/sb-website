@@ -37,7 +37,7 @@ Defined once in `seed/seed.json` ([seed files](https://docs.emdashcms.com/themes
 
 | Collection | URL | Fields |
 | --- | --- | --- |
-| `projects` | `/projects/{slug}` | title, summary (text, 60 to 240 characters), status (select: active, pending, past), partner, location, website (url), logo (image, optional), cover (image), body (portableText), featured (boolean), order (integer) |
+| `projects` | `/projects/{slug}` | title, summary (text, 60 to 240 characters), status (select: active, applicant, past; "applicant" uses the mockup's `status--pending` badge with the label "Applicant"), partner, location, website (url), logo (image, optional), cover (image), body (portableText), featured (boolean), order (integer) |
 | `services` | none; listed on `/services/` | title, audience (text), deliverables (repeater of short strings), terms (string), body, order |
 | `supports` | none; listed on the accelerator page | title, summary (text), body, order |
 | `updates` | `/updates/{slug}` | title, excerpt (text), cover (image, optional), body, project (reference to `projects`, optional). Author comes from EmDash bylines; date from the entry. |
@@ -70,7 +70,13 @@ EmDash has no singleton type, so each fixed page is one `pages` entry looked up 
 - Images render through `<Image>` from `emdash/ui`. EmDash's image endpoint reads R2 directly, so images work for visitors even though `/_emdash/*` is behind Access ([`images` option](https://docs.emdashcms.com/reference/configuration/#images)).
 
 ## Environments and CI
-- `main` deploys to superbenefit.org through Workers Builds (already connected). Branches get Worker Previews with their own D1, R2 and KV in the `previews` block ([docs](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)). `superbenefit.dev` is the preview domain.
+- `main` deploys to superbenefit.org through Workers Builds (already connected).
+- **One set of resources, none for previews** (owner decision, 2026-11-21). The site has one D1 database, one R2 bucket and one KV namespace. Branch builds stay on the Worker's current preview model: `wrangler versions upload`, which gives each branch a Version URL that "runs one uploaded version against your production resources" ([Version URLs](https://developers.cloudflare.com/workers/versions-and-deployments/version-urls/)). The one-time switch to Worker Previews is not made, because Previews "do not use production settings" and need their own bindings ([preview builds](https://developers.cloudflare.com/workers/ci-cd/builds/build-branches/#configure-preview-builds)). `superbenefit.dev` is the preview domain.
+- What this costs, as documented:
+  - Branch previews read and write the live database and bucket. EmDash's guide advises against exactly this ("Never point a preview binding at a production database or bucket", [preview deployments](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)). Before launch there is no live content, so the risk is nil and content entered on a preview is already in place at launch. After launch, a branch that upgrades EmDash would run its database migrations against live data on its first request, so EmDash upgrades after launch are tested locally with `astro dev` (local database) before they are pushed.
+  - Version URLs are not generated for Workers that use Durable Objects ([build configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)), so EmDash co-editing, which needs one, stays off. EmDash then uses single-editor mode with edit locks.
+  - Scheduled publishing is confirmed after launch. Not verified: whether a Cron Trigger reaches a version that is uploaded but not deployed; no doc statement was found either way.
+- To verify on the first CMS branch: that Wrangler's [automatic provisioning](https://developers.cloudflare.com/workers/wrangler/configuration/#automatic-provisioning) creates the database, bucket and namespace on `versions upload`. The docs describe it for "when you deploy". If it does not, the owner creates the three production resources once by hand.
 - GitHub Actions on every PR: `npm ci`, `npm run check`, `npm run build`, `npm audit --omit=dev`. Dependabot weekly for npm.
 - `compatibility_date` moves to the current date.
 
@@ -78,10 +84,10 @@ EmDash has no singleton type, so each fixed page is one `pages` entry looked up 
 All Worker domain and Access settings are configured by a human in the Cloudflare dashboard. They are not written into config files and not changed by agents through the API. That covers custom domains and routes (including `.dev` as the preview domain and the www redirect), the Access application, its policies and identity provider, and Turnstile widget hostnames. `wrangler.jsonc` carries bindings, cron, vars and the `previews` block only, with no `routes`. Issues that need one of these settings are written as an owner checklist item with the exact value to enter, and the code work waits on it.
 
 ## Not decided by this page
-Copy, the services that survive, what to say about Pacto, canonical social links and the AI-crawler policy are content decisions for Stage 4. Fleet fixes (governance canonical, unidentified Workers) are last in the order.
+Copy and the new service offerings are content work; see `issues.md`. Fleet fixes (governance canonical, unidentified Workers) are last in the order.
 
 ## First-deploy checks
-The setup above is taken from the docs and source, not yet deployed. The first preview deploy runs the docs' own checklist: a public page, admin sign-in through Access, a media upload shown on a public page while signed out, and the cron in `wrangler tail`.
+The setup above is taken from the docs and source, not yet deployed. The first branch build with EmDash runs the docs' own checklist: a public page, admin sign-in through Access, a media upload shown on a public page while signed out, and the cron in `wrangler tail`.
 
 ## Owner decisions (2026-11-20)
 1. Editors sign in through Access with GitHub. Org members are Contributors; the "Web Admins" team are Admins.
@@ -89,5 +95,7 @@ The setup above is taken from the docs and source, not yet deployed. The first p
 3. Updates are written in EmDash.
 4. `/about/` stays.
 5. `.dev` is the preview domain, set up by the owner. Domain and Access settings are dashboard-only (see Ownership).
+6. No preview-specific Cloudflare resources (2026-11-21). See Environments and CI.
+7. AI crawlers: block training, allow everything else. Projects awaiting acceptance are marked "Applicant".
 
 Owner dashboard items, each written into the issue that needs it: the Access application on `/_emdash/*` with the GitHub identity provider and policy, the AUD tag as the `CF_ACCESS_AUDIENCE` secret, the Zero Trust team domain (a value for `astro.config.mjs`), HSTS, the www redirect, the `.dev` preview domain, and Turnstile widget hostnames.
