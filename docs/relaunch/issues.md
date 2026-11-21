@@ -7,12 +7,13 @@ Nothing here has been created on GitHub yet. Each item is one outcome.
 - **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
 
 ## Needs the owner
-Four things only a person can do or provide. Each blocks the issues listed. Agents do not change Cloudflare domain or Access settings.
+Five things only a person can do or provide. Agents do not change Cloudflare domain or Access settings.
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
-| B1 | The site's one database, bucket and session namespace, created once, with their IDs posted in the issue: `npx wrangler d1 create sb-website`, `npx wrangler r2 bucket create sb-website-media`, `npx wrangler kv namespace create sb-website-session`. | These are the site's permanent resources, not preview copies. Worker Previews bind to resources by ID, and Wrangler only creates them automatically on a production deploy, which does not happen until launch. | B2 |
-| B3 | Once the CMS is on a branch URL: an Access application for `/_emdash/*` on superbenefit.org and the preview hostname, with a policy allowing members of the GitHub org; its AUD tag saved with `npx wrangler secret put CF_ACCESS_AUDIENCE`; the team domain (`<name>.cloudflareaccess.com`) posted in the issue. The GitHub identity provider is already set up. | Sign-in to the CMS goes through Access. The planning session cannot see Zero Trust settings; if any of these already exist, say so in the issue. | B4 |
+| A5 | Protect this Worker's previews with Cloudflare Access (Previews only), and set the two preview secrets once: `npx wrangler preview base-config secret put CONTACT_EMAIL` and `... TURNSTILE_SECRET_KEY`. | Previews on `superbenefit.dev` are public and indexable today. Previews do not inherit production secrets, so the contact form cannot send on a preview without them. | C9 testing; must be done before B2 |
+| B1 | Three staging resources for previews, created once, with their IDs: `npx wrangler d1 create sb-website-staging`, `npx wrangler r2 bucket create sb-website-media-staging`, `npx wrangler kv namespace create sb-website-staging-session`. | Cloudflare and EmDash both say previews bind to staging resources, never production's (quotes in `architecture.md`, Environments and CI). All previews share this one set. Production's own resources are created by Wrangler at launch and need nothing. | B2 |
+| B3 | An Access application for `superbenefit.org/_emdash/*` with a policy for GitHub org members. The AUD tag of that application as the production secret `CF_ACCESS_AUDIENCE`, and the AUD tag of the previews application (A5) as the preview base secret of the same name. The Zero Trust team domain. | CMS sign-in goes through Access. The GitHub identity provider already exists. | B4 |
 | D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
 | D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
 
@@ -24,7 +25,7 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 - **Discord:** `https://discord.gg/DMezXT7UAt` everywhere. Already changed in the current code.
 - **AI crawlers:** block training, allow all other bots. In EmDash this is the "Disallow AI training" setting, on.
 - **Other Workers:** `docs` and `sb-auth` are for later and out of scope. `regen-toolkit` and `slc-advisor` have moved elsewhere.
-- **Preview resources:** none. One database, bucket and namespace for the site; Worker Previews bind to them by ID. Details and trade-offs in `architecture.md`, Environments and CI.
+- **Previews:** the Worker is on Worker Previews, served at `<branch-name>.superbenefit.dev`. Previews use one shared staging database, bucket and session namespace, as Cloudflare's and EmDash's docs require. An earlier answer of "no preview resources" was given when the plan still assumed the legacy preview model; it does not apply to Worker Previews.
 - **GitHub sign-in:** the GitHub OAuth app and the Zero Trust identity provider already exist.
 - **Done by the owner in the dashboard (checked 2026-11-21):** HSTS is on (`max-age=15552000`); `superbenefit.dev` is the preview domain, so a branch preview is served at `<branch-name>.superbenefit.dev`; the preview hostname is allowed on the Turnstile widget. R2 is enabled on the account.
 
@@ -44,12 +45,13 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
 | A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |
+| A5 | Owner: previews are behind Access and the two preview secrets are set. | A signed-out visit to a preview URL asks for sign-in. A test message sends from the contact form on a preview. | none | Owner |
 
 ## B. CMS
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| B1 | Owner: the site's database, bucket and session namespace exist, and their IDs are in the issue. | IDs posted. | none | Owner |
-| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with one D1 database, R2 bucket and KV namespace. The `previews` block binds the same three by ID (see `architecture.md`, Environments and CI). Conflicting settings are removed. | Branch preview at `<branch-name>.superbenefit.dev`: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. | B1 | L |
+| B1 | Owner: the three staging resources exist and their IDs are in the issue. | IDs posted. | none | Owner |
+| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes: production bindings by name at the top level, and the `previews` block binding `DB`, `MEDIA` and `SESSION` to the staging resources by ID. Conflicting settings are removed (list in `architecture.md`). | Branch preview at `<branch-name>.superbenefit.dev`: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. How the preview gets `EMDASH_SITE_URL` is settled and recorded in `architecture.md`. | A5, B1 | L |
 | B3 | Owner: see "Needs the owner". | Values posted; visiting `/_emdash/admin` signed out redirects to GitHub. | B2 | Owner |
 | B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form recorded in `architecture.md`. | B3 | M |
 | B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | The admin shows all five content types with the fields in `architecture.md`. | B2 | M |
@@ -91,7 +93,7 @@ Also needed later, with no decision involved: a human edit of all copy (D3), and
 | E3 | Links across the fleet use `https://discord.gg/DMezXT7UAt` and the `.org` knowledge domain. | No `.dev` knowledge links or other Discord invite on any property. | none | M |
 
 ## Order
-1. Now, in parallel: A1 to A4, E1, E3, and the owner item D1.
+1. Now, in parallel: A1 to A4, E1, E3, and the owner items A5, B1 and D1.
 2. B1, B2, then B5. B3 and B4 as soon as B2 is on a branch preview.
 3. C1, then C2. Then C3 to C10 in parallel. B6 after C1.
 4. C11, B7, D2 to D6.

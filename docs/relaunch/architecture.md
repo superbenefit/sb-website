@@ -70,16 +70,29 @@ EmDash has no singleton type, so each fixed page is one `pages` entry looked up 
 - Images render through `<Image>` from `emdash/ui`. EmDash's image endpoint reads R2 directly, so images work for visitors even though `/_emdash/*` is behind Access ([`images` option](https://docs.emdashcms.com/reference/configuration/#images)).
 
 ## Environments and CI
-- `main` deploys to superbenefit.org through Workers Builds.
-- **Branch previews are Worker Previews** (owner switched the Worker from the legacy preview model on 2026-11-21). Each branch is served at `<branch-name>.superbenefit.dev`, the owner's preview domain ([custom domain Preview URLs](https://developers.cloudflare.com/workers/previews/custom-domains/)). The Preview command is `npx wrangler preview`.
-- Previews do not use the top-level settings: "The `previews` block is required", and bindings the Worker reads at runtime are repeated in it ([configuration](https://developers.cloudflare.com/workers/previews/configuration/)). `wrangler.jsonc` has the block, with the `send_email` binding.
-- **One set of resources, none for previews** (owner decision, 2026-11-21). When EmDash is installed, the `previews` block binds `DB`, `MEDIA` and `SESSION` to the site's own database, bucket and namespace by ID. Cloudflare binds Preview resources by ID, and "two Previews bound to the same account-level resource ID or name share its data" ([resources](https://developers.cloudflare.com/workers/previews/resources/)).
-- What that costs, as documented:
-  - Branch previews read and write the live database and bucket. EmDash's guide advises against it ("Never point a preview binding at a production database or bucket", [preview deployments](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)). Before launch there is no live content, so content entered on a preview is already in place at launch. After launch, a branch that upgrades EmDash would run its database migrations against live data on its first request, so EmDash upgrades are tested locally with `astro dev` before they are pushed.
-  - Cron Triggers target production, so scheduled publishing does not run on a preview ([limitations](https://developers.cloudflare.com/workers/previews/resources/#limitations)). It is confirmed after launch.
-- Secrets for previews (`CONTACT_EMAIL`, `TURNSTILE_SECRET_KEY`, later `CF_ACCESS_AUDIENCE`) are set once on the Previews base config, not in the repository ([secrets](https://developers.cloudflare.com/workers/previews/configuration/#secrets)).
+Two environments under one Worker, as Cloudflare's [Previews](https://developers.cloudflare.com/workers/previews/) docs describe. Cloudflare: "Previews are the recommended way to test changes before production", and "Do not use Version URLs for branch or pull request testing" ([compare workflows](https://developers.cloudflare.com/workers/previews/compare-workflows/)).
+
+| | Production | Previews |
+| --- | --- | --- |
+| Branch | `main` | every other branch |
+| Command (Workers Builds) | `npx wrangler deploy` | `npx wrangler preview` |
+| URL | superbenefit.org | `<branch-name>.superbenefit.dev` |
+| Settings | top level of `wrangler.jsonc` | the `previews` block; nothing is inherited |
+| Database, bucket, sessions | the site's own, created by Wrangler on the first production deploy | one shared staging set |
+| Secrets | `wrangler secret put` | `wrangler preview base-config secret put`, once |
+| Cron Trigger | runs | does not run |
+
+- **Previews use staging resources, never production's.** Cloudflare: "Point Preview bindings at staging or test resources instead of production resources", and for D1 "configure one staging database that all Previews share by default" ([configuration](https://developers.cloudflare.com/workers/previews/configuration/), [resources](https://developers.cloudflare.com/workers/previews/resources/#d1-migrations)). EmDash: "the preview needs a database and bucket separate from production. Never point a preview binding at a production database or bucket" ([preview deployments](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)). That is three staging resources in total, shared by every preview: one D1 database, one R2 bucket, one KV namespace for sessions. They are bound by ID in the `previews` block.
+- **Production resources need no setup.** With the names in `wrangler.jsonc`, "Wrangler creates the D1 database and R2 bucket" on the first deploy ([Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/#configure-bindings)).
+- **Previews are protected with Cloudflare Access.** Custom-domain Preview URLs are public and do not get `X-Robots-Tag: noindex` ([custom domains](https://developers.cloudflare.com/workers/previews/custom-domains/#protect-preview-content)). With the CMS installed, an empty staging database shows the setup wizard and "the first visitor to finish the wizard becomes the administrator" (EmDash, same page). Access can protect one Worker's previews only ([Cloudflare Access](https://developers.cloudflare.com/workers/configuration/cloudflare-access/)).
+- **Because all previews share the staging database**, a branch that upgrades EmDash migrates it for the others on its first request. A branch that needs isolation points its own `previews` block at another database (EmDash, same page).
+- **Scheduled publishing cannot be tested on a preview**, because Cron Triggers target production ([limitations](https://developers.cloudflare.com/workers/previews/resources/#limitations)). It is confirmed after launch.
+- **To verify on the first CMS preview:** EmDash's guide passes each preview its own URL with `--var EMDASH_SITE_URL:<preview URL>`, and says setup fails with `SITE_URL_REQUIRED` without it. How that fits Workers Builds' Preview command and a shared, already set-up staging database is not stated in either set of docs.
+- `wrangler.jsonc` today has the `previews` block with the `send_email` binding, which is all the current site reads at runtime.
 - GitHub Actions on every PR: `npm ci`, `npm run check`, `npm run build`, `npm audit --omit=dev`. Dependabot weekly for npm.
 - `compatibility_date` moves to the current date.
+
+History: until 2026-11-21 the Worker was on the legacy preview model (Version URLs), and earlier drafts of this plan were built around it. That model is gone; nothing in the plan depends on it.
 
 ## Ownership
 All Worker domain and Access settings are configured by a human in the Cloudflare dashboard. They are not written into config files and not changed by agents through the API. That covers custom domains and routes (including `.dev` as the preview domain and the www redirect), the Access application, its policies and identity provider, and Turnstile widget hostnames. `wrangler.jsonc` carries bindings, cron, vars and the `previews` block only, with no `routes`. Issues that need one of these settings are written as an owner checklist item with the exact value to enter, and the code work waits on it.

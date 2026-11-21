@@ -67,7 +67,7 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - The Cloudflare account is on Workers Paid.
 - Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays.
 - Editors sign in with GitHub through Cloudflare Access: org members as Contributors, the "Web Admins" team as Admins. Editors use the EmDash admin, so no developer is needed to publish.
-- `.dev` is the preview domain. No preview-specific Cloudflare resources: one database, bucket and namespace for the site.
+- Branch previews are Worker Previews at `<branch-name>.superbenefit.dev`, bound to one shared staging database, bucket and session namespace. See `architecture.md`, Environments and CI.
 - Discord invite everywhere: `https://discord.gg/DMezXT7UAt`.
 - AI crawlers: block training, allow all other bots.
 - The three services on the old site are real; the owner is redoing the offerings.

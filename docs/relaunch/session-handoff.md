@@ -17,10 +17,12 @@ All on branch `feature/relaunch`, in `docs/relaunch/`:
 Then `AGENTS.md` for the code as it stands.
 
 ## State
-- Merged into `feature/relaunch`: dependency upgrade and Turnstile fix (PR #18), architecture and design prompt (PR #19).
-- PR #20 merged the first draft of the Stage 4 list. The mockups, the final list and this file came in the PR after it. Confirm `docs/relaunch/mockups/` exists on `feature/relaunch`; if it does not, that PR is still open, so ask the owner before doing anything else.
+- Merged into `feature/relaunch`: dependency upgrade and Turnstile fix (PR #18), architecture and design prompt (PR #19), first draft of the Stage 4 list (PR #20).
+- PR #22 holds the mockups, the final issue list, the Worker Previews `previews` block and this file. Confirm `docs/relaunch/mockups/` exists on `feature/relaunch`; if it does not, #22 is still open, so ask the owner before doing anything else.
 - `main` still runs the old site. Nothing from the relaunch is in production.
-- No GitHub issues exist yet for this work.
+- Branch previews work: each branch is served at `<branch-name>.superbenefit.dev`.
+- No GitHub issues exist yet for this work. The owner has not yet approved `issues.md`.
+- Open owner items are at the top of `issues.md`.
 
 ## What to do
 1. **Finish Stage 4.** If the owner has approved `issues.md`, create one GitHub issue per item in `superbenefit/sb-website`. Use the item's id and outcome as the title (for example "C3: Home page"). In the body put the outcome, the mockup files, the acceptance check, how to verify, dependencies as issue links, and size. Label owner items so they are easy to find. For owner items, copy the full row from "Needs the owner" so the issue stands alone. Create them in the order in `issues.md` so dependency links resolve. Report the list of created issues with links.
@@ -43,7 +45,7 @@ Then `AGENTS.md` for the code as it stands.
 - Branch previews are Worker Previews on the owner's preview domain: `<branch-name>.superbenefit.dev`. `wrangler.jsonc` needs its `previews` block for them. HSTS is on and the preview hostname is allowed on the Turnstile widget.
 - Read the account before stating its condition. The Cloudflare tools can list D1, KV, R2 and Workers; a single failed call is not evidence that something is switched off.
 - Do not give the owner setup steps for things you cannot see. Ask what already exists first. The GitHub identity provider for Access already exists.
-- Workers Builds is connected: `main` deploys to production; every other branch is a Worker Preview at `<branch-name>.superbenefit.dev`. The owner wants no preview-specific Cloudflare resources, so previews bind to the site's one database, bucket and namespace by ID (see `architecture.md`).
+- Workers Builds is connected: `main` deploys to production with `wrangler deploy`; every other branch is a Worker Preview (`wrangler preview`) at `<branch-name>.superbenefit.dev`. Previews inherit nothing from production: settings come from the `previews` block, secrets from the preview base config, and data from one shared staging database, bucket and namespace. Read `architecture.md`, Environments and CI, before touching `wrangler.jsonc`.
 - The Turnstile site key reaches the prerendered contact page from `vars` in `wrangler.jsonc` at build time.
 - npm 11.19 blocks dependency install scripts until approved with `npm install-scripts approve`. `esbuild` and `workerd` are approved, pinned by version; a version bump needs re-approval.
 - docs.emdashcms.com describes unreleased `main`, ahead of npm. Check behaviour against the installed version.
