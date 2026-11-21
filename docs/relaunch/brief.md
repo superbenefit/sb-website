@@ -2,7 +2,7 @@
 
 Last updated 2026-11-20. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
 
-Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `design-handoff.md` (prompt for the design session), `issues.md` (the work, broken into issues), `planning-prompt.md` (the five planning stages).
+Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `mockups/` (the owner's design; start with its README), `issues.md` (the work, broken into issues), `design-handoff.md` (the prompt the design session was given), `session-handoff.md` (prompt to continue planning in a new session), `planning-prompt.md` (the five planning stages).
 
 ## Goal
 Get SuperBenefit's Cloudflare web properties complete, consistent and launched under one brand, starting with superbenefit.org (this repo).
@@ -18,7 +18,8 @@ Current themes: local impact, local data, local AI, sovereign tech, worker coope
 Each gets a feature card and an overview page:
 - All In For Sport (allinforsport.org)
 - DAO Primitives
-- Pacto (application pending)
+- Pacto (applicant; https://covenant-gov.github.io/pacto-app/)
+- Social Lean Canvas (applicant; https://socialleancanvas.com/)
 - Institute for Community Sustainability (London, Ontario)
 
 ## Accelerator/supports vs services
@@ -29,7 +30,7 @@ Each gets a feature card and an overview page:
 Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. Set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`.
 
 ## Design
-A SuperBenefit design system exists at `superbenefit/design-system`. The current styling predates it and is due for a redesign, run as a separate design session whose mockups feed back into the plan.
+A SuperBenefit design system exists at `superbenefit/design-system`. The owner's mockups for the relaunch are in `mockups/` and are the design instructions: pages are built to match them.
 
 ## Content standard
 Overhaul all copy to remove AI slop and make real points directly.
@@ -46,12 +47,14 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 ## Fleet
 | Property | Worker | Notes |
 | --- | --- | --- |
-| superbenefit.org | sb-website | www returns 522 |
+| superbenefit.org | sb-website | www redirects to the apex (301) |
 | superbenefit.dev | same build | public copy |
 | knowledge.superbenefit.org / .dev | knowledge-garden | Knowledge Garden |
 | governance.superbenefit.org | governance-site | Starlight, Astro 5; canonical wrongly points to .dev |
 | allinforsport.org | aifs-site | Astro 6 |
-| unidentified hostnames | knowledge-server, governance-server, sb-auth, docs, regen-toolkit, slc-advisor | |
+| other Workers | knowledge-server, governance-server | not identified |
+| out of scope | docs, sb-auth | for later use; ignore for now |
+| moved elsewhere | regen-toolkit, slc-advisor | |
 
 ## Working rules
 1. Verify before asserting. Claims about Astro, EmDash, Cloudflare or any tool come from current official docs or source, with a link. Say plainly what you could not verify.
@@ -64,11 +67,13 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - The Cloudflare account is on Workers Paid.
 - Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays.
 - Editors sign in with GitHub through Cloudflare Access: org members as Contributors, the "Web Admins" team as Admins. Editors use the EmDash admin, so no developer is needed to publish.
-- `.dev` is the preview domain.
+- Branch previews are Worker Previews at `<branch-name>.superbenefit.dev`, bound to one shared staging database, bucket and session namespace. See `architecture.md`, Environments and CI.
+- Discord invite everywhere: `https://discord.gg/DMezXT7UAt`.
+- AI crawlers: block training, allow all other bots.
+- The three services on the old site are real; the owner is redoing the offerings.
+- Pacto and Social Lean Canvas are shown as applicants.
+- The GitHub OAuth app and Zero Trust identity provider already exist.
+- X handle stays `SuperBenefitDAO`. "Book an onboarding call" has no link yet; the button is hidden until an editor adds one.
 
 ## Open questions
-- Which services survive the cut, and are the $5,000 tiers and hour-based SLAs real?
-- What is Pacto, and what can be said publicly while the application is pending?
-- Canonical channels: which Discord invite, Paragraph or Mirror, X handle?
-- What are `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serving, and which are in scope?
-- AI-crawler policy across the fleet: block, allow, or allow with attribution?
+- The new service offerings (owner is redoing them).

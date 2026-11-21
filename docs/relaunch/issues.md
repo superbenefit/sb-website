@@ -1,14 +1,42 @@
-# Stage 4: issue list (draft for owner approval, 2026-11-21)
+# Stage 4: issue list (2026-11-21)
 
-Nothing here has been created on GitHub. Each item is one outcome. Sizes: S is under half a day, M about a day, L two to three days. "Owner" items need a person in the Cloudflare or GitHub dashboard. Every code issue is one branch and one PR into `feature/relaunch`, and closes when `npm run check` and `npm run build` pass and the Workers Builds preview shows the stated result.
+Nothing here has been created on GitHub yet. Each item is one outcome.
 
-## What the mockups changed
-Source: `superbenefit.org relaunch mockups.html`, received 2026-11-21. Ten pages at 1440 and 390 px, plus the mobile menu.
-- Tokens match `src/styles/global.css`. New ones: `--radius-sm`, `--radius-md`, `--radius-pill`, `--space-xl-half`, `--rule`, `--rule-dark`, `--stripe`. Fonts stay Playfair Display and Inter.
-- Content model changes are recorded in `architecture.md`.
-- The home page has a project selector that advances every 7 seconds on screens 900 px and wider, with previous, next and pause controls, and no auto-advance under reduced motion. The handoff prompt said no carousels; this one has a pause control, so it meets WCAG 2.2.2. It is built as designed (P3) with a small script and no library.
-- Not in the mockups: the component sheet, the notes file, and these states: form field error, submitting, success and server error; keyboard focus; an empty updates list; a project with no updates. Those are built from the tokens and shown in the PR preview for owner review.
-- Still placeholder: the hero illustration, project logos and covers, and all service audience lines.
+- **Sizes:** S is under half a day, M about a day, L two to three days.
+- **Every code issue** is one branch and one PR into `feature/relaunch`. It closes when `npm run check` and `npm run build` pass and the Workers Builds preview shows the stated result.
+- **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
+
+## Needs the owner
+Five things only a person can do or provide. Agents do not change Cloudflare domain or Access settings.
+
+| # | What is needed | Why | Blocks |
+| --- | --- | --- | --- |
+| A5 | Protect this Worker's previews with Cloudflare Access (Previews only), and set the two preview secrets once: `npx wrangler preview base-config secret put CONTACT_EMAIL` and `... TURNSTILE_SECRET_KEY`. | Previews on `superbenefit.dev` are public and indexable today. Previews do not inherit production secrets, so the contact form cannot send on a preview without them. | C9 testing; must be done before B2 |
+| B1 | Three staging resources for previews, created once, with their IDs: `npx wrangler d1 create sb-website-staging`, `npx wrangler r2 bucket create sb-website-media-staging`, `npx wrangler kv namespace create sb-website-staging-session`. | Cloudflare and EmDash both say previews bind to staging resources, never production's (quotes in `architecture.md`, Environments and CI). All previews share this one set. Production's own resources are created by Wrangler at launch and need nothing. | B2 |
+| B3 | An Access application for `superbenefit.org/_emdash/*` with a policy for GitHub org members. The AUD tag of that application as the production secret `CF_ACCESS_AUDIENCE`, and the AUD tag of the previews application (A5) as the preview base secret of the same name. The Zero Trust team domain. | CMS sign-in goes through Access. The GitHub identity provider already exists. | B4 |
+| D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
+| D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
+
+Also needed later, with no decision involved: a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
+
+## Answered by the owner (2026-11-21)
+- **Services:** the three in the mockups are real; the owner is redoing the offerings (D1).
+- **Projects:** five. All In For Sport, DAO Primitives and the Institute for Community Sustainability are active. [Pacto](https://covenant-gov.github.io/pacto-app/) and [Social Lean Canvas](https://socialleancanvas.com/) are applicants. Status values are active, applicant and past.
+- **Discord:** `https://discord.gg/DMezXT7UAt` everywhere. Already changed in the current code.
+- **AI crawlers:** block training, allow all other bots. In EmDash this is the "Disallow AI training" setting, on.
+- **Other Workers:** `docs` and `sb-auth` are for later and out of scope. `regen-toolkit` and `slc-advisor` have moved elsewhere.
+- **Previews:** the Worker is on Worker Previews, served at `<branch-name>.superbenefit.dev`. Previews use one shared staging database, bucket and session namespace, as Cloudflare's and EmDash's docs require. An earlier answer of "no preview resources" was given when the plan still assumed the legacy preview model; it does not apply to Worker Previews.
+- **GitHub sign-in:** the GitHub OAuth app and the Zero Trust identity provider already exist.
+- **Done by the owner in the dashboard (checked 2026-11-21):** HSTS is on (`max-age=15552000`); `superbenefit.dev` is the preview domain, so a branch preview is served at `<branch-name>.superbenefit.dev`; the preview hostname is allowed on the Turnstile widget. R2 is enabled on the account.
+
+## Decided, no input needed
+- The home page project selector is built as designed: it advances every 7 seconds with pause, previous and next. See `mockups/README.md`.
+- www.superbenefit.org returns 301 to the apex and keeps the path (checked 2026-11-21; it returned 522 on 2026-11-20). Nothing left to do.
+- The X handle stays `SuperBenefitDAO`, as on the current site.
+- "Book an onboarding call" has no URL. Its link is a CMS field, and the button is not rendered while the field is empty.
+- Pacto and Social Lean Canvas summaries are drafted from each project's own site and edited by a person with the rest of the copy (D3, D4).
+- States the mockups do not show (form error, submitting, success, server error; empty lists) are built from the mockup tokens and components, and shown on the branch preview for review.
+- The home page headings differ between the 1440 and 390 px mockups. Copy is settled in D3; the layout is the same.
 
 ## A. Hygiene and security
 | # | Outcome | Accept when | Depends on | Size |
@@ -17,41 +45,43 @@ Source: `superbenefit.org relaunch mockups.html`, received 2026-11-21. Ten pages
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
 | A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |
-| A5 | Owner: www.superbenefit.org redirects to the apex; HSTS is on; `superbenefit.dev` is the preview domain; the Turnstile widget allows the preview hostname. | `curl -I` shows 301 on www and the HSTS header on the apex. Turnstile issues a token on the preview. | none | Owner |
+| A5 | Owner: previews are behind Access and the two preview secrets are set. | A signed-out visit to a preview URL asks for sign-in. A test message sends from the contact form on a preview. | none | Owner |
 
 ## B. CMS
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| B1 | Owner: preview D1 database, R2 bucket and KV namespace exist, and their IDs are in the issue. | IDs posted. | none | Owner |
-| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes, with the `previews` block. Conflicting settings are removed (list in `architecture.md`). | Preview: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays, the cron appears in `wrangler tail`. | B1 | L |
-| B3 | Owner: Access application on `/_emdash/*` with the GitHub identity provider and a policy for org members; AUD tag saved as the `CF_ACCESS_AUDIENCE` secret; team domain posted in the issue. | Values posted; visiting `/_emdash/admin` signed out redirects to GitHub. | B2 | Owner |
-| B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form is recorded in `architecture.md`. | B3 | M |
-| B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | A fresh preview database shows all five content types with the fields in `architecture.md`. | B2 | M |
+| B1 | Owner: the three staging resources exist and their IDs are in the issue. | IDs posted. | none | Owner |
+| B2 | EmDash is installed exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes: production bindings by name at the top level, and the `previews` block binding `DB`, `MEDIA` and `SESSION` to the staging resources by ID. Conflicting settings are removed (list in `architecture.md`). | Branch preview at `<branch-name>.superbenefit.dev`: a public page renders, `/_emdash/admin` shows setup, an uploaded image displays. How the preview gets `EMDASH_SITE_URL` is settled and recorded in `architecture.md`. | A5, B1 | L |
+| B3 | Owner: see "Needs the owner". | Values posted; visiting `/_emdash/admin` signed out redirects to GitHub. | B2 | Owner |
+| B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form recorded in `architecture.md`. | B3 | M |
+| B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | The admin shows all five content types with the fields in `architecture.md`. | B2 | M |
 | B6 | Workers Cache is on, with one route rule per public route tagged by collection. | A second request to a page is a cache hit. Publishing an edit shows on the public page within a minute. A draft preview link shows unpublished content. | B5, C1 | M |
 | B7 | Legacy content code is gone: both loaders, mock JSON, `content.config.ts`, `sanitize.ts`, draft-gating flags, `@astrojs/sitemap`, `public/robots.txt`. | `/sitemap.xml` and `/robots.txt` come from EmDash. No mock titles in any page. | C3 to C9 | S |
 
-## C. Pages (from the mockups)
-| # | Outcome | Accept when | Depends on | Size |
-| --- | --- | --- | --- | --- |
-| C1 | Base layout and shared parts match the mockups: new tokens, header, mobile menu, footer with both menus, closing band, buttons, status badge, page hero. Head tags and JSON-LD come from `<EmDashHead>`. | Header, footer and band match the mockups at 390 and 1440 px. Menu edits in the admin show on the site. No `set:html` JSON-LD remains. | B5 | L |
-| C2 | Rich text renders every element in the Update mockup: headings, lists, quote with attribution, image with caption, inline and block code, table, click-to-load video. | A test entry using every element matches the Update mockup at both widths. No request goes to the video host before play is pressed. | C1 | M |
-| C3 | Home page matches the mockup, including the project selector with pause, previous and next, keyboard support, and no auto-advance under reduced motion. | Matches at both widths. One `<h1>`. With JavaScript off, the first project shows and all are reachable. | C1 | L |
-| C4 | Accelerator page at `/accelerator/`; `/support` and `/supports` redirect to it. | Matches the mockup. Both old paths return 301. | C1 | S |
-| C5 | Services page with deliverables lists and terms. | Matches the mockup with three services. | C1 | M |
-| C6 | Projects index and project page, with status, optional logo, and related updates. | Match the mockups. A project with no logo and one with no updates both render cleanly. | C1, C2 | M |
-| C7 | Updates index with pagination and update page with author, date and linked project. | Match the mockups. An empty list shows a message, not a blank page. | C1, C2 | M |
-| C8 | About page. | Matches the mockup. | C1, C2 | S |
-| C9 | Contact page in the new design, keeping explicit Turnstile rendering. | Matches the mockup. The five navigation scenarios from PR #18 pass. Error, submitting and success states are shown in the PR. | C1 | M |
-| C10 | Not-found and server-error pages; correct `manifest.json` icons and favicon. | Unknown URL returns 404 with the mockup page. Manifest icons are square at their declared sizes. | C1 | S |
-| C11 | Accessibility pass on all pages. | Automated axe scan has no violations at either width; keyboard walk-through reaches every control with visible focus. | C3 to C10 | M |
+## C. Pages (built to `mockups/`)
+| # | Outcome | Mockup | Accept when | Depends on | Size |
+| --- | --- | --- | --- | --- | --- |
+| C1 | Base layout and shared parts: new tokens, header, mobile menu, stripe, footer with both menus, closing band, buttons, status badge, page hero, wave divider. Head tags and JSON-LD come from `<EmDashHead>`. | every page; `mobile-menu-open` | Header, footer and band match at 390 and 1440 px. Menu edits in the admin show on the site. No `set:html` JSON-LD remains. | B5 | L |
+| C2 | Rich text renders every element: headings, lists, quote with attribution, image with caption, inline and block code, table, click-to-load video. | `update` | A test entry using every element matches at both widths. No request goes to the video host before play is pressed. | C1 | M |
+| C3 | Home page, including the project selector exactly as specified in `mockups/README.md`, with five projects. | `home` | Matches at both widths. One `<h1>`. Selector behaviour matches each point in the README. With JavaScript off, the first project shows and all are reachable. | C1 | L |
+| C4 | Accelerator page at `/accelerator/`; `/support` and `/supports` redirect to it. | `accelerator` | Matches. Both old paths return 301. | C1 | S |
+| C5 | Services page with deliverables lists and terms. | `services` | Matches with three services. | C1 | M |
+| C6 | Projects index and project page, with status, optional logo and related updates. | `projects`, `project` | Match. A project with no logo and one with no updates render cleanly. | C1, C2 | M |
+| C7 | Updates index with pagination; update page with author, date and linked project. | `updates`, `update` | Match. An empty list shows a message. | C1, C2 | M |
+| C8 | About page. | `about` | Matches. | C1, C2 | S |
+| C9 | Contact page in the new design, keeping explicit Turnstile rendering. | `contact` | Matches. The five navigation scenarios from PR #18 pass. Error, submitting and success states are shown in the PR. | C1 | M |
+| C10 | Not-found and server-error pages; correct `manifest.json` icons and favicon. | `not-found`, `server-error` | Unknown URL returns 404 with the mockup page. Manifest icons are square at their declared sizes. | C1 | S |
+| C11 | Accessibility pass on all pages. | all | Automated axe scan has no violations at either width; a keyboard walk-through reaches every control with visible focus. | C3 to C10 | M |
+
+"Matches" means: side by side with `mockups/screenshots/{page}-1440.jpg` and `-390.jpg`, layout, spacing, type and colour agree, using the values in `mockups/mockups.css`.
 
 ## D. Content and launch
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| D1 | Owner answers: which services and prices are real; what can be said about Pacto; the canonical Discord invite, X handle and onboarding-call link; AI-crawler policy. | Answers recorded in `brief.md`. | none | Owner |
+| D1 | Owner: the new service offerings (see "Needs the owner"). | Recorded in `brief.md`. | none | Owner |
 | D2 | Site settings, menus and the closing band are filled in, including the AI-training setting. | Footer and band show the canonical links. `/robots.txt` reflects the policy. | B5, D1 | S |
 | D3 | Copy for the six fixed pages is drafted to the content standard and edited by a person. | Each page is published by an Editor or Admin. | C3 to C9, D1 | M |
-| D4 | The four projects, three services and four supports are entered with real logos, covers and alt text. | No placeholder text or image on any page. | C5, C6, D1 | M |
+| D4 | The five projects (three active, two applicants), the services and the four supports are entered with real logos, covers and alt text. | No placeholder text or image on any page. | C5, C6, D1 | M |
 | D5 | At least three real updates are published, or the home page hides the section when there are none. | Home and `/updates/` show real entries. | C7 | S |
 | D6 | Each page has a title and description; the home title carries "Nonprofit DAO Accelerator". Owner: Web Analytics on, sitemap submitted to Search Console. | Titles and descriptions are unique. | D3 | S |
 | D7 | Launch: `feature/relaunch` merges to `main`; EmDash is switched from staging to live; the first-deploy checks in `architecture.md` pass on superbenefit.org with the production Turnstile key. | A real contact message arrives. An edit published in the admin shows on the live site. | all above | M |
@@ -60,17 +90,12 @@ Source: `superbenefit.org relaunch mockups.html`, received 2026-11-21. Ten pages
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
 | E1 | governance.superbenefit.org's canonical points to itself (`governance-site` repo). | `<link rel="canonical">` on the live site is the `.org` URL. | none | S |
-| E2 | Owner: say what `docs`, `regen-toolkit`, `slc-advisor` and `sb-auth` serve and which are in scope. | Recorded in `brief.md`. | none | Owner |
-| E3 | Links across the fleet use the canonical channels from D1 and the `.org` knowledge domain. | No `.dev` knowledge links or second Discord invite on any property. | D1, E2 | M |
+| E3 | Links across the fleet use `https://discord.gg/DMezXT7UAt` and the `.org` knowledge domain. | No `.dev` knowledge links or other Discord invite on any property. | none | M |
 
 ## Order
-1. Now, in parallel: A1 to A4, and owner items A5, B1, D1, E2.
-2. B2, then B5. B3 and B4 as soon as B2 is on a preview.
+1. Now, in parallel: A1 to A4, E1, E3, and the owner items A5, B1 and D1.
+2. B1, B2, then B5. B3 and B4 as soon as B2 is on a branch preview.
 3. C1, then C2. Then C3 to C10 in parallel. B6 after C1.
 4. C11, B7, D2 to D6.
 5. D7.
-6. E1 any time; E3 after D1 and E2.
-
-## Questions before creating the issues
-1. Where should the mockup file live so the coding sessions can open it? It is 10 MB, so it has not been committed here.
-2. The home project selector auto-advances. Build it as designed, or show the four projects as a static list?
+6. E1 and E3 any time.
