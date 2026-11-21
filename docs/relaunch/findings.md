@@ -31,7 +31,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### SEO
 - No `<h1>` on the homepage; title is "Make Better Faster".
 - Sitemap lists two URLs.
-- Extensionless URLs 307 to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)); internal links use the redirecting form.
+- `404.html` and `500.html` set their canonical to `/404/` and `/500/`, which 307 to `/404` and `/500` (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/) serves a file asset without the slash). The canonical comes from `Astro.url.pathname` in `SEO.astro`; it was the same before A4.
 - Homepage has hidden links to noindexed drafts.
 - governance.superbenefit.org's canonical points to governance.superbenefit.dev (fleet).
 - `robots.txt` comments claim a Content-Signal that the file does not contain (N7).
@@ -41,7 +41,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### Content
 - Old messaging throughout; nothing on the accelerator, local capacity building, Pacto or ICS.
 - Owner to confirm or cut: "Governance Innovation Lab", the "NFT Energy Labeling Experiment" description, the service SLAs and $5,000 tiers.
-- Links to `www.allinforsport.org`, which does not resolve, in `about.astro` and `projects.astro` (N6). Use the apex.
 - Links are consistent inside this repo (one Discord invite, Paragraph only). Across the fleet they are not: two Discord invites, Mirror and Paragraph, knowledge `.org` and `.dev`.
 
 ## Fixed
@@ -58,6 +57,8 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |
 | N4 | Comments said prerendered pages cannot read `wrangler.jsonc` vars. They can: the adapter loads them at build (tested). | Comments and docs corrected. |
 | N8 (part) | `AGENTS.md` called the fonts API experimental. | Corrected. |
+| SEO (part) | Internal links used the extensionless form, which 307s to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). | A4 (#26): `trailingSlash: 'always'` and every internal link ends in `/`. |
+| N6 | Links to `www.allinforsport.org`, which does not resolve, in `about.astro` and `projects.astro`. | A4 (#26): links point at the apex. |
 
 ## Withdrawn
 - Footer entity wording ("Worker Self-Directed Non-Profit Digital LLC") is correct as written. Do not re-raise.

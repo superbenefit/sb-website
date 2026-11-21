@@ -35,6 +35,7 @@ No test runner or linter is configured. Workers Builds builds every branch and p
 
 ### Rendering & Deployment
 - **Output mode**: `server` (SSR via Cloudflare Workers, with per-page `prerender` opt-in)
+- **URLs**: `trailingSlash: 'always'`. Internal links end in `/` (`/contact/`, not `/contact`); Workers static assets 307 the extensionless form to it
 - **Adapter**: `@astrojs/cloudflare`; Sharp optimizes images for prerendered pages at build time, and the Cloudflare Images binding serves any on-demand route
 - **Static assets**: Served from `dist` through the `ASSETS` binding (`wrangler.jsonc`). No custom security headers are set: there is no `public/_headers` file
 - **Every page is prerendered** (`export const prerender = true`), so the Worker only runs server actions such as the contact form
