@@ -49,7 +49,7 @@ Created at the owner's request. All previews share them. They go in the `preview
 ## A. Hygiene and security
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
-| A1 | Every PR is checked. GitHub Actions runs `npm ci`, `npm run check`, `npm run build`, `npm audit --omit=dev`; Dependabot opens weekly npm updates. | A PR with a type error fails the check. A Dependabot PR appears. | none | S |
+| A1 | Every branch is type-checked. `npm run build` runs `astro check` before `astro build`, so Workers Builds fails on a type error. No GitHub Actions workflow; Dependabot is decided at launch (owner decision, 2026-11-21). | A branch with a type error fails the Workers Builds check. | none | S |
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
 | A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |

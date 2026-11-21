@@ -19,12 +19,12 @@ cp .env.example .env   # optional; leave KNOWLEDGE_API_URL blank to use mock dat
 ```
 
 - `npm run dev` — Start dev server (localhost:4321)
-- `npm run build` — Generate Worker types (`wrangler types`), then build to `dist/`
+- `npm run build` — Generate Worker types (`wrangler types`), type-check (`astro check`), then build to `dist/`. A type error fails the build
 - `npm run check` — Generate Worker types, then TypeScript and Astro validation
 - `npm run preview` — Preview built site locally
 - `npm run deploy` — Build + deploy to Cloudflare Workers via Wrangler
 
-No test runner or linter is configured. Workers Builds builds every branch and posts a preview URL on pull requests; `main` deploys to production.
+No test runner or linter is configured. Workers Builds is the only CI: it runs `npm run build` (which type-checks) on every branch and posts a preview URL on pull requests; `main` deploys to production.
 
 ## Gotchas
 
