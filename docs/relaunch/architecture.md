@@ -37,11 +37,15 @@ Defined once in `seed/seed.json` ([seed files](https://docs.emdashcms.com/themes
 
 | Collection | URL | Fields |
 | --- | --- | --- |
-| `projects` | `/projects/{slug}` | title, summary (text), status (select: active, pending, past), partner, location, website (url), logo (image), cover (image), body (portableText), featured (boolean), order (integer) |
-| `services` | none; listed on `/services/` | title, audience (text), deliverable (text), terms (string: price or SLA), body, order |
+| `projects` | `/projects/{slug}` | title, summary (text, 60 to 240 characters), status (select: active, pending, past), partner, location, website (url), logo (image, optional), cover (image), body (portableText), featured (boolean), order (integer) |
+| `services` | none; listed on `/services/` | title, audience (text), deliverables (repeater of short strings), terms (string), body, order |
 | `supports` | none; listed on the accelerator page | title, summary (text), body, order |
-| `updates` | `/updates/{slug}` | title, excerpt (text), cover (image), body, project (reference to `projects`) |
-| `pages` | fixed routes above | title, intro (text), body, cta_label, cta_url |
+| `updates` | `/updates/{slug}` | title, excerpt (text), cover (image, optional), body, project (reference to `projects`, optional). Author comes from EmDash bylines; date from the entry. |
+| `pages` | fixed routes above | eyebrow (string), title, intro (text), cta_label, cta_url, section_label, section_heading, body, cost_summary (string, accelerator and services only) |
+
+Changed after the mockups (2026-11-21): service deliverables are a list; `pages` gains eyebrow, a section label and heading, and `cost_summary`, which the home page shows under "What it costs"; update cover and project are optional. The home page's "What you get" lists are the titles of the `supports` and `services` entries, not separate fields.
+
+Shared across pages, managed once: the closing call-to-action band (heading, text, second button) is an EmDash [widget area](https://docs.emdashcms.com/guides/widgets/); the header menu and the two footer menus ("Site", "Elsewhere") are [Menus](https://docs.emdashcms.com/guides/menus/).
 
 EmDash has no singleton type, so each fixed page is one `pages` entry looked up by slug. Site title, tagline, social handles and the AI-training opt-out live in [Site Settings](https://docs.emdashcms.com/guides/site-settings/); header and footer links in [Menus](https://docs.emdashcms.com/guides/menus/). Rich text is Portable Text rendered by EmDash's components, so `src/utils/sanitize.ts`, both loaders and the mock JSON are deleted.
 
