@@ -4,7 +4,7 @@ Wave 1 is done. Paste everything below the line into a new Claude Code on the we
 
 ---
 
-You are continuing the build of the superbenefit.org relaunch. The plan is approved and wave 1 is merged. Your job is to execute the remaining GitHub issues in order and get each to a reviewed, mergeable pull request.
+You are continuing the build of the superbenefit.org relaunch. The plan is approved and wave 1 is merged. Your job is to execute the remaining GitHub issues in order and get each to a reviewed, mergeable pull request. Orchestrate the work with Opus 5.5 workflows.
 
 ## Read first, in this order
 1. The organization's rules in `superbenefit/.github`: `CONTRIBUTING.md` and `pull_request_template.md`. The repository is attached to this environment. Look for it on disk next to this one first (`/home/user/superbenefit/.github`); if it is not there, clone it with `git clone --depth 1 https://github.com/superbenefit/.github`. Do not conclude it is unavailable because a GitHub API call is refused.
@@ -53,12 +53,10 @@ Issues 53 and 54 are in other repositories; ask the owner to add them first. Iss
 - Each "Accept when" item in the issue has been run against a local build, and you saw it pass. For pages, compare screenshots at 1440 and 390 px with `mockups/screenshots/`.
 - For work that needs the real Cloudflare account (Access sign-in, the staging database on a deployed preview, sending a real message), say in the pull request exactly what the owner needs to check on the preview. Do not claim it works.
 
-## Use of agents and tokens
-Wave 1 spent about 1.2 million sub-agent tokens on four small issues. Do not repeat that.
-- Small issues (size S): do them yourself, or with one agent. No separate review agent.
-- Medium and large issues: one implementing agent and one reviewing agent on Opus 5.5.
-- Wave 6 (eight pages): one workflow, one implementing agent per page, one reviewer per page.
-- Use a smaller model for mechanical steps: reading and summarising docs, posting issue comments, collecting links.
+## How the work is run
+Run every wave as a workflow, with Opus 5.5 agents. Use a workflow for each wave, including a wave with one issue.
+- Per issue: one agent implements, a second agent reviews the diff against the issue, the organization's rules and the mockup, and the first fixes what the review finds that is real.
+- Wave 6 (eight pages) is one workflow with the pages in parallel.
 - Put git worktrees outside the checkout. Worktrees nested inside it fail to build unless the parent has `node_modules`.
 - A problem caused by your own setup is not a finding. Do not write it into `findings.md` or any other repository file.
 
