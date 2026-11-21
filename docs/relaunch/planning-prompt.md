@@ -1,6 +1,6 @@
 # Planning session prompt
 
-Progress: all five stages are done. The 32 issues are GitHub issues 23 to 54. The build is run from `execution-prompt.md`.
+Progress: all five planning stages are done. Wave 1 of the build (issues 23 to 26) is merged. The build continues from `execution-prompt.md`.
 
 You are planning the relaunch of superbenefit.org. This session produces a plan, not code. Do not change application code. Write plan outputs to `docs/relaunch/` on this branch.
 
