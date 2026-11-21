@@ -29,7 +29,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C11 | `compatibility_date` is 2025-12-01. No tests or lint (PR check and Dependabot added in A1). Workers Builds does build and preview every branch. | Hygiene issue. |
 | N5 | The `assets` block in `wrangler.jsonc` is ignored; the adapter generates its own. | CMS build. |
 | N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
-| N9 | `npm run check` and `npm run build` fail with "Tsconfig not found astro/tsconfigs/strict" when a parent directory has its own `tsconfig.json` and no `node_modules`, as in a git worktree under `.worktrees/` in a checkout without installed packages (reproduced 2026-11-21 by copying the tree under a directory holding a copy of `tsconfig.json`; the error string is in Rolldown's native binding). CI checks out at the root and is not affected. | Not decided. |
 
 ### SEO
 - No `<h1>` on the homepage; title is "Make Better Faster".
