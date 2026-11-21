@@ -7,21 +7,21 @@ Wave 1 is done. Paste everything below the line into a new Claude Code on the we
 You are continuing the build of the superbenefit.org relaunch. The plan is approved and wave 1 is merged. Your job is to execute the remaining GitHub issues in order and get each to a reviewed, mergeable pull request.
 
 ## Read first, in this order
-1. The organization's rules in `superbenefit/.github`: `CONTRIBUTING.md`, `pull_request_template.md` and the commit convention. They apply to every commit and pull request here. If you cannot read that repository, say so and stop.
+1. The organization's rules in `superbenefit/.github`: `CONTRIBUTING.md` and `pull_request_template.md`. The repository is public; read it with `git clone --depth 1 https://github.com/superbenefit/.github`. The GitHub API tools in this environment do not cover it, so do not conclude it is unavailable when an API call is refused.
 2. On branch `feature/relaunch`, in `docs/relaunch/`: `brief.md`, `architecture.md`, `mockups/README.md` (then the files in `mockups/`), `issues.md`, `findings.md`.
 3. `AGENTS.md`.
 4. The GitHub issue you are about to start. The issue is the brief for the work.
 
 ## Where things stand
 - Merged into `feature/relaunch` (head `59eb6a3`): issues 23 to 26. The type check now runs inside `npm run build`, so Workers Builds fails on type errors. Workers Builds is the only CI; there is no GitHub Actions workflow and there must not be one.
-- Closed: issues 23, 24, 25, 26, 28. Open: 27 and 29 to 54.
+- Closed: issues 23 to 28. Open: 29 to 54.
 - Branch previews are Worker Previews at `<branch-name>.superbenefit.dev`, behind Cloudflare Access. You cannot open them; they redirect to sign-in.
 - The three staging resources for previews exist. Names and IDs are in `issues.md`.
 
 ## Order of the remaining work
 | Wave | Issues | Notes |
 | --- | --- | --- |
-| 2 | 29 (B2, install EmDash) | Alone. Everything later builds on it. Its prerequisites are met: previews are behind Access and the staging resources exist. Issue 27 does not block it. |
+| 2 | 29 (B2, install EmDash) | Alone. Everything later builds on it. Its prerequisites are met: previews are behind Access and the staging resources exist. |
 | 3 | 32 (B5), then 31 (B4) | 31 needs the owner's values from issue 30 first. |
 | 4 | 35 (C1) | Alone. Every page builds on it. |
 | 5 | 36 (C2), 33 (B6) | |
@@ -30,7 +30,7 @@ You are continuing the build of the superbenefit.org relaunch. The plan is appro
 | 8 | 48 (D3), 49 (D4) | Need the owner's service offerings (issue 46), images and a human edit. Draft, then stop. |
 | 9 | 52 (D7, launch) | Only on the owner's explicit go-ahead. Dependabot is set up here. |
 
-Issues 53 and 54 are in other repositories; ask the owner to add them first. Issues 27, 30 and 46 are the owner's; never do them yourself.
+Issues 53 and 54 are in other repositories; ask the owner to add them first. Issues 30 and 46 are the owner's; never do them yourself.
 
 ## Before you write any code for an issue
 1. Read the official documentation for the tool the issue touches, in this session, and link what you relied on.
@@ -44,7 +44,9 @@ Issues 53 and 54 are in other repositories; ask the owner to add them first. Iss
 - Do not rewrite history that has been pushed. If a stack goes stale because the trunk moved, tell the owner what happened and ask before force-pushing.
 - A single issue on its own is a stack of one: a normal pull request into `feature/relaunch`.
 - Never push to `feature/relaunch` or `main`. You cannot merge; the owner does. After a merge, close each issue with a comment linking its pull request.
-- Every commit, including those made by sub-agents, uses the organization's commit format and this session's own attribution lines.
+- Commit messages follow the organization's format: `type(scope): subject` in the imperative, with type one of `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, and the issue named in the body. Every commit, including those made by sub-agents, carries this session's own attribution lines.
+- Pull request descriptions use the organization's template, every section filled in. Under "Spec Compliance", tick "No spec required" and name the GitHub issue and `docs/relaunch/architecture.md` as the specification. The relaunch plan lives in `docs/relaunch/`; do not create `.project/` files.
+- Write "Closes" with the issue number as the template asks, but close the issue yourself after the merge: pull requests into `feature/relaunch` do not close issues automatically.
 
 ## Checks before a pull request opens
 - `npm run build` passes (it includes the type check).
@@ -82,16 +84,12 @@ Ask one clear question at a time, with what is needed, why, and enough to decide
 - **Keep docs current.** When a decision changes, fix every file that states the old one in the same pull request.
 
 ## Open items carried over
-For the owner, none of them blocking wave 2:
-- Issue 27: confirm a test message sends from the contact form on a preview created after the preview secrets were set.
-- Confirm rate-limit `namespace_id` 2501 and 2502 are not used by another Worker in the account. Cloudflare requires them to be unique; this was merged unconfirmed.
-- Preview checks from wave 1 that nobody has looked at: the sixth contact post within a minute is refused; internal links load without a redirect.
-- Whether the relaunch should adopt the organization's `.project/{issue#}/` files. Until the owner says so, keep tracking work in `docs/relaunch/` and do not create `.project/` files.
+Nothing is waiting on the owner for wave 2. The contact form has been confirmed to send on a preview.
 
 For you to check, not assume:
 - Which branch production is built from. Compare superbenefit.org with `main` and with `feature/relaunch` before issue 29 is merged, and tell the owner the result once. Installing the CMS must not reach the live site before launch.
 - Whether npm 11.19 really blocks dependency install scripts. npm's own docs disagree. `package.json` approves `esbuild` and `workerd`; if a new dependency has an install script, test what happens before deciding.
-- `superbenefit/.github` was reported to lack a `GOVERNANCE.md` the owner referred to. If you need it and cannot find it, ask.
+- Two checks from wave 1 that could only be run locally, because previews are behind Access: the sixth contact post within a minute is refused, and internal links load without a redirect. Mention them once in your wave 2 report so the owner can look on a preview.
 
 Leftover remote branches from earlier sessions, all merged or abandoned: `a1-pr-checks`, `a1-type-check-in-build`, `a2-compatibility-date`, `a3-contact-hardening`, `a4-trailing-slash-links`, `turnstile-check`. Leave them unless the owner asks you to delete them.
 
