@@ -47,7 +47,7 @@ Workers Builds is connected to this repository: `main` deploys to production, an
 | `KNOWLEDGE_API_URL` | No | HTTPS endpoint for the SuperBenefit knowledge server (host must be `knowledge.superbenefit.org`). Omit to use bundled mock data. |
 | `CONTACT_EMAIL` | Production | Recipient of the `/contact` form. A Worker secret in production (`wrangler secret put CONTACT_EMAIL`). |
 | `TURNSTILE_SECRET_KEY` | Production | Turnstile secret for the `/contact` form. A Worker secret in production; local dev uses the always-pass test key. |
-| `EMDASH_SITE_URL` | Production | Origin EmDash uses for setup, passkeys, emails and the sitemap. Production sets `https://superbenefit.org` in `vars` in `wrangler.jsonc`; branch previews set none. Local dev reads those `vars` too, so `.env` overrides it with `http://localhost:4321`. |
+| `EMDASH_SITE_URL` | Production | Origin EmDash uses for setup, emails and the sitemap. Production sets `https://superbenefit.org` in `vars` in `wrangler.jsonc`; branch previews set none. Local dev reads those `vars` too, so `.env` overrides it with `http://localhost:4321`. |
 | `CF_ACCESS_AUDIENCE` | Previews and production | Application Audience (AUD) tag of the Cloudflare Access application in front of the CMS, which EmDash checks the Access JWT against. A Worker secret set in the dashboard: one value under Previews Base (the previews Access application), one under Production (the `superbenefit.org/_emdash/*` application). Never in the repo or `.env`; local dev does not use it. Unset, every admin request returns 401 "Authentication failed". |
 | `PUBLIC_TURNSTILE_SITE_KEY` | No | Turnstile site key, fixed at build time. `.env` sets the test key for local dev; other builds take the production key from `vars` in `wrangler.jsonc`. |
 

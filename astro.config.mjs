@@ -14,7 +14,9 @@ import { access, d1, r2 } from '@emdash-cms/cloudflare';
 // https://docs.emdashcms.com/guides/authentication/#cloudflare-access
 // describes. The AUD tag is the Worker secret CF_ACCESS_AUDIENCE (production
 // and Previews Base), never a value in this repo. `npm run dev` has no Access
-// JWT, so local development falls back to passkeys.
+// JWT, and EmDash 1.5.0 offers no passkey while access() is configured: local
+// sign-in uses /_emdash/api/auth/dev-bypass (docs/relaunch/architecture.md,
+// Auth).
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
