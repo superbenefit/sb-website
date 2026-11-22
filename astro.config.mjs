@@ -34,6 +34,9 @@ export default defineConfig({
         // in; Editor for the "Knowledge Stewardship" GitHub team; Admin for
         // "Web Admins". Keys are compared, exactly and case-sensitively, with
         // the group names Access returns; the first matching group wins.
+        // EmDash 1.5.0 reads the identity's `groups`; GitHub sign-in returns
+        // teams under `teams`, so the mapping matches nothing yet and an
+        // Admin sets these roles under Users (architecture.md, Auth; R1).
         defaultRole: 20,
         roleMapping: { 'Web Admins': 50, 'Knowledge Stewardship': 40 },
       }),

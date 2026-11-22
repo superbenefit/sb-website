@@ -26,6 +26,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
 | C11 | No tests, lint or Dependabot. Workers Builds builds, type-checks and previews every branch (A1). | Dependabot: decided at launch. |
 | N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
+| R1 | EmDash does not assign roles from GitHub teams. It resolves the role from the Access identity's `groups` only (`@emdash-cms/cloudflare` 1.5.0 and `main`); with GitHub sign-in, Access returns `orgs` and `teams` and no `groups` (owner's `get-identity` on the B4 preview, 2026-11-22). Neither EmDash's nor Cloudflare's docs give a setting for it. | Owner decision: an Admin sets roles under Users; the `roleMapping` stays in the code; an upstream issue is drafted for the owner to file. Recheck when EmDash is upgraded. |
 | L1 | With Access sign-in, the admin's Log out button only ends EmDash's session; the Access session remains, so the page reloads signed in (EmDash 1.5.0, `routes/api/auth/logout.ts`; reported by the owner on the B4 preview, 2026-11-22). | No setting in 1.5.0. Sign out at `/cdn-cgi/access/logout`. Recheck when EmDash is upgraded. |
 
 ### SEO
