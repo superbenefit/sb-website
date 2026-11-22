@@ -78,7 +78,10 @@ export default defineConfig({
         // teams under `teams`, so the mapping matches nothing yet and an
         // Admin sets these roles under Users (architecture.md, Auth; R1).
         defaultRole: 20,
-        roleMapping: { 'Web Admins': 50, 'Knowledge Stewardship': 40 },
+        roleMapping: { 'superbenefit/Web Admins': 50, 'superbenefit/Knowledge Stewardship': 40 },
+        // TEST BRANCH ONLY (emdash-cms/emdash#5027): re-apply the mapped role on every
+        // sign-in so existing users, and the first user, show what the mapping gives.
+        syncRoles: true,
       }),
       // Recommended for cached sites: public HTML is the same for everyone;
       // editors get an Edit pill that opens a fresh, uncached ?_edit render.
