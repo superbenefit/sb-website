@@ -1,0 +1,185 @@
+---
+/**
+ * Project page, built to docs/relaunch/mockups/pages/project.html: the
+ * compact red hero (logo, status, place, name, summary), the cover and body
+ * beside the partner and website, then the project's latest updates.
+ *
+ * Content comes from EmDash (docs/relaunch/architecture.md, Rendering per
+ * route). The project is read with getEmDashEntry(), so its draft preview
+ * link shows the draft (https://docs.emdashcms.com/guides/preview/); an
+ * unknown slug renders the 404 page. Every read passes its cache hint to
+ * Astro.cache.set() (https://docs.emdashcms.com/deployment/route-caching/;
+ * the route rule is `/projects/[slug]` in astro.config.mjs, tagged
+ * `projects` and `updates`).
+ *
+ * Related updates: an update names its project in its `project` reference
+ * field (seed/seed.json). EmDash 1.5.0 resolves a reference field from the
+ * entry that holds it (getEmDashEntry `references`, getEmDashReferences;
+ * https://docs.emdashcms.com/guides/querying-content/), and the project has
+ * no field on the other end of the relation, so the page walks the published
+ * updates, newest first, reads each one's `project` with
+ * getEmDashReferences() and keeps the first three that point at this
+ * project. See docs/relaunch/issues.md, C6 notes.
+ *
+ * Missing content: the logo, place, cover, body, partner and website are
+ * left out when empty, and the facts column when both partner and website
+ * are; the updates section is left out when no update names the project
+ * (the mockups show neither case).
+ */
+import { getEmDashCollection, getEmDashEntry, getEmDashReferences } from 'emdash';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import WaveDivider from '../../components/WaveDivider.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import ImageSlot from '../../components/ImageSlot.astro';
+import Ledger from '../../components/Ledger.astro';
+import EntryList from '../../components/EntryList.astro';
+import type { EntryItem } from '../../components/EntryList.astro';
+import RichText from '../../components/rich-text/RichText.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/more.css';
+
+/** How many updates the section shows: one row of the mockup's grid. */
+const UPDATES_SHOWN = 3;
+/** Updates read per step of the walk. */
+const UPDATES_PER_STEP = 20;
+
+const slug = Astro.params.slug?.replace(/\/+$/, '');
+const { entry: project, cacheHint } = slug
+  ? await getEmDashEntry('projects', slug)
+  : { entry: null, cacheHint: undefined };
+if (!project) {
+  return Astro.rewrite('/404');
+}
+if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
+
+const updates: EntryItem[] = [];
+let cursor: string | undefined;
+do {
+  const page = await getEmDashCollection('updates', {
+    orderBy: { published_at: 'desc' },
+    limit: UPDATES_PER_STEP,
+    cursor,
+  });
+  if (Astro.cache?.enabled) Astro.cache.set(page.cacheHint);
+  const refs = await Promise.all(
+    page.entries.map((update) => getEmDashReferences('updates', update.data.id, 'project')),
+  );
+  page.entries.forEach((update, i) => {
+    const target = refs[i].entries[0];
+    const targetId = (target?.data as { id?: string } | undefined)?.id ?? target?.id;
+    if (targetId && targetId === project.data.id && updates.length < UPDATES_SHOWN) {
+      const { data } = update;
+      updates.push({
+        href: `/updates/${data.slug ?? update.id}/`,
+        title: data.title,
+        date: data.publishedAt ?? data.createdAt,
+        excerpt: data.excerpt ?? undefined,
+        cover: data.cover,
+      });
+    }
+  });
+  cursor = page.nextCursor;
+} while (cursor && updates.length < UPDATES_SHOWN);
+
+const { title, summary, project_status, location, logo, cover, body, partner, website } = project.data;
+const hasFacts = Boolean(partner || website);
+---
+
+<BaseLayout title={title} description={summary} bandFrom={updates.length > 0 ? 'green' : 'cream'}>
+  <PageHero title={title} intro={summary} variant="red" compact>
+    <Fragment slot="meta">
+      {logo && <ImageSlot image={logo} kind="logo" sizes="72px" priority />}
+      <StatusBadge status={project_status} />
+      {location && <span class="caps">{location}</span>}
+    </Fragment>
+  </PageHero>
+  <WaveDivider bg="red" fill="cream" />
+  <section class="sec">
+    <div class="wrap pd">
+      <div>
+        {cover && (
+          <div class="pd__cover">
+            <ImageSlot image={cover} sizes="(min-width: 1200px) 736px, (min-width: 900px) 64vw, 100vw" priority />
+          </div>
+        )}
+        <RichText value={body} />
+      </div>
+      {hasFacts && (
+        <aside class="pd__aside">
+          <Ledger
+            rows={[
+              { label: 'Partner', text: partner ?? '' },
+              { label: 'Website', link: website ? { href: website, label: 'Visit the website' } : null },
+            ]}
+          />
+        </aside>
+      )}
+    </div>
+  </section>
+  {updates.length > 0 && (
+    <>
+      <WaveDivider bg="cream" fill="green" />
+      <section class="sec sec--sage">
+        <div class="wrap">
+          <div class="sec__head">
+            <h2 class="display">Updates on this project</h2>
+            <a class="more" href="/updates/">All updates <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+          </div>
+          <EntryList entries={updates} />
+        </div>
+      </section>
+    </>
+  )}
+</BaseLayout>
+
+<style>
+  /* The mockups' links take the text colour (mockups.css `a`), as the base a
+     rule in global.css now does. Kept from before global.css's base matched mockups.css (findings.md, G3). */
+  .more,
+  .more:hover {
+    color: inherit;
+  }
+
+  /* Project detail layout: the `pd` rules in docs/relaunch/mockups/mockups.css. */
+  .pd {
+    display: grid;
+    gap: var(--space-xl-half);
+  }
+
+  .pd__cover {
+    aspect-ratio: 16 / 9;
+    border: var(--rule);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* `contain: size` keeps a real cover's own height out of the frame's size,
+     so the frame's aspect-ratio alone sets its height, as with the
+     placeholder (https://developer.mozilla.org/en-US/docs/Web/CSS/contain). */
+  .pd__cover :global(.has-image) {
+    contain: size;
+  }
+
+  .pd__cover :global(.slot),
+  .pd :global(.prose .slot) {
+    background: var(--color-cream-light);
+  }
+
+  .pd__aside :global(.ledger) {
+    margin: 0px;
+  }
+
+  .pd__aside :global(.ledger > div) {
+    grid-template-columns: 6.5rem minmax(0px, 1fr);
+  }
+
+  @media (min-width: 900px) {
+    .pd {
+      grid-template-columns: minmax(0px, 8fr) minmax(0px, 4fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+  }
+</style>

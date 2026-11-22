@@ -63,6 +63,8 @@ interface Props {
   /** The band's first button; defaults to "Get in touch" and /contact/. */
   bandLabel?: string;
   bandHref?: string;
+  /** `band`: the band's own link leads and the page's button follows (contact). */
+  bandLead?: 'page' | 'band';
   /** Cache this response under the route rule; `false` for error pages. */
   cache?: boolean;
 }
@@ -84,6 +86,7 @@ const {
   bandFrom,
   bandLabel,
   bandHref,
+  bandLead,
   cache = true,
 } = Astro.props;
 
@@ -128,8 +131,8 @@ const page = createPublicPageContext({
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{fullTitle}</title>
     <EmDashHead page={page} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#1a1a1a" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="sitemap" href="/sitemap.xml" />
@@ -142,7 +145,7 @@ const page = createPublicPageContext({
     <Header cache={cache} />
     <main>
       <slot />
-      {closingBand && <ClosingBand from={bandFrom} primaryLabel={bandLabel} primaryHref={bandHref} cache={cache} />}
+      {closingBand && <ClosingBand from={bandFrom} primaryLabel={bandLabel} primaryHref={bandHref} lead={bandLead} cache={cache} />}
     </main>
     <FooterFade />
     <Footer cache={cache} />

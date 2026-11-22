@@ -3,7 +3,8 @@
  * Rich text: a Portable Text field rendered by EmDash's <PortableText> inside
  * the mockup's `prose` box (docs/relaunch/mockups/mockups.css; the rules are
  * the PROSE section of src/styles/global.css). Used by every page that shows
- * a body field (about, project, update).
+ * a rich text field. `inherit` keeps the type size of the box it sits in
+ * (`prose--inherit`), as the mockup's About page does in its split.
  *
  * EmDash renders text blocks (headings, paragraphs, lists, quotes) and the
  * table itself. Three block types are replaced, the documented way
@@ -25,9 +26,11 @@ import RichTextTable from './RichTextTable.astro';
 interface Props {
   value: PortableTextBlock[] | null | undefined;
   class?: string;
+  /** Take font size and line height from the parent box. */
+  inherit?: boolean;
 }
 
-const { value, class: className } = Astro.props;
+const { value, class: className, inherit = false } = Astro.props;
 
 const components = {
   type: {
@@ -40,7 +43,7 @@ const components = {
 ---
 
 {value && value.length > 0 && (
-  <div class:list={['prose', className]}>
+  <div class:list={['prose', inherit && 'prose--inherit', className]}>
     <PortableText value={value} components={components} />
   </div>
 )}

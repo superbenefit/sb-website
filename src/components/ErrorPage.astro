@@ -1,0 +1,75 @@
+---
+/**
+ * Error page body for /404 and /500: the `err` rules in
+ * docs/relaunch/mockups/mockups.css (pages/not-found.html and
+ * pages/server-error.html). A large status code (orange for 404, gold for
+ * 500), the title as the page's one h1, a message and the actions slot
+ * (buttons). The pages pass cache={false} and closingBand={false} to the
+ * layout; the section's bottom padding leaves room for the footer fade, which
+ * overlaps it.
+ */
+interface Props {
+  code: 404 | 500;
+  title: string;
+  message: string;
+}
+
+const { code, title, message } = Astro.props;
+---
+
+<section class:list={['err', { 'err--500': code === 500 }, 'on-ink']}>
+  <div class="wrap">
+    <p class="err__code" aria-hidden="true">{code}</p>
+    <h1 class="display">{title}</h1>
+    <p class="msg">{message}</p>
+    {Astro.slots.has('default') && <div class="ph__actions"><slot /></div>}
+  </div>
+</section>
+
+<style>
+  .err {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+    padding-block: var(--space-xl) calc(var(--space-xl) + 80px);
+    text-align: left;
+  }
+
+  .err__code {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: clamp(7rem, 4rem + 14vw, 15rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-orange);
+  }
+
+  .err--500 .err__code {
+    color: var(--color-gold);
+  }
+
+  .err h1 {
+    font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
+    margin-top: var(--space-lg);
+  }
+
+  .err p.msg {
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    max-width: 40ch;
+    margin-top: var(--space-md);
+  }
+
+  /* The mockup reuses the page hero's action row (`ph__actions`). */
+  .ph__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-xl-half);
+  }
+
+  @media (min-width: 900px) {
+    .err {
+      padding-block: 5.5rem calc(120px + 5.5rem);
+    }
+  }
+</style>

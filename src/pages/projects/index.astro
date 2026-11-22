@@ -1,0 +1,62 @@
+---
+/**
+ * Projects index, built to docs/relaunch/mockups/pages/projects.html: the
+ * red page hero, then every published project as a card.
+ *
+ * Content comes from EmDash (docs/relaunch/architecture.md, Rendering per
+ * route): the hero from the `pages` entry `projects`, the cards from the
+ * `projects` collection, ordered by their `order` field and then by title.
+ * Both are read with EmDash's query helpers, so a draft preview link shows
+ * the draft (https://docs.emdashcms.com/guides/preview/), and each passes
+ * its cache hint to Astro.cache.set(), so publishing either purges the cached
+ * page (https://docs.emdashcms.com/deployment/route-caching/; the route rule
+ * is `/projects` in astro.config.mjs).
+ *
+ * Missing content: without the `pages` entry the title is "Projects" and no
+ * intro is shown. With no projects, a dashed `empty` box (mockups.css, the
+ * shared src/styles/parts/empty.css) says so; the mockups show no empty state.
+ */
+import { getEmDashCollection, getEmDashEntry } from 'emdash';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import WaveDivider from '../../components/WaveDivider.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/empty.css';
+
+const { entry: page, cacheHint: pageHint } = await getEmDashEntry('pages', 'projects');
+const { entries, cacheHint: listHint } = await getEmDashCollection('projects');
+if (Astro.cache?.enabled) {
+  Astro.cache.set(pageHint);
+  Astro.cache.set(listHint);
+}
+
+const projects = [...entries].sort(
+  (a, b) =>
+    (a.data.order ?? Number.POSITIVE_INFINITY) - (b.data.order ?? Number.POSITIVE_INFINITY) ||
+    a.data.title.localeCompare(b.data.title),
+);
+
+const title = page?.data.title || 'Projects';
+const intro = page?.data.intro;
+---
+
+<BaseLayout title={title} description={intro ?? ''} bandFrom="cream">
+  <PageHero title={title} intro={intro} kicker={page?.data.eyebrow} variant="red" />
+  <WaveDivider bg="red" fill="cream" />
+  <section class="sec">
+    <div class="wrap">
+      {projects.length > 0 ? (
+        <ul class="pgrid">
+          {projects.map((project) => (
+            <li><ProjectCard project={project} /></li>
+          ))}
+        </ul>
+      ) : (
+        <div class="empty">
+          <p>No projects are published yet.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

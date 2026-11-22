@@ -1,0 +1,112 @@
+---
+/**
+ * The updates index, one page of it: docs/relaunch/mockups/pages/updates.html.
+ * Gold hero with the `pages` entry `updates` (title, intro), the wave, then
+ * the `entries` list and the `pager` in a cream `sec`. Used by
+ * src/pages/updates/index.astro (page 1) and
+ * src/pages/updates/page/[page].astro (pages 2 and on).
+ *
+ * Content: the hero reads its `pages` entry with getEmDashEntry(), so a
+ * preview link for that entry shows its draft (issues.md, B6 notes); the list
+ * comes from getUpdatesPage(). Every cache hint goes to Astro.cache.set(), on
+ * top of the route rule in astro.config.mjs.
+ *
+ * Missing content (issues.md, C7 notes): with no `updates` page entry the
+ * title is "Updates" and there is no intro. With no published updates the
+ * list is the mockup's `empty` box with a short message, and there is no
+ * pager; with one page of updates there is no pager either.
+ */
+import { getEmDashEntry } from 'emdash';
+import type { CacheHint } from 'emdash';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from './PageHero.astro';
+import WaveDivider from './WaveDivider.astro';
+import EntryList from './EntryList.astro';
+import type { EntryItem } from './EntryList.astro';
+import '../styles/parts/sec.css';
+import '../styles/parts/empty.css';
+
+interface Props {
+  items: EntryItem[];
+  page: number;
+  totalPages: number;
+  cacheHints: CacheHint[];
+}
+
+const { items, page, totalPages, cacheHints } = Astro.props;
+
+const { entry: pageEntry, cacheHint: pageHint } = await getEmDashEntry('pages', 'updates');
+if (Astro.cache?.enabled) {
+  for (const hint of [pageHint, ...cacheHints]) Astro.cache.set(hint);
+}
+
+const title = pageEntry?.data.title || 'Updates';
+const intro = pageEntry?.data.intro || undefined;
+const docTitle = page > 1 ? `${title}, page ${page}` : title;
+
+const pageHref = (n: number) => (n <= 1 ? '/updates/' : `/updates/page/${n}/`);
+const newer = page > 1 ? pageHref(page - 1) : null;
+const older = page < totalPages ? pageHref(page + 1) : null;
+---
+
+<BaseLayout title={docTitle} description={intro ?? ''} bandFrom="cream">
+  <PageHero title={title} intro={intro} variant="gold" />
+  <WaveDivider bg="gold" fill="cream" />
+  <section class="sec">
+    <div class="wrap">
+      {items.length > 0 ? (
+        <EntryList entries={items} />
+      ) : (
+        <div class="empty">
+          <h3>No updates yet</h3>
+          <p>News from the projects and the network will be listed here.</p>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <nav class="pager" aria-label="Pagination">
+          {newer ? (
+            <a class="btn btn--line" href={newer} rel="prev">Newer</a>
+          ) : (
+            <span class="btn btn--line" aria-disabled="true">Newer</span>
+          )}
+          <span class="caps">Page {page} of {totalPages}</span>
+          {older ? (
+            <a class="btn btn--line" href={older} rel="next">Older <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+          ) : (
+            <span class="btn btn--line" aria-disabled="true">Older</span>
+          )}
+        </nav>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Pagination: the `pager` rules in docs/relaunch/mockups/mockups.css
+     (only the updates index uses them). */
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: var(--rule);
+  }
+
+  .pager .btn {
+    min-height: 2.75rem;
+    padding: 0.5em 1.2em;
+    font-size: var(--text-sm);
+  }
+
+  .pager .btn svg {
+    transition: none;
+  }
+
+  .pager [aria-disabled='true'] {
+    opacity: 0.45;
+    border-style: dashed;
+    pointer-events: none;
+  }
+</style>

@@ -44,21 +44,44 @@ export default defineConfig({
   // 'ignore' (Astro's default): EmDash admin URLs have no trailing slash. https://docs.astro.build/en/reference/configuration-reference/#trailingslash
   trailingSlash: 'ignore',
   cache: { provider: cacheCloudflare() },
+  // The old accelerator URLs, as Astro's configured redirects
+  // (https://docs.astro.build/en/guides/routing/#configured-redirects). They
+  // are in the build, not the database, so they work on any database with no
+  // data step (architecture.md, Rendering per route). The build writes them,
+  // in both slash forms, into dist/client/_redirects
+  // (@astrojs/cloudflare/dist/index.js, @astrojs/underscore-redirects), which
+  // Workers static assets answer before the Worker runs
+  // (https://developers.cloudflare.com/workers/static-assets/redirects/).
+  // `astro dev` answers them in Astro's handler instead, which uses
+  // `status` only when the destination is a route's own path, so there a GET
+  // gets 301 and other methods 308 (astro/dist/core/redirects/render.js).
+  redirects: {
+    '/support': { status: 301, destination: '/accelerator/' },
+    '/supports': { status: 301, destination: '/accelerator/' },
+  },
   // Patterns match the request path, with or without the trailing slash
-  // (trailingSlash 'ignore'). /support becomes a redirect to /accelerator/ in
-  // C4, which replaces its rule; /projects/[slug] arrives with C6. /home has
-  // no rule: it is a 301 to / that calls Astro.cache.set(false).
+  // (trailingSlash 'ignore'). /projects/[slug] shows the project's updates,
+  // so it is tagged with both collections. /home has no rule: it is a 301 to /
+  // that calls Astro.cache.set(false). /support and /supports have none
+  // either: they are the configured `redirects` above, answered before any
+  // page renders.
+  // The home page also lists the titles of the services and supports entries.
   routeRules: {
-    '/': rule(['pages', 'projects', 'updates']),
+    '/': rule(['pages', 'projects', 'updates', 'services', 'supports']),
     '/about': rule(['pages']),
+    '/accelerator': rule(['pages', 'supports']),
     '/contact': rule(['pages']),
-    '/projects': rule(['projects']),
+    '/projects': rule(['pages', 'projects']),
+    '/projects/[slug]': rule(['projects', 'updates']),
     '/services': rule(['pages', 'services']),
-    '/support': rule(['pages', 'supports']),
-    '/updates': rule(['updates']),
-    '/updates/[...slug]': rule(['updates']),
-    // The collections EmDash lists in the sitemap: routable ones with SEO.
-    // services and supports are not routable (seed/seed.json), so not listed.
+    // The index shows the `updates` pages entry and each update's project;
+    // an update shows its project's card.
+    '/updates': rule(['pages', 'updates', 'projects']),
+    '/updates/page/[page]': rule(['pages', 'updates', 'projects']),
+    '/updates/[...slug]': rule(['updates', 'projects']),
+    // The site's own sitemap routes (src/pages/sitemap*.xml.ts), which list
+    // the routable collections with SEO (src/utils/sitemap.ts). services and
+    // supports are not routable (seed/seed.json), so not listed.
     '/sitemap.xml': rule(['pages', 'projects', 'updates']),
     '/sitemap-[collection].xml': rule(['pages', 'projects', 'updates']),
   },
@@ -98,7 +121,7 @@ export default defineConfig({
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   vite: { plugins: [tailwindcss()] },
   fonts: [
-    { provider: fontProviders.google(), name: 'Playfair Display', cssVariable: '--font-playfair', weights: ['400 900'], styles: ['normal'], display: 'swap', fallbacks: ['Georgia', 'Times New Roman', 'serif'] },
+    { provider: fontProviders.google(), name: 'Playfair Display', cssVariable: '--font-playfair', weights: ['400 900'], styles: ['normal', 'italic'], display: 'swap', fallbacks: ['Georgia', 'Times New Roman', 'serif'] },
     { provider: fontProviders.google(), name: 'Inter', cssVariable: '--font-inter', weights: ['100 900'], styles: ['normal'], display: 'swap', fallbacks: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'] },
   ],
 });

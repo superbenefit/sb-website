@@ -1,374 +1,79 @@
 ---
+/**
+ * About page, /about/: docs/relaunch/mockups/pages/about.html.
+ *
+ * Content comes from EmDash on each request (docs/relaunch/architecture.md,
+ * Rendering per route): the `pages` entry `about`, read with
+ * getEmDashEntry(), so a draft preview link (`?_preview=`) shows the draft
+ * here (https://docs.emdashcms.com/guides/preview/). Its cache hint tags the
+ * response for EmDash's purge on publish; the route rule in astro.config.mjs
+ * sets the lifetime (https://docs.emdashcms.com/deployment/route-caching/).
+ *
+ * Fields (seed/seed.json): hero title `title`, kicker `eyebrow`, intro
+ * `intro`; the split from `section_label`, `section_heading` and `body`
+ * (rich text, RichText); the closing band's first button from `cta_label`
+ * and `cta_url` (the mockup's "Call to action label"), else the layout's
+ * default. The hero image is the SuperBenefit icon, as in the mockup.
+ *
+ * Missing content: an absent entry or field is not rendered; the title falls
+ * back to "About" so the page always has one h1. The split is left out when
+ * it has no label, heading or body, and the hero's wave then runs into the
+ * closing band.
+ *
+ * Not built: the mockup's gold quote section. The content model has no field
+ * for it (the mockup's own note: "Anything else shown here would need a
+ * field"); a quote in the body renders inside the body (docs/relaunch/issues.md,
+ * C8 notes).
+ */
+import { Image } from 'astro:assets';
+import { getEmDashEntry } from 'emdash';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import WaveDivider from '../components/WaveDivider.astro';
-import SectionDivider from '../components/SectionDivider.astro';
+import RichText from '../components/rich-text/RichText.astro';
+import icon from '../assets/sb-icon.jpg';
+import '../styles/parts/sec.css';
+import '../styles/parts/split.css';
 
-const hero = {
-  title: 'About SuperBenefit',
-  subtitle: 'A node in the regenerative ecosystem',
-};
+const { entry: page, cacheHint } = await getEmDashEntry('pages', 'about');
+if (page && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-// Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
-// Toggle by flipping `pageIsDraft` to false when the page is ready to ship.
-const pageIsDraft = true;
-const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
+const data = page?.data;
+const title = data?.title || 'About';
+const hasBody = Boolean(data?.body?.length);
+const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody);
+const bandHref = data?.cta_label && data?.cta_url ? data.cta_url : undefined;
+const bandLabel = bandHref ? data?.cta_label : undefined;
 ---
 
 <BaseLayout
-  title="About — SuperBenefit"
-  description="About SuperBenefit: a purpose-aligned network using emerging technologies to grow new systems of coordination. Our mission, values, and theory of change."
-  noindex={showDraftPlaceholder}
+  title={title}
+  description={data?.intro || title}
+  bandFrom={hasSplit ? 'cream' : 'black'}
+  bandLabel={bandLabel}
+  bandHref={bandHref}
 >
-  {showDraftPlaceholder ? (
-    <section class="draft-placeholder">
-      <div class="container">
-        <span class="section-label">Draft</span>
-        <h1>Coming soon</h1>
-        <p>We're working on this page. Check back soon.</p>
-        <a href="/" class="draft-cta">Back to home</a>
-      </div>
-    </section>
-  ) : (
+  <PageHero title={title} kicker={data?.eyebrow} intro={data?.intro} variant="black">
+    <Image slot="art" class="ph__art" src={icon} alt="SuperBenefit icon" width={400} height={400} />
+  </PageHero>
+
+  {hasSplit && (
     <>
-      <PageHero title={hero.title} intro={hero.subtitle} variant="black" />
-
-  <WaveDivider bg="black" fill="cream" bands />
-
-  <!-- Mission Section -->
-  <section class="about-mission">
-    <div class="container mission-content" data-animate="fade-up">
-      <span class="section-label">Our Mission</span>
-      <h2>Emerging technologies are a rare opportunity. Not a silver bullet, but the potential to intervene at the deepest levels of how power flows.</h2>
-      <div class="mission-columns">
-        <div>
-          <p>
-            Our current systems of coordination - how we organize, allocate resources, govern ourselves, make collective decisions - clearly aren't working for most people. Value is extracted rather than circulated, power ever more concentrated, our planet and people devastated.
-          </p>
-          <p>
-            Meanwhile, across the world, there is a hidden mosaic of grassroots initiatives yearning to be woven. Open source, peer-to-peer, built to be forked.
-          </p>
+      <WaveDivider bg="black" fill="cream" bands />
+      <section class="sec">
+        <div class="wrap split">
+          <div>
+            {data?.section_label && <p class="caps">{data.section_label}</p>}
+            {data?.section_heading && <h2 class="display">{data.section_heading}</h2>}
+          </div>
+          {hasBody && (
+            <div class="split__body">
+              <RichText value={data?.body} inherit />
+            </div>
+          )}
         </div>
-        <div>
-          <p>
-            SuperBenefit is one part of a much larger regenerative ecosystem. Together, we are building the commons and cultivating the connective tissue between disparate communities, initiatives, technologies, and bioregions.
-          </p>
-          <p>
-            Through projects like the <a href="https://knowledge.superbenefit.dev/docs/" target="_blank" rel="noopener noreferrer">Reimagining Power Project</a> and <a href="https://allinforsport.org/" target="_blank" rel="noopener noreferrer">All In For Sport</a>, we work alongside partners across multiple continents, experimenting with decentralized tools to shift ownership and agency to communities that have been excluded from the systems that shape their lives.
-          </p>
-        </div>
-      </div>
-      <blockquote class="pull-quote">
-        "Not just reimagining existing systems, but growing new ones alongside them."
-      </blockquote>
-    </div>
-  </section>
-
-  <SectionDivider from="cream" to="green" />
-
-  {/* Values */}
-  <section class="about-values">
-    <div class="container">
-      <header class="values-header" data-animate="fade-up">
-        <span class="section-label">Our Values</span>
-        <h2>What guides our work</h2>
-      </header>
-      <div class="values-grid">
-        <div class="value-card" data-animate="fade-up" style="--stagger: 0ms">
-          <span class="value-icon" aria-hidden="true">&darr;</span>
-          <h3>Open Source</h3>
-          <p>Everything we build is open source, licensed for anyone to use, adapt, and fork. Transparency is the foundation of trust.</p>
-        </div>
-        <div class="value-card" data-animate="fade-up" style="--stagger: 80ms">
-          <span class="value-icon" aria-hidden="true">&harr;</span>
-          <h3>Peer-to-Peer</h3>
-          <p>We organize as a network of peers — not a hierarchy. Power is distributed, decisions are made by those affected by them.</p>
-        </div>
-        <div class="value-card" data-animate="fade-up" style="--stagger: 160ms">
-          <span class="value-icon" aria-hidden="true">&olarr;</span>
-          <h3>Regenerative</h3>
-          <p>Our work aims to regenerate social, ecological, and economic systems — creating cycles of value that circulate rather than extract.</p>
-        </div>
-        <div class="value-card" data-animate="fade-up" style="--stagger: 0ms">
-          <span class="value-icon" aria-hidden="true">&sung;</span>
-          <h3>Translocal</h3>
-          <p>We are rooted in specific places and communities while connected globally. Local autonomy, translocal solidarity.</p>
-        </div>
-        <div class="value-card" data-animate="fade-up" style="--stagger: 80ms">
-          <span class="value-icon" aria-hidden="true">&circlearrowleft;</span>
-          <h3>Commons-Based</h3>
-          <p>We build and steward shared resources — knowledge, code, infrastructure, and capital — governed by the communities that rely on them.</p>
-        </div>
-        <div class="value-card" data-animate="fade-up" style="--stagger: 160ms">
-          <span class="value-icon" aria-hidden="true">&weierp;</span>
-          <h3>Systems Thinking</h3>
-          <p>We see the whole system, not isolated parts. Our interventions aim to shift underlying patterns, not just surface symptoms.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <SectionDivider from="green" to="cream" />
-
-  {/* Theory of Change */}
-  <section class="about-toc">
-    <div class="container">
-      <span class="section-label" data-animate="fade-up">Theory of Change</span>
-      <h2 data-animate="fade-up">How we work</h2>
-      <div class="toc-steps">
-        <div class="toc-step" data-animate="fade-up" style="--stagger: 0ms">
-          <div class="step-number">01</div>
-          <div class="step-connector" aria-hidden="true"></div>
-          <h3>Convene</h3>
-          <p>We bring together builders, researchers, and community leaders who are working at the edges of systems change. Through gatherings, salons, and shared spaces, we create the conditions for trust, learning, and collaboration across disciplines and geographies.</p>
-        </div>
-        <div class="toc-step" data-animate="fade-up" style="--stagger: 100ms">
-          <div class="step-number">02</div>
-          <div class="step-connector" aria-hidden="true"></div>
-          <h3>Coordinate</h3>
-          <p>We develop shared infrastructure, capital allocation mechanisms, and governance patterns that enable autonomous teams to work together without centralized control. Our DAO primitives framework provides modular building blocks for designing purpose-aligned networks.</p>
-        </div>
-        <div class="toc-step" data-animate="fade-up" style="--stagger: 200ms">
-          <div class="step-number">03</div>
-          <h3>Catalyze</h3>
-          <p>We launch and support initiatives that create regenerative outcomes — from decentralized governance experiments to community-owned infrastructure. Each initiative produces knowledge, tools, and patterns that feed back into the ecosystem.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
+      </section>
     </>
   )}
 </BaseLayout>
 
-<style>
-  /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
-  .draft-placeholder {
-    background: var(--color-cream);
-    padding-block: var(--space-2xl);
-    min-height: 60vh;
-    display: flex;
-    align-items: center;
-    text-align: center;
-  }
-  .draft-placeholder .container {
-    max-width: 640px;
-  }
-  .draft-placeholder h1 {
-    font-family: var(--font-serif);
-    color: var(--color-charcoal);
-    margin-block-end: var(--space-md);
-  }
-  .draft-placeholder p {
-    color: var(--color-charcoal);
-    opacity: 0.8;
-    font-size: var(--text-lg);
-    line-height: 1.7;
-    margin-block-end: var(--space-xl);
-  }
-  .draft-cta {
-    display: inline-block;
-    padding: 0.9em 2em;
-    border-radius: 50px;
-    background: var(--color-orange);
-    color: var(--color-cream);
-    font-weight: 600;
-    text-decoration: none;
-    transition: background var(--transition-fast);
-  }
-  .draft-cta:hover {
-    background: var(--color-orange-dark);
-  }
-
-  /* ===== Section Label ===== */
-  .section-label {
-    display: inline-block;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-orange);
-    margin-block-end: var(--space-sm);
-  }
-
-  /* ===== Mission ===== */
-  .about-mission {
-    background: var(--color-cream);
-    padding-block: var(--space-2xl);
-  }
-
-  .mission-content {
-    max-width: 900px;
-  }
-
-  .mission-content h2 {
-    margin-block-end: var(--space-xl);
-    max-width: 700px;
-  }
-
-  .mission-columns {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-    margin-block-end: var(--space-xl);
-  }
-
-  @media (min-width: 768px) {
-    .mission-columns {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .mission-columns p {
-    color: var(--color-charcoal);
-    opacity: 0.8;
-    line-height: 1.7;
-    margin-block-end: var(--space-md);
-  }
-
-  .mission-columns a {
-    color: var(--color-orange);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: opacity var(--transition-fast);
-  }
-
-  .mission-columns a:hover {
-    opacity: 0.7;
-  }
-
-  .pull-quote {
-    font-family: var(--font-serif);
-    font-size: var(--text-xl);
-    font-style: italic;
-    color: var(--color-orange);
-    border-inline-start: 4px solid var(--color-gold);
-    padding-inline-start: var(--space-lg);
-    margin-block-start: var(--space-lg);
-  }
-
-  /* ===== Values ===== */
-  .about-values {
-    background: var(--color-green-sage);
-    padding-block: var(--space-2xl);
-  }
-
-  .values-header {
-    text-align: center;
-    margin-block-end: var(--space-xl);
-  }
-
-  .values-header .section-label {
-    color: var(--color-charcoal);
-    opacity: 0.7;
-  }
-
-  .values-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-lg);
-  }
-
-  .value-card {
-    background: var(--color-cream-light);
-    border-radius: 12px;
-    padding: var(--space-xl) var(--space-lg);
-    box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
-    animation-delay: var(--stagger);
-  }
-
-  .value-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .value-icon {
-    display: block;
-    font-size: 2rem;
-    color: var(--color-orange);
-    margin-block-end: var(--space-sm);
-  }
-
-  .value-card h3 {
-    margin-block-end: var(--space-xs);
-  }
-
-  .value-card p {
-    font-size: var(--text-sm);
-    color: var(--color-charcoal);
-    opacity: 0.75;
-    line-height: 1.7;
-  }
-
-  /* ===== Theory of Change ===== */
-  .about-toc {
-    background: var(--color-cream);
-    padding-block: var(--space-2xl);
-  }
-
-  .about-toc h2 {
-    margin-block-end: var(--space-xl);
-  }
-
-  .toc-steps {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
-  }
-
-  @media (min-width: 768px) {
-    .toc-steps {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-lg);
-    }
-  }
-
-  .toc-step {
-    position: relative;
-    animation-delay: var(--stagger);
-  }
-
-  .step-number {
-    font-family: var(--font-serif);
-    font-size: var(--text-3xl);
-    font-weight: 900;
-    color: var(--color-orange);
-    opacity: 0.3;
-    line-height: 1;
-    margin-block-end: var(--space-sm);
-  }
-
-  .step-connector {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .step-connector {
-      display: block;
-      position: absolute;
-      top: 2rem;
-      right: calc(-1 * var(--space-lg) / 2 - 20px);
-      width: 40px;
-      height: 2px;
-      background: linear-gradient(to right, var(--color-orange), transparent);
-    }
-
-    .toc-step:last-child .step-connector {
-      display: none;
-    }
-  }
-
-  .toc-step h3 {
-    color: var(--color-charcoal);
-    margin-block-end: var(--space-xs);
-  }
-
-  .toc-step p {
-    font-size: var(--text-sm);
-    color: var(--color-charcoal);
-    opacity: 0.75;
-    line-height: 1.7;
-  }
-
-</style>

@@ -1,0 +1,78 @@
+---
+/**
+ * An image in a mockup image place: `slot` (a cover, filling its frame) or
+ * `logo` (the square `logo-slot`). Rules in src/styles/parts/slot.css, copied
+ * from docs/relaunch/mockups/mockups.css.
+ *
+ * With an image, it is EmDash's <Image> from `emdash/ui`
+ * (https://docs.emdashcms.com/guides/querying-content/), filling the place.
+ * Without one it is the mockup's labelled placeholder; a logo with an
+ * `initial` is the mockup's `logo-slot--initial` instead, which the mockups
+ * show for a project with no logo.
+ *
+ * `sizes` and `priority` are passed to <Image> when given (its props in
+ * node_modules/emdash/src/components/EmDashImage.astro): `sizes` for the
+ * responsive image, `priority` to load an image above the fold at once.
+ */
+import type { ImageValue } from 'emdash';
+import { Image } from 'emdash/ui';
+import '../styles/parts/slot.css';
+
+interface Props {
+  image?: ImageValue | null;
+  kind?: 'slot' | 'logo';
+  /** Shown in the placeholder; also its accessible name. */
+  label?: string;
+  /** For a logo with no image: the letter the mockup shows instead. */
+  initial?: string;
+  class?: string;
+  /** `sizes` for the responsive image. */
+  sizes?: string;
+  /** Load at once (an image above the fold). */
+  priority?: boolean;
+}
+
+const { image, kind = 'slot', label, initial, class: className, sizes, priority } = Astro.props;
+const hasImage = Boolean(image);
+const placeholder = label ?? (kind === 'logo' ? 'Logo' : 'Cover image, 16:9');
+const name = kind === 'logo' ? 'Project logo' : 'Cover image';
+// Only the props a caller gave: <Image> spreads its other props onto the
+// <img>, so an undefined `sizes` would replace the one it works out itself.
+const imageProps = {
+  ...(sizes ? { sizes } : {}),
+  ...(priority ? { priority } : {}),
+};
+---
+
+{kind === 'logo' ? (
+  hasImage ? (
+    <span class:list={['logo-slot', 'has-image', className]}><Image image={image} {...imageProps} /></span>
+  ) : initial ? (
+    <span class:list={['logo-slot', 'logo-slot--initial', className]} aria-hidden="true">{initial}</span>
+  ) : (
+    <span class:list={['logo-slot', className]} role="img" aria-label={name}>{placeholder}</span>
+  )
+) : hasImage ? (
+  <div class:list={['slot', 'has-image', className]}><Image image={image} {...imageProps} /></div>
+) : (
+  <div class:list={['slot', 'caps', className]} role="img" aria-label={name}>{placeholder}</div>
+)}
+
+<style>
+  /* A real image fills the place the placeholder marks: no inner padding,
+     cropped to the frame's shape, inside the logo's rounded border. */
+  .has-image {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .has-image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .logo-slot.has-image :global(img) {
+    object-fit: contain;
+  }
+</style>

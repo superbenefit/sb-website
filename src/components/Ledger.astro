@@ -1,0 +1,68 @@
+---
+/**
+ * The "What you get / What it costs" list and the project page's facts: the
+ * `ledger` rules in src/styles/parts/ledger.css, copied from
+ * docs/relaunch/mockups/mockups.css. Each row is a caps label and either a
+ * list of short items, one line of text, or a `more` link (the project
+ * page's "Visit the website", pages/project.html). A row with none of these
+ * is left out, and so is the whole list when no row has content.
+ */
+import '../styles/parts/ledger.css';
+
+interface Row {
+  label: string;
+  items?: string[];
+  text?: string;
+  /** A `more` link with its arrow; the page that uses it imports more.css. */
+  link?: { href: string; label: string } | null;
+}
+
+interface Props {
+  rows: Row[];
+}
+
+const rows = Astro.props.rows
+  .map((row) => ({
+    ...row,
+    items: (row.items ?? []).map((item) => item.trim()).filter(Boolean),
+    text: row.text?.trim() ?? '',
+    link: row.link?.href ? row.link : null,
+  }))
+  .filter((row) => row.items.length > 0 || row.text || row.link);
+---
+
+{rows.length > 0 && (
+  <dl class="ledger">
+    {rows.map((row) => (
+      <div>
+        <dt class="caps">{row.label}</dt>
+        <dd>
+          {row.items.length > 0 ? (
+            <ul>{row.items.map((item) => <li>{item}</li>)}</ul>
+          ) : row.text ? (
+            row.text
+          ) : (
+            row.link && (
+              <a class="more" href={row.link.href}>{row.link.label} <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+            )
+          )}
+        </dd>
+      </div>
+    ))}
+  </dl>
+)}
+
+<style>
+  /* The same as the base ul rule in global.css (mockups.css's list reset).
+     Kept from before global.css had it (findings.md, G1). */
+  ul {
+    list-style: none;
+  }
+
+  /* The same as the base a rule in global.css (mockups.css `a`: inherit, no
+     hover colour). Kept from before global.css's base matched mockups.css (findings.md, G3). */
+  a,
+  a:hover {
+    color: inherit;
+  }
+</style>

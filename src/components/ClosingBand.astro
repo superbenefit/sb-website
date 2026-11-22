@@ -14,6 +14,11 @@
  * first button is the page's own action and defaults to "Get in touch",
  * which most mockup pages show. Nothing is rendered when the area has no
  * content widget.
+ *
+ * `lead="band"` is the contact page's order (mockups/pages/contact.html): the
+ * area's link comes first, as the accent button, and the page's own button
+ * second, as the outline button. That button has no default there and is
+ * left out unless both its label and link are given.
  */
 import { getWidgetAreaWithCacheHint } from 'emdash';
 import type { PortableTextBlock } from 'emdash';
@@ -26,11 +31,13 @@ interface Props {
   from?: 'black' | 'charcoal' | 'cream' | 'paper' | 'green' | 'orange' | 'gold' | 'red';
   primaryLabel?: string;
   primaryHref?: string;
+  /** Which button leads: the page's own (default) or the widget area's link. */
+  lead?: 'page' | 'band';
   /** Pass the cache hint to Astro.cache; the layout turns it off for pages that are not cached. */
   cache?: boolean;
 }
 
-const { from = 'cream', primaryLabel = 'Get in touch', primaryHref = '/contact/', cache = true } = Astro.props;
+const { from = 'cream', primaryLabel, primaryHref, lead = 'page', cache = true } = Astro.props;
 
 interface Span {
   _type: string;
@@ -69,7 +76,14 @@ for (const block of paragraphs) {
   if (link && !second) second = link;
   else if (!link && !text) text = block;
 }
-const external = second ? /^https?:\/\//.test(second.href) : false;
+const own =
+  lead === 'page'
+    ? { label: primaryLabel ?? 'Get in touch', href: primaryHref ?? '/contact/' }
+    : primaryLabel && primaryHref
+      ? { label: primaryLabel, href: primaryHref }
+      : undefined;
+const [first, next] = lead === 'band' ? [second, own] : [own, second];
+const rel = (href: string) => (/^https?:\/\//.test(href) ? 'noopener noreferrer' : undefined);
 ---
 
 {widget && (
@@ -82,10 +96,14 @@ const external = second ? /^https?:\/\//.test(second.href) : false;
           {text && <PortableText value={[text]} />}
         </div>
         <div class="close__actions">
-          <Button href={primaryHref} variant="accent" arrow>{primaryLabel}</Button>
-          {second && (
-            <Button href={second.href} variant="line" rel={external ? 'noopener noreferrer' : undefined}>
-              {second.label}
+          {first && (
+            <Button href={first.href} variant="accent" arrow rel={rel(first.href)}>
+              {first.label}
+            </Button>
+          )}
+          {next && (
+            <Button href={next.href} variant="line" rel={rel(next.href)}>
+              {next.label}
             </Button>
           )}
         </div>

@@ -122,13 +122,13 @@ img {
 }
 
 a {
-  color: var(--color-orange);
+  color: inherit;
   text-decoration: none;
-  transition: color var(--transition-fast);
 }
 
-a:hover {
-  color: var(--color-red);
+ul,
+ol {
+  list-style: none;
 }
 
 button {
@@ -144,7 +144,6 @@ h1, h2, h3, h4 {
   font-family: var(--font-serif);
   font-weight: 700;
   line-height: 1.15;
-  color: var(--color-charcoal);
   text-wrap: balance;
 }
 
@@ -152,10 +151,6 @@ h1 { font-size: var(--text-3xl); }
 h2 { font-size: var(--text-2xl); }
 h3 { font-size: var(--text-xl); }
 h4 { font-size: var(--text-lg); }
-
-p {
-  max-width: 70ch;
-}
 
 /* ===== UTILITIES ===== */
 
@@ -388,8 +383,8 @@ p {
   background: var(--color-orange);
 }
 
-/* The mockups' base rule is a { color: inherit }; the site's base link rule
-   (orange, red on hover) predates them, so prose links inherit here. */
+/* The same as the base a rule above (mockups.css `a`: inherit). Kept from
+   before the base rule matched mockups.css (findings.md, G3). */
 .prose a,
 .prose a:hover {
   color: inherit;
@@ -572,6 +567,26 @@ p {
 
 .prose .scroll .emdash-table.emdash-table p {
   margin: 0;
+}
+
+/* Rich text inside a box that sets its own type size (a split body, a
+   support or service item, the contact aside). The mockup's About page puts
+   `style="font-size: inherit; line-height: inherit;"` on that prose box;
+   this class is the same two declarations (RichText's `inherit` prop). */
+.prose--inherit {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* On a dark section the quote's rules and inline code take the dark-section
+   values (`--rule-dark`; code keeps its light box, so its text is charcoal).
+   The mockups show rich text on light sections only. */
+.on-ink .prose blockquote {
+  border-block: var(--rule-dark);
+}
+
+.on-ink .prose :not(pre) > code {
+  color: var(--color-charcoal);
 }
 
 /* ===== REDUCED MOTION ===== */
