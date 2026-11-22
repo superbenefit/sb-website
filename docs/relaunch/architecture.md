@@ -1,6 +1,6 @@
 # Architecture (decided 2026-11-20)
 
-The design the relaunch builds. Every choice follows the official docs linked. Owner decisions are recorded at the end. Nothing here is deployed yet; see First-deploy checks.
+The design the relaunch builds. Every choice follows the official docs linked. Owner decisions are recorded at the end. The CMS install runs on a branch preview (2026-11-22); production is not deployed until launch. See First-deploy checks.
 
 ## Stack
 Astro 7.4 + `@astrojs/cloudflare` 14.4 on Workers Paid, with EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`). Set up exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes:
@@ -105,7 +105,7 @@ Two environments under one Worker, as Cloudflare's [Previews](https://developers
   - The setup wizard is still shown on an empty database under Access auth; the first person through Access after setup becomes Admin (`astro/middleware/auth.ts`).
   - Local development reads the top-level `vars`, so `npm run dev` needs `EMDASH_SITE_URL=http://localhost:4321` in `.env` (in `.env.example`); without it a passkey made on localhost fails with "Security error".
   - Preview names: a `/` in the branch name becomes `-` (observed: branch `docs/stage-4-final` is served at `docs-stage-4-final.superbenefit.dev`). Cloudflare's docs do not state the rule.
-  - Still to confirm on the first CMS preview (owner, behind Access): that setup there stores `https://<branch-name>.superbenefit.dev`. If it fails with `SITE_URL_REQUIRED`, the Preview command passes the URL with `--var`, as the guide shows.
+  - Confirmed by the owner on the first CMS preview, `b2-install-emdash.superbenefit.dev` (2026-11-22): setup completed without `EMDASH_SITE_URL`, so the Preview command needs no `--var`. Not checked: which URL setup stored as the site URL.
 - `wrangler.jsonc` has the `previews` block with `DB`, `MEDIA` and `SESSION` on the staging resources by ID, and the `send_email` and `ratelimits` bindings. It does not repeat `EMDASH_ROOMS`: the guide's `previews` block leaves it out, so previews edit in single-editor mode. `wrangler deploy --dry-run` parses and schema-checks the `previews` block offline (it warns on unknown fields); only `wrangler preview` checks it against the account.
 - Workers Builds is the only CI. Its build command is `npm run build`, which runs `wrangler types && astro check && astro build`, so a type error fails the build on every branch and on `main`. `astro build` alone does no type checking ([Astro TypeScript guide](https://docs.astro.build/en/guides/typescript/#type-checking)); the script is the one Astro's [Cloudflare adapter page](https://docs.astro.build/en/guides/integrations-guide/cloudflare/#typing) gives. EmDash's guide builds with the package's `build` script and deploys with `wrangler deploy` or `wrangler preview` ([Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/#build-and-deploy)). Cloudflare recommends external CI only for self-hosted or unsupported Git hosts ([CI/CD](https://developers.cloudflare.com/workers/ci-cd/)), so there is no GitHub Actions workflow. Dependabot is decided at launch (D7): GitHub reads its config only from the default branch.
 - `compatibility_date` moves to the current date.
@@ -119,7 +119,7 @@ All Worker domain and Access settings are configured by a human in the Cloudflar
 Copy and the new service offerings are content work; see `issues.md`. Fleet fixes (governance canonical, unidentified Workers) are last in the order.
 
 ## First-deploy checks
-The setup above is taken from the docs and source, not yet deployed. The first branch build with EmDash runs the docs' own checklist: a public page, admin sign-in through Access, a media upload shown on a public page while signed out, and the cron in `wrangler tail`.
+The first branch preview with EmDash (`b2-install-emdash`, 2026-11-22) passed the owner's checks: public pages render, the setup wizard completes, and an uploaded image displays. Still to run on production at launch (D7): the docs' own checklist, including admin sign-in through Access and the cron in `wrangler tail`, which cannot run on a preview.
 
 ## Owner decisions (2026-11-20)
 1. Editors sign in through Access with GitHub. Org members are Contributors; the "Web Admins" team are Admins.
