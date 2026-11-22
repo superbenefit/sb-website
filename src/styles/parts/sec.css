@@ -1,0 +1,47 @@
+/* Section, dark section and section head: .sec, .sec--alt, .sec--ink, .sec--sage, .sec--gold, .sec__head, .sec__note.
+   Copied unchanged from docs/relaunch/mockups/mockups.css (.sec rules, in the stylesheet's order). Shared part:
+   import it from the page or component that uses these classes. */
+
+.sec  {
+    background: var(--color-cream);
+    padding-block: var(--space-xl);
+}
+.sec--alt  {
+    background: var(--color-cream-light);
+}
+.sec__head  {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+.sec__head h2  {
+    font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
+}
+@media (min-width: 900px)  {
+  .sec  {
+      padding-block: 6.5rem;
+  }
+  .sec__head  {
+      margin-bottom: var(--space-xl-half);
+  }
+}
+.sec--ink  {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+}
+.sec--sage  {
+    background: var(--color-green-sage);
+}
+.sec--gold  {
+    background: var(--color-gold);
+}
+.sec__note  {
+    max-width: 30ch;
+    text-align: right;
+}
+.sec h2.display  {
+    font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
+}

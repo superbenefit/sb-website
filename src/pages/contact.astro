@@ -1,9 +1,39 @@
 ---
+/**
+ * Contact page, /contact/: docs/relaunch/mockups/pages/contact.html.
+ *
+ * Content comes from EmDash on each request (docs/relaunch/architecture.md,
+ * Rendering per route): the `pages` entry `contact`, read with
+ * getEmDashEntry(), so a draft preview link (`?_preview=`) shows the draft
+ * here (https://docs.emdashcms.com/guides/preview/). Its cache hint tags the
+ * response for EmDash's purge on publish; the route rule in astro.config.mjs
+ * sets the lifetime (https://docs.emdashcms.com/deployment/route-caching/).
+ *
+ * Fields (seed/seed.json): hero kicker `eyebrow`, title `title`, intro
+ * `intro`; the aside's heading `section_heading` and its text `body`, where a
+ * last paragraph that is only a link (the mockup's email address) is the
+ * `more` link; the closing band's outline button `cta_label` and `cta_url`
+ * ("Book an onboarding call", docs/relaunch/issues.md, Decided). The band is
+ * the shared widget area in the contact mockup's order: its own link (Join
+ * the Discord) leads as the accent button (ClosingBand `lead="band"`).
+ *
+ * Missing content: an absent entry or field is not rendered; the title falls
+ * back to "Contact" so the page always has one h1. The aside is left out when
+ * it has no heading and no body; the form is always shown.
+ *
+ * The form posts to the `contact` action (src/actions/contact.ts). Its states
+ * (field error, submitting, success, server error) use the mockup's
+ * `field--error`, `field__error`, `btn[aria-disabled]`, `spin` and `banner`
+ * rules; the mockups show none of them (docs/relaunch/mockups/README.md).
+ */
+import { getEmDashEntry } from 'emdash';
+import type { PortableTextBlock } from 'emdash';
+import { PortableText } from 'emdash/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import WaveDivider from '../components/WaveDivider.astro';
-import SectionDivider from '../components/SectionDivider.astro';
-import CallToAction from '../components/CallToAction.astro';
+import '../styles/parts/sec.css';
+import '../styles/parts/more.css';
 
 // PUBLIC_ variables are inlined at build time, so the site key is fixed at
 // build. It comes from PUBLIC_TURNSTILE_SITE_KEY: `.env` in local
@@ -12,123 +42,122 @@ import CallToAction from '../components/CallToAction.astro';
 const siteKey =
   import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADtinm8-q80lFVL-';
 
-const hero = {
-  title: 'Get in touch',
-  subtitle: "We read every message. Tell us what you're working on.",
+const { entry: page, cacheHint } = await getEmDashEntry('pages', 'contact');
+if (page && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const data = page?.data;
+const title = data?.title || 'Contact';
+
+interface Span {
+  _type: string;
+  text?: string;
+  marks?: string[];
+}
+type TextBlock = PortableTextBlock & {
+  children?: Span[];
+  markDefs?: { _type: string; _key: string; href?: string }[];
+  style?: string;
 };
+
+/** A normal paragraph whose text is all one link: its label and href. */
+function linkOnly(block: TextBlock | undefined): { label: string; href: string } | undefined {
+  if (!block || block._type !== 'block' || (block.style ?? 'normal') !== 'normal') return undefined;
+  const links = (block.markDefs ?? []).filter((def) => def._type === 'link' && def.href);
+  if (links.length !== 1) return undefined;
+  const [link] = links;
+  const spans = (block.children ?? []).filter((child) => (child.text ?? '').trim() !== '');
+  if (spans.length === 0 || !spans.every((span) => span.marks?.includes(link._key))) return undefined;
+  return { label: spans.map((span) => span.text).join('').trim(), href: link.href as string };
+}
+
+const body = (data?.body ?? []) as TextBlock[];
+const more = linkOnly(body.at(-1));
+const text = more ? body.slice(0, -1) : body;
+const hasAside = Boolean(data?.section_heading || body.length);
+const bandHref = data?.cta_label && data?.cta_url ? data.cta_url : undefined;
+const bandLabel = bandHref ? data?.cta_label : undefined;
 ---
 
 <BaseLayout
-  closingBand={false}
-  title="Contact — SuperBenefit"
-  description="Get in touch with SuperBenefit. We work with aligned organizations, networks, and contributors on governance, research, and regenerative systems."
+  title={title}
+  description={data?.intro || title}
+  bandFrom="cream"
+  bandLead="band"
+  bandLabel={bandLabel}
+  bandHref={bandHref}
   preconnect={['https://challenges.cloudflare.com']}
 >
-  <PageHero title={hero.title} intro={hero.subtitle} variant="charcoal" />
+  <PageHero title={title} kicker={data?.eyebrow} intro={data?.intro} variant="charcoal" />
 
   <WaveDivider bg="charcoal" fill="cream" bands />
 
-  <section class="contact-form-section">
-    <div class="container">
-      <div class="contact-banner contact-banner-success" role="status" hidden>
-        <strong>Thanks — your message is on its way.</strong>
-        {" "}We'll be in touch within a few days.
-      </div>
-
-      <div class="contact-banner contact-banner-error" role="alert" hidden></div>
-
-      <div class="contact-grid">
-        <aside class="contact-aside">
-          <span class="section-label">Contact</span>
-          <h2>How we work</h2>
-          <p>
-            SuperBenefit is a small network. We respond personally and try
-            to be useful even when a formal engagement isn't the right fit.
-            For project proposals, partnership ideas, speaking, or just to
-            say hello — the form is the fastest path.
-          </p>
-          <p class="contact-aside-meta">
-            Prefer email? Reach us at{" "}
-            <a href="mailto:contact@superbenefit.org">contact@superbenefit.org</a>.
-          </p>
+  <section class="sec">
+    <div class="wrap contact">
+      {hasAside && (
+        <aside class="contact__aside">
+          {data?.section_heading && <h2 class="display">{data.section_heading}</h2>}
+          {text.length > 0 && <PortableText value={text} />}
+          {more && <a class="more" href={more.href}>{more.label}</a>}
         </aside>
+      )}
 
-        <form class="contact-form" method="POST">
-          <div class="contact-field">
-            <label for="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              maxlength="120"
-              autocomplete="name"
-            />
-          </div>
+      <form class="form" id="contact-form" method="POST">
+        <div class="field">
+          <label for="name">Name (required)</label>
+          <input type="text" id="name" name="name" required maxlength="120" autocomplete="name" />
+        </div>
 
-          <div class="contact-field">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              maxlength="200"
-              autocomplete="email"
-            />
-          </div>
+        <div class="field">
+          <label for="email">Email (required)</label>
+          <input type="email" id="email" name="email" required maxlength="200" autocomplete="email" />
+        </div>
 
-          <div class="contact-field">
-            <label for="subject">Subject</label>
-            <input
-              type="text"
-              id="subject"
-              name="subject"
-              required
-              maxlength="200"
-            />
-          </div>
+        <div class="field">
+          <label for="subject">Subject (required)</label>
+          <input type="text" id="subject" name="subject" required maxlength="200" />
+        </div>
 
-          <div class="contact-field">
-            <label for="message">Message</label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              rows="6"
-              maxlength="5000"
-            ></textarea>
-          </div>
+        <div class="field">
+          <label for="message">Message (required)</label>
+          <textarea id="message" name="message" required rows="6" maxlength="5000"></textarea>
+        </div>
 
-          <div class="contact-turnstile">
-            <div id="turnstile-widget" data-sitekey={siteKey}></div>
-          </div>
+        <div class="field" data-field="cf-turnstile-response">
+          <div id="turnstile-widget" class="form__turnstile" data-sitekey={siteKey}></div>
+        </div>
 
-          <button type="submit" class="contact-submit">
-            Send message
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M5 12h14"></path>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </button>
-        </form>
-      </div>
+        <button class="btn btn--ink" type="submit">
+          Send message
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </button>
+      </form>
     </div>
   </section>
 
-  <SectionDivider from="cream" to="charcoal" />
-
-  <CallToAction variant="contact" />
+  <!-- State markup, copied into the form by the script below. The icons take
+       the mockup's `field__error svg`, `banner svg` and `btn svg` rules. -->
+  <template id="contact-field-error">
+    <p class="field__error">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16.5v.01" /></svg>
+      <span></span>
+    </p>
+  </template>
+  <template id="contact-sending">
+    Sending…
+    <svg class="spin" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9" /></svg>
+  </template>
+  <template id="contact-ok">
+    <div class="banner banner--ok" role="status" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.8 2.8L16.5 9.5" /></svg>
+      <p><strong>Message sent.</strong> Thank you. We will be in touch within a few days.</p>
+    </div>
+  </template>
+  <template id="contact-bad">
+    <div class="banner banner--bad" role="alert" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16.5v.01" /></svg>
+      <p></p>
+    </div>
+  </template>
 </BaseLayout>
 
 <script>
@@ -175,58 +204,96 @@ const hero = {
     if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
   }
 
+  /** A copy of the content of one of the page's <template> elements. */
+  function clone(id: string): DocumentFragment {
+    const template = document.getElementById(id);
+    return template instanceof HTMLTemplateElement
+      ? (template.content.cloneNode(true) as DocumentFragment)
+      : document.createDocumentFragment();
+  }
+
   function setupForm() {
-    const form = document.querySelector<HTMLFormElement>('.contact-form');
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
     if (!form || form.dataset.contactInit === 'true') return;
     form.dataset.contactInit = 'true';
 
-    const container = form.closest('.container');
-    const successBanner = container?.querySelector('.contact-banner-success');
-    const errorBanner = container?.querySelector('.contact-banner-error');
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const idle = submitBtn ? Array.from(submitBtn.childNodes) : [];
+    let submitting = false;
+
+    function clearState(f: HTMLFormElement) {
+      f.querySelectorAll('.field__error, .banner').forEach((el) => el.remove());
+      f.querySelectorAll('.field--error').forEach((el) => el.classList.remove('field--error'));
+      f.querySelectorAll('[aria-invalid]').forEach((el) => {
+        el.removeAttribute('aria-invalid');
+        el.removeAttribute('aria-describedby');
+      });
+    }
+
+    function showBanner(f: HTMLFormElement, id: 'contact-ok' | 'contact-bad', message?: string) {
+      const banner = clone(id).firstElementChild as HTMLElement | null;
+      if (!banner) return;
+      const p = banner.querySelector('p');
+      if (message !== undefined && p) p.textContent = message;
+      f.insertBefore(banner, f.firstChild);
+      banner.focus();
+    }
+
+    function showFieldError(f: HTMLFormElement, field: string, messages: string[]) {
+      const wrapper =
+        field === 'cf-turnstile-response'
+          ? f.querySelector<HTMLElement>('[data-field="cf-turnstile-response"]')
+          : f.querySelector(`[name="${CSS.escape(field)}"]`)?.closest<HTMLElement>('.field');
+      const error = clone('contact-field-error').firstElementChild as HTMLElement | null;
+      if (!wrapper || !error) return;
+      error.id = `${field}-error`;
+      const span = error.querySelector('span');
+      if (span) span.textContent = messages.join(', ');
+      wrapper.classList.add('field--error');
+      wrapper.appendChild(error);
+      const input = wrapper.querySelector('input:not([type="hidden"]), textarea');
+      input?.setAttribute('aria-invalid', 'true');
+      input?.setAttribute('aria-describedby', error.id);
+    }
+
+    function setSubmitting(on: boolean) {
+      submitting = on;
+      if (!submitBtn) return;
+      if (on) {
+        submitBtn.replaceChildren(clone('contact-sending'));
+        submitBtn.setAttribute('aria-disabled', 'true');
+      } else {
+        submitBtn.replaceChildren(...idle);
+        submitBtn.removeAttribute('aria-disabled');
+      }
+    }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (submitting) return;
 
-      // Clear previous state
-      form.querySelectorAll('.contact-field-error').forEach((el) => el.remove());
-      successBanner?.setAttribute('hidden', '');
-      errorBanner?.setAttribute('hidden', '');
-
-      const submitBtn = form.querySelector('.contact-submit') as HTMLButtonElement;
-      const originalHTML = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
+      clearState(form);
+      setSubmitting(true);
 
       try {
         const formData = new FormData(form);
         const { data, error } = await actions.contact(formData);
 
         if (data?.ok) {
-          successBanner?.removeAttribute('hidden');
           form.reset();
           resetWidget();
+          showBanner(form, 'contact-ok');
         } else if (isInputError(error)) {
           for (const [field, messages] of Object.entries(error.fields)) {
-            const p = document.createElement('p');
-            p.className = 'contact-field-error';
-            p.textContent = (messages ?? []).join(', ');
-            if (field === 'cf-turnstile-response') {
-              form.querySelector('.contact-turnstile')?.appendChild(p);
-            } else {
-              const input = form.querySelector(`[name="${CSS.escape(field)}"]`);
-              input?.closest('.contact-field')?.appendChild(p);
-            }
+            showFieldError(form, field, messages ?? []);
           }
+          form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
         } else if (error) {
-          if (errorBanner) {
-            errorBanner.textContent = error.message;
-            errorBanner.removeAttribute('hidden');
-          }
+          showBanner(form, 'contact-bad', error.message);
           resetWidget();
         }
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalHTML;
+        setSubmitting(false);
       }
     });
   }
@@ -261,139 +328,138 @@ const hero = {
 ></script>
 
 <style>
-  .contact-form-section {
-    background: var(--color-cream);
-    padding-block: var(--space-2xl);
-  }
-
-  .contact-grid {
+  /* The `contact`, `form`, `field`, `btn[aria-disabled]`, `spin` and `banner`
+     rules from docs/relaunch/mockups/mockups.css, unchanged except that the
+     design tool's `.is-focus` stand-in is left out. The state elements come
+     from this page's <template>s, so the scoped selectors reach them. The
+     Turnstile container keeps the mockup placeholder's 65 px height so the
+     form does not move when the widget appears; the widget is not restyled. */
+  .contact {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-2xl);
-    align-items: start;
+    gap: var(--space-xl-half);
   }
-  @media (min-width: 768px) {
-    .contact-grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  .contact__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: flex-start;
+    max-width: 40ch;
+  }
+  /* The mockups' base rule is a { color: inherit }; the site's legacy base
+     link rule (orange, red on hover) is not, so the link inherits here. */
+  .contact__aside .more,
+  .contact__aside .more:hover {
+    color: inherit;
+  }
+  .contact__aside h2 {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    margin-bottom: var(--space-sm);
+  }
+  .form {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .field {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .field label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--color-cream-light);
+    color: var(--color-charcoal);
+    border: var(--rule);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: var(--text-base);
+  }
+  .field textarea {
+    min-height: 10rem;
+    resize: vertical;
+  }
+  .field input:focus-visible, .field textarea:focus-visible {
+    outline: 3px solid var(--color-charcoal);
+    outline-offset: 3px;
+  }
+  .field--error input, .field--error textarea {
+    border-color: var(--color-red-deep);
+    border-width: 3px;
+  }
+  .field__error {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-red-deep);
+  }
+  .field__error svg, .banner svg {
+    width: 1.2em;
+    height: 1.2em;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .form__turnstile {
+    min-height: 65px;
+    max-width: 100%;
+  }
+  .form .btn {
+    justify-self: start;
+    border: 0px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .spin {
+    animation: 1s linear 0s infinite normal none running spin;
+  }
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
     }
   }
-
-  .contact-aside .section-label {
-    display: inline-block;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-orange);
-    margin-block-end: var(--space-sm);
-  }
-  .contact-aside h2 {
-    font-family: var(--font-serif);
-    font-size: var(--text-2xl);
-    color: var(--color-charcoal);
-    margin-block-end: var(--space-md);
-  }
-  .contact-aside p {
-    color: var(--color-charcoal);
-    opacity: 0.8;
-    line-height: 1.7;
-    max-width: 60ch;
-    margin-block-end: var(--space-md);
-  }
-  .contact-aside-meta a {
-    color: var(--color-orange);
-  }
-
-  .contact-form {
-    display: grid;
-    gap: var(--space-md);
-  }
-
-  .contact-field {
-    display: grid;
-    gap: var(--space-xs);
-  }
-  .contact-field label {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-charcoal);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .contact-field input,
-  .contact-field textarea {
-    font: inherit;
-    color: var(--color-charcoal);
-    background: var(--color-cream-light);
-    border: 1px solid rgb(var(--color-black-rgb) / 0.12);
-    border-radius: 6px;
-    padding: var(--space-sm) var(--space-md);
-    font-family: var(--font-sans);
+  .banner {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border: var(--rule);
+    border-radius: var(--radius-md);
     font-size: var(--text-base);
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color var(--transition-fast);
+    line-height: 1.5;
   }
-  .contact-field input:focus,
-  .contact-field textarea:focus {
-    outline: none;
-    border-color: var(--color-orange);
-    box-shadow: 0 0 0 3px rgb(var(--color-orange-rgb) / 0.15);
+  .banner svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.1em;
   }
-  .contact-field textarea {
-    resize: vertical;
-    min-height: 8rem;
-    line-height: 1.6;
+  .banner--ok {
+    background: var(--color-green-sage);
   }
-  .contact-field-error {
-    font-size: var(--text-xs);
-    color: var(--color-red);
-    margin: 0;
-  }
-
-  .contact-turnstile {
-    margin-block: var(--space-sm);
-  }
-  .contact-turnstile .contact-field-error {
-    margin-block-start: var(--space-xs);
-  }
-
-  .contact-submit {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    font-family: var(--font-sans);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+  .banner--bad {
+    background: var(--color-red-deep);
     color: var(--color-cream);
-    background: var(--color-orange);
-    border: none;
-    border-radius: 6px;
-    padding: var(--space-md) var(--space-lg);
-    cursor: pointer;
-    transition: background var(--transition-fast);
-    justify-self: start;
+    border-color: var(--color-black);
   }
-  .contact-submit:hover {
-    background: var(--color-orange-dark);
-  }
-
-  .contact-banner {
-    padding: var(--space-md) var(--space-lg);
-    border-radius: 6px;
-    margin-block-end: var(--space-xl);
-    font-size: var(--text-base);
-  }
-  .contact-banner-success {
-    background: rgb(var(--color-green-rgb) / 0.12);
-    border: 1px solid rgb(var(--color-green-rgb) / 0.4);
-    color: var(--color-charcoal);
-  }
-  .contact-banner-error {
-    background: rgb(var(--color-red-rgb) / 0.1);
-    border: 1px solid rgb(var(--color-red-rgb) / 0.4);
-    color: var(--color-red-deep);
+  @media (min-width: 900px) {
+    .contact {
+      grid-template-columns: minmax(0px, 5fr) minmax(0px, 7fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
   }
 </style>
