@@ -1,17 +1,26 @@
 # Architecture (decided 2026-11-20)
 
-The design the relaunch builds. Every choice follows the official docs linked. Owner decisions are recorded at the end. Nothing here is deployed yet; see First-deploy checks.
+The design the relaunch builds. Every choice follows the official docs linked. Owner decisions are recorded at the end. The CMS install runs on a branch preview (2026-11-22); production is not deployed until launch. See First-deploy checks.
 
 ## Stack
 Astro 7.4 + `@astrojs/cloudflare` 14.4 on Workers Paid, with EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`). Set up exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes:
-- `astro.config.mjs`: `output: "server"`, `adapter: cloudflare()` with no options, `react()`, `emdash({ database: d1({ binding: "DB" }), storage: r2({ binding: "MEDIA" }) })`.
-- `wrangler.jsonc`: `main: ./src/worker.ts`, the `DB` and `MEDIA` bindings by name (Wrangler creates both on first deploy), `triggers.crons: ["* * * * *"]`.
-- `src/worker.ts`: the documented entry from `@emdash-cms/cloudflare/worker` with `createScheduledHandler()`.
-- `src/live.config.ts` with `emdashLoader()`. `EMDASH_SITE_URL` is set before first setup.
+Installed in B2 (#29) with `emdash` and `@emdash-cms/cloudflare` 1.5.0, `@astrojs/react`, `react` and `react-dom`:
+- `astro.config.mjs`: `output: "server"`, `adapter: cloudflare()` with no options, `react()`, `emdash({ database: d1({ binding: "DB" }), storage: r2({ binding: "MEDIA" }) })`. No `sandboxRunner`: the guide drops it, with the `LOADER` binding, for a site with no marketplace, registry or sandboxed plugins.
+- `wrangler.jsonc`: `main: ./src/worker.ts`, the `DB` (`sb-website`) and `MEDIA` (`sb-website-media`) bindings by name (Wrangler creates both on first deploy), the `EMDASH_ROOMS` Durable Object binding with the `exports` entry for `EmDashRoom` (co-editing rooms; co-editing stays off until `coEditing: true`), `triggers.crons: ["* * * * *"]`, and `EMDASH_SITE_URL` in `vars`. The adapter adds the `SESSION` KV and `IMAGES` bindings to the config it generates (`dist/server/wrangler.json`), at the top level and in `previews`.
+- `src/worker.ts`: the documented entry from `@emdash-cms/cloudflare/worker`: the spread default handler with `createScheduledHandler()`, and the `EmDashRoom`, `EmDashRoomSite` and `PluginBridge` exports. `emdash doctor` reports the scheduler wiring as found.
+- `src/live.config.ts` with `emdashLoader()`.
+- `tsconfig.json` lists `./worker-configuration.d.ts` in `compilerOptions.types`, as Cloudflare's [TypeScript guide](https://developers.cloudflare.com/workers/languages/typescript/) says, so `src/worker.ts` type-checks against the Workers runtime types. Secrets are declared in `src/env.d.ts`.
 
-Current settings that conflict with this and are removed: `prerenderEnvironment: 'node'`, the custom `imageService` object, the `sessionDrivers.lruCache()` override (EmDash sign-in uses the adapter's KV sessions), the `assets` block in `wrangler.jsonc`, `@astrojs/sitemap` and `public/robots.txt`.
+Settings that conflicted with this were removed in B2: `prerenderEnvironment: 'node'`, the custom `imageService` object (the adapter default, the `IMAGES` binding, now transforms images at build and on demand), the `sessionDrivers.lruCache()` override (EmDash sign-in uses the adapter's KV sessions), the `assets` block in `wrangler.jsonc`, `@astrojs/sitemap` (with its draft filter) and `public/robots.txt`. `/sitemap.xml` and `/robots.txt` now come from EmDash, and the layout's `<link rel="sitemap">` points at `/sitemap.xml`. The existing pages are still prerendered and still read the legacy loaders until the page issues replace them.
 
 docs.emdashcms.com tracks unreleased `main`, ahead of the npm release (1.5.0 on 2026-11-20). Check doc-derived behaviour against the installed version.
+
+URLs (owner decision, 2026-11-22; finding T1): `trailingSlash: 'ignore'`, Astro's default ([`trailingSlash`](https://docs.astro.build/en/reference/configuration-reference/#trailingslash): "Match URLs regardless of whether a trailing '/' exists"). A4 had set `'always'`, under which every `/_emdash/` URL without a trailing slash returned 404, and the EmDash admin uses those URLs (it redirects to `/_emdash/admin/setup` and calls `/_emdash/api/...`). EmDash's docs say nothing about `trailingSlash`, and its [official templates](https://github.com/emdash-cms/emdash/tree/main/templates) set none. Consequences:
+- Internal links still end in `/`.
+- Prerendered pages: Astro does not control their trailing slash ("Trailing slashes on prerendered pages are handled by the hosting platform"). Workers static assets' default [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/) still 307s `/about` to `/about/`.
+- On-demand pages, once the page issues render them on demand: both `/about` and `/about/` answer 200. `Astro.url.pathname` keeps the form requested, which `SEO.astro` builds the canonical from and `isNavLinkActive` (`src/utils/nav.ts`) compares against `/about/`.
+- EmDash reads the host setting (`emdash/dist/astro/index.mjs`, 1.5.0). Under `'ignore'` it leaves the URLs it builds for content (sitemap, menus) as the collection's URL pattern gives them, without a trailing slash.
+- Verified locally (`astro preview`, EmDash 1.5.0, 2026-11-22): `/_emdash/admin` and `/_emdash/admin/` 302 to `/_emdash/admin/setup`, which returns 200 with and without the slash; `/_emdash/api/setup/status` returns 200 with and without the slash.
 
 ## Rendering per route
 | Route | Mode | Content source |
@@ -87,14 +96,17 @@ Two environments under one Worker, as Cloudflare's [Previews](https://developers
 - **Previews are protected with Cloudflare Access.** Custom-domain Preview URLs are public and do not get `X-Robots-Tag: noindex` ([custom domains](https://developers.cloudflare.com/workers/previews/custom-domains/#protect-preview-content)). With the CMS installed, an empty staging database shows the setup wizard and "the first visitor to finish the wizard becomes the administrator" (EmDash, same page). Access can protect one Worker's previews only ([Cloudflare Access](https://developers.cloudflare.com/workers/configuration/cloudflare-access/)).
 - **Because all previews share the staging database**, a branch that upgrades EmDash migrates it for the others on its first request. A branch that needs isolation points its own `previews` block at another database (EmDash, same page).
 - **Scheduled publishing cannot be tested on a preview**, because Cron Triggers target production ([limitations](https://developers.cloudflare.com/workers/previews/resources/#limitations)). It is confirmed after launch.
-- **Site URL for the CMS** (from EmDash source at `packages/core/src`, checked 2026-11-21):
-  - Production sets `EMDASH_SITE_URL=https://superbenefit.org` in the top-level `vars`. No `siteUrl` in `astro.config.mjs`, because that is built into every preview ([EmDash guide](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)).
-  - Previews set no `EMDASH_SITE_URL`. Setup is run once on the shared staging database. After that, `emdash:setup_complete` is true and other previews skip setup; nothing in the source rejects a request because its hostname differs from the stored URL (`astro/routes/api/setup/index.ts`, `astro/middleware/setup.ts`, `api/csrf.ts`).
+- **Site URL for the CMS** (EmDash 1.5.0 as installed, checked 2026-11-21):
+  - Production sets `EMDASH_SITE_URL=https://superbenefit.org` in the top-level `vars`. No `siteUrl` in `astro.config.mjs`, because that is built into every preview ([EmDash guide](https://docs.emdashcms.com/deployment/cloudflare/#preview-deployments)). EmDash reads it from `process.env` at runtime, which Cloudflare fills from `vars` with `nodejs_compat` and our compatibility date.
+  - Previews set no `EMDASH_SITE_URL`. The setup route (`emdash/dist/astro/routes/api/setup/index.mjs`) takes `siteUrl`, then `EMDASH_SITE_URL` or `SITE_URL`; failing those, a production build running on Cloudflare Workers (`navigator.userAgent` contains `Cloudflare-Workers`) uses `https://` plus the request hostname. `SITE_URL_REQUIRED` is returned only when none of these applies, such as a production build on Node with no URL configured. So a preview records `https://<branch-name>.superbenefit.dev` and setup does not fail; the guide's `SITE_URL_REQUIRED` warning does not apply to Workers in 1.5.0.
+  - Verified locally: the production build under `astro preview` (workerd) with `EMDASH_SITE_URL` removed from the generated config completed the setup wizard, stored `emdash:site_url` as `https://localhost` (scheme forced to https, port dropped), created a passkey for RP ID `localhost`, and an uploaded image was served from the media route and through `/_image`. With `EMDASH_SITE_URL` present, setup stored that value and offered RP ID `superbenefit.org`.
+  - Setup is run once on the shared staging database. After that, `emdash:setup_complete` is true and other previews skip setup; nothing in the source rejects a request because its hostname differs from the stored URL (`astro/routes/api/setup/index.ts`, `astro/middleware/setup.ts`, `api/csrf.ts`).
   - The cost on staging: links in emails and the sitemap point at whichever preview ran setup.
   - The setup wizard is still shown on an empty database under Access auth; the first person through Access after setup becomes Admin (`astro/middleware/auth.ts`).
+  - Local development reads the top-level `vars`, so `npm run dev` needs `EMDASH_SITE_URL=http://localhost:4321` in `.env` (in `.env.example`); without it a passkey made on localhost fails with "Security error".
   - Preview names: a `/` in the branch name becomes `-` (observed: branch `docs/stage-4-final` is served at `docs-stage-4-final.superbenefit.dev`). Cloudflare's docs do not state the rule.
-  - To confirm on the first CMS preview: that setup succeeds there without `EMDASH_SITE_URL`. EmDash's guide says it fails with `SITE_URL_REQUIRED`; its configuration reference and source say a production build on Cloudflare Workers records its own hostname instead. If it fails, the Preview command passes the URL with `--var`, as the guide shows.
-- `wrangler.jsonc` today has the `previews` block with the `send_email` and `ratelimits` bindings, which are all the current site reads at runtime.
+  - Confirmed by the owner on the first CMS preview, `b2-install-emdash.superbenefit.dev` (2026-11-22): setup completed without `EMDASH_SITE_URL`, so the Preview command needs no `--var`. Not checked: which URL setup stored as the site URL.
+- `wrangler.jsonc` has the `previews` block with `DB`, `MEDIA` and `SESSION` on the staging resources by ID, and the `send_email` and `ratelimits` bindings. It does not repeat `EMDASH_ROOMS`: the guide's `previews` block leaves it out, so previews edit in single-editor mode. `wrangler deploy --dry-run` parses and schema-checks the `previews` block offline (it warns on unknown fields); only `wrangler preview` checks it against the account.
 - Workers Builds is the only CI. Its build command is `npm run build`, which runs `wrangler types && astro check && astro build`, so a type error fails the build on every branch and on `main`. `astro build` alone does no type checking ([Astro TypeScript guide](https://docs.astro.build/en/guides/typescript/#type-checking)); the script is the one Astro's [Cloudflare adapter page](https://docs.astro.build/en/guides/integrations-guide/cloudflare/#typing) gives. EmDash's guide builds with the package's `build` script and deploys with `wrangler deploy` or `wrangler preview` ([Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/#build-and-deploy)). Cloudflare recommends external CI only for self-hosted or unsupported Git hosts ([CI/CD](https://developers.cloudflare.com/workers/ci-cd/)), so there is no GitHub Actions workflow. Dependabot is decided at launch (D7): GitHub reads its config only from the default branch.
 - `compatibility_date` moves to the current date.
 
@@ -107,7 +119,7 @@ All Worker domain and Access settings are configured by a human in the Cloudflar
 Copy and the new service offerings are content work; see `issues.md`. Fleet fixes (governance canonical, unidentified Workers) are last in the order.
 
 ## First-deploy checks
-The setup above is taken from the docs and source, not yet deployed. The first branch build with EmDash runs the docs' own checklist: a public page, admin sign-in through Access, a media upload shown on a public page while signed out, and the cron in `wrangler tail`.
+The first branch preview with EmDash (`b2-install-emdash`, 2026-11-22) passed the owner's checks: public pages render, the setup wizard completes, and an uploaded image displays. Still to run on production at launch (D7): the docs' own checklist, including admin sign-in through Access and the cron in `wrangler tail`, which cannot run on a preview.
 
 ## Owner decisions (2026-11-20)
 1. Editors sign in through Access with GitHub. Org members are Contributors; the "Web Admins" team are Admins.
@@ -117,5 +129,6 @@ The setup above is taken from the docs and source, not yet deployed. The first b
 5. `.dev` is the preview domain, set up by the owner. Domain and Access settings are dashboard-only (see Ownership).
 6. No preview-specific Cloudflare resources (2026-11-21). See Environments and CI.
 7. AI crawlers: block training, allow everything else. Projects awaiting acceptance are marked "Applicant".
+8. `trailingSlash: 'ignore'` (2026-11-22), replacing A4's `'always'`, so the EmDash admin works. See Stack.
 
 Owner items still open are listed at the top of `issues.md`. Already in place: the GitHub identity provider, the www redirect, HSTS, the `.dev` preview domain and the Turnstile preview hostname.

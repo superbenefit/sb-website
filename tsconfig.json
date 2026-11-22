@@ -2,6 +2,9 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "strictNullChecks": true,
+    // Worker runtime and binding types from `wrangler types`:
+    // https://developers.cloudflare.com/workers/languages/typescript/
+    "types": ["./worker-configuration.d.ts"],
     "paths": {
       "@components/*": ["./src/components/*"],
       "@layouts/*": ["./src/layouts/*"],

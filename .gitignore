@@ -51,3 +51,7 @@ temp/
 .codex/
 .cursor/
 .antigravity/
+
+# EmDash migration manifest, written by every build; not source:
+# https://docs.emdashcms.com/deployment/core-migrations/
+.emdash/migrations.json

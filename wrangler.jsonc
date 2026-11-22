@@ -1,12 +1,38 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sb-website",
+  // EmDash Worker entry point (Astro handler, co-editing rooms, Cron):
+  // https://docs.emdashcms.com/deployment/cloudflare/#add-the-worker-entry-point
+  "main": "./src/worker.ts",
   "compatibility_date": "2026-11-17",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS"
+  // EmDash bindings, by name. On the first `wrangler deploy`, Wrangler
+  // creates the D1 database and R2 bucket if they do not exist yet. The
+  // adapter adds the SESSION KV and IMAGES bindings to the config it
+  // generates, and `wrangler deploy` provisions SESSION:
+  // https://docs.emdashcms.com/deployment/cloudflare/#configure-bindings
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sb-website"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "sb-website-media"
+    }
+  ],
+  // Co-editing rooms. EmDash finds the Durable Object by this binding name.
+  "durable_objects": {
+    "bindings": [{ "name": "EMDASH_ROOMS", "class_name": "EmDashRoom" }]
   },
+  "exports": {
+    "EmDashRoom": { "type": "durable-object", "storage": "sqlite" }
+  },
+  // Scheduled publishing, plugin tasks, backups and maintenance. Cron
+  // Triggers do not run on Previews.
+  "triggers": { "crons": ["* * * * *"] },
   "send_email": [
     {
       "name": "EMAIL",
@@ -24,15 +50,39 @@
     }
   ],
   "vars": {
-    "PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAADtinm8-q80lFVL-"
+    "PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAADtinm8-q80lFVL-",
+    // The CMS's public origin (setup, passkeys, emails, sitemap). Set here,
+    // not as `siteUrl` in astro.config.mjs, which would be built into every
+    // preview: https://docs.emdashcms.com/deployment/cloudflare/#worker-previews
+    "EMDASH_SITE_URL": "https://superbenefit.org"
   },
   "observability": {
     "enabled": true
   },
-  // Settings for Worker Previews (branch builds). Previews do not use the
-  // top-level bindings, so the ones the Worker reads at runtime are repeated:
+  // Settings for Worker Previews (branch builds). Previews inherit no
+  // bindings or vars from the top level, so every binding the Worker reads
+  // is repeated here, pointed at the shared staging resources:
   // https://developers.cloudflare.com/workers/previews/configuration/
+  // https://docs.emdashcms.com/deployment/cloudflare/#worker-previews
+  // No EMDASH_SITE_URL here: see docs/relaunch/architecture.md, "Site URL
+  // for the CMS".
   "previews": {
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "sb-website-staging",
+        "database_id": "5237a837-fbba-4c56-9abd-cee85a5d7ee2"
+      }
+    ],
+    "r2_buckets": [
+      {
+        "binding": "MEDIA",
+        "bucket_name": "sb-website-media-staging"
+      }
+    ],
+    // Astro sessions (EmDash sign-in). `wrangler preview` rejects the
+    // adapter's SESSION binding without a namespace ID.
+    "kv_namespaces": [{ "binding": "SESSION", "id": "b6146e12bb6f472ab6960d3735cf109a" }],
     "send_email": [
       {
         "name": "EMAIL",

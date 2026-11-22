@@ -19,7 +19,7 @@ Four things only a person can do or provide. Agents do not change Cloudflare dom
 Also needed later, with no decision involved: a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
 
 ## Staging resources for previews (created 2026-11-21)
-Created at the owner's request. All previews share them. They go in the `previews` block of `wrangler.jsonc` when EmDash is installed (B2).
+Created at the owner's request. All previews share them. They are bound in the `previews` block of `wrangler.jsonc` since B2.
 
 | Binding | Kind | Name | ID |
 | --- | --- | --- | --- |
@@ -52,7 +52,7 @@ Created at the owner's request. All previews share them. They go in the `preview
 | A1 | Every branch is type-checked. `npm run build` runs `astro check` before `astro build`, so Workers Builds fails on a type error. No GitHub Actions workflow; Dependabot is decided at launch (owner decision, 2026-11-21). | A branch with a type error fails the Workers Builds check. | none | S |
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
-| A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |
+| A4 | Internal links use the trailing-slash form. `www.allinforsport.org` links point at the apex. A4 also set `trailingSlash: 'always'`; the owner replaced it with Astro's default `'ignore'` on 2026-11-22 (finding T1) because `'always'` made the EmDash admin URLs 404. | No internal link on the preview returns 307. | none | S |
 | A5 | Owner: a test message sends from the contact form on a new preview. (Access on previews: done. Preview secrets: done.) | The message arrives. | none | Owner |
 
 ## B. CMS
@@ -64,7 +64,7 @@ Created at the owner's request. All previews share them. They go in the `preview
 | B4 | Admin sign-in goes through Access with `defaultRole: 20` and `roleMapping: { "Web Admins": 50 }`. | An org member signs in as Contributor. A "Web Admins" member signs in as Admin. If the team name arrives in another form, the mapping key is corrected and the form recorded in `architecture.md`. | B3 | M |
 | B5 | The content model exists: five collections, the closing-band widget area and three menus, from `seed/seed.json`. | The admin shows all five content types with the fields in `architecture.md`. | B2 | M |
 | B6 | Workers Cache is on, with one route rule per public route tagged by collection. | A second request to a page is a cache hit. Publishing an edit shows on the public page within a minute. A draft preview link shows unpublished content. | B5, C1 | M |
-| B7 | Legacy content code is gone: both loaders, mock JSON, `content.config.ts`, `sanitize.ts`, draft-gating flags, `@astrojs/sitemap`, `public/robots.txt`. | `/sitemap.xml` and `/robots.txt` come from EmDash. No mock titles in any page. | C3 to C9 | S |
+| B7 | Legacy content code is gone: both loaders, mock JSON, `content.config.ts`, `sanitize.ts`, draft-gating flags. (`@astrojs/sitemap` and `public/robots.txt` were removed by B2, #29.) | `/sitemap.xml` and `/robots.txt` come from EmDash. No mock titles in any page. | C3 to C9 | S |
 
 ## C. Pages (built to `mockups/`)
 | # | Outcome | Mockup | Accept when | Depends on | Size |
