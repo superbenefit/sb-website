@@ -47,9 +47,10 @@ export default defineConfig({
   // Patterns match the request path, with or without the trailing slash
   // (trailingSlash 'ignore'). /support becomes a redirect to /accelerator/ in
   // C4, which replaces its rule; /projects/[slug] arrives with C6. /home has
-  // no rule: it is a 301 to / that calls Astro.cache.set(false).
+  // no rule: it is a 301 to / that calls Astro.cache.set(false). The home page
+  // also lists the titles of the services and supports entries (C3).
   routeRules: {
-    '/': rule(['pages', 'projects', 'updates']),
+    '/': rule(['pages', 'projects', 'updates', 'services', 'supports']),
     '/about': rule(['pages']),
     '/contact': rule(['pages']),
     '/projects': rule(['projects']),
