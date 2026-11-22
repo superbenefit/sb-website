@@ -40,8 +40,9 @@ function iconFor(url: string): string | undefined {
 }
 ---
 
+<!-- Owner decision, 2026-11-22: the stripe runs edge to edge, as on the header and the current site; the mockup keeps it in the column. -->
 <footer class="ft on-ink">
-  <div class="wrap ft__wrap">
+  <div class="wrap">
     <div class="ft__grid">
       <div>
         <a class="ft__brand" href="/">
@@ -95,7 +96,9 @@ function iconFor(url: string): string | undefined {
         </nav>
       )}
     </div>
-    <div class="stripe stripe--rule"></div>
+  </div>
+  <div class="stripe stripe--rule"></div>
+  <div class="wrap">
     <div class="ft__base">
       <p>&copy; {year} SuperBenefit, a Worker Self-Directed Non-Profit Digital LLC</p>
       <a href="https://ethereum.org">
@@ -109,11 +112,6 @@ function iconFor(url: string): string | undefined {
   .ft {
     background: var(--color-black);
     color: var(--color-cream);
-  }
-
-  /* Owner decision, 2026-11-22: the footer content spans the window, not the 1200px column of the mockup. */
-  .ft__wrap {
-    max-width: none;
   }
 
   .ft__grid {
