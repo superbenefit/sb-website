@@ -1,0 +1,21 @@
+---
+/**
+ * Portable Text `code` block as the mockup's code block: <pre><code>, which
+ * scrolls sideways and never wraps (`.prose pre` in src/styles/global.css).
+ * The EmDash 1.5.0 editor stores `code` and `language`; the language is kept
+ * as a `language-*` class, as EmDash's own Code component does.
+ */
+interface Props {
+  node: {
+    _type: 'code';
+    _key: string;
+    code?: string;
+    language?: string;
+  };
+}
+
+const { node } = Astro.props;
+const language = typeof node?.language === 'string' && /^[\w+#.-]+$/.test(node.language) ? `language-${node.language}` : undefined;
+---
+
+{node?.code && <pre class={language}><code class={language}>{node.code}</code></pre>}
