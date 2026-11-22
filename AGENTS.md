@@ -15,7 +15,7 @@ EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/`. The base
 **Setup** (first time):
 ```bash
 npm install
-cp .env.example .env   # leave KNOWLEDGE_API_URL blank to use mock data; holds local test keys for the contact form and the local EMDASH_SITE_URL
+cp .env.example .env   # local test keys for the contact form and the local EMDASH_SITE_URL
 ```
 
 - `npm run dev` — Start dev server (localhost:4321)
@@ -55,18 +55,13 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 - **Updates pages** (C7, `docs/relaunch/issues.md`, C7 notes): `/updates/` and `/updates/page/{n}/` (`UpdatesIndex.astro`, six per page, newest first by `published_at`; `/updates/page/1/` 301s to `/updates/`) and `/updates/{slug}/`. Content through `getEmDashEntry()`/`getEmDashCollection()`/`getEmDashReferences()` (`src/utils/updates.ts`): the `pages` entry `updates` for the hero, each update's `project` reference, author from EmDash bylines (`data.bylines`), date from `publishedAt`. Shared parts in `src/components/` (`EntryList`, `ProjectCard`, `ImageSlot`) with their mockup rules in `src/styles/parts/`
 - **Styles**: all component CSS is inlined into the HTML (`build.inlineStylesheets: 'always'`)
 
-### Content Collections & Data Loading
-- Two collections defined in `src/content.config.ts`, `updates` and `projects`, sharing one `contentSchema`
-- Custom Astro loaders in `src/loaders/` fetch from an external knowledge API at build time
-- `KNOWLEDGE_API_URL` sets the `updates` endpoint; if it is unset, rejected or unreachable, the loader falls back to `src/data/mock-updates.json`. `projectsLoader()` is called with no endpoint, so `projects` always comes from `src/data/mock-projects.json`
-- Loader endpoint validation: HTTPS-only, host allowlist restricted to `knowledge.superbenefit.org`
+### Content
+- All content comes from EmDash at request time: `src/live.config.ts` registers EmDash's `emdashLoader()` as the one live collection, and pages read through `getEmDashEntry()`, `getEmDashCollection()` and `getEmDashReferences()`. There is no `src/content.config.ts`, no build-time loader and no mock data (removed in B7, issue #34)
 
 ### Homepage Composition (src/pages/index.astro)
 Built to `docs/relaunch/mockups/pages/home.html` (C3): hero (`hero`) → banded wave → about section (`sec about`) → the two audience panels (`doors`, `door` with `Ledger`) → projects (`sec--ink` with `ProjectSelector`) → the three newest updates (`EntryList`, left out when there are none) → the layout's closing band. Content: the `pages` entries `home`, `accelerator` and `services`; the titles of the `supports` and `services` entries ("What you get"); the featured `projects` in their `order`; the newest `updates` with their linked project (`getEmDashReferences`). Every query's cache hint goes to `Astro.cache.set()`. A missing field is not rendered; with no `home` entry the `<h1>` reads "Home". Page-only rules are in `src/styles/home.css`, a plain stylesheet so the cascade with the shared parts is the mockups' own (scoped styles add an attribute to every selector).
 
 **ProjectSelector** (`src/components/ProjectSelector.astro`): the mockup's `sel` with the behaviour of `docs/relaunch/mockups/project-selector.reference.js`. At 900 px and wider, without reduced motion, the CSS fill on the active name runs 7 seconds and its `animationend` opens the next project; hover pauses the fill; Pause/Play, previous, next and choosing a name as the README describes. Without JavaScript the names are links to the project pages and the controls are hidden; the script turns them into buttons.
-
-**SectionDivider** (`src/components/SectionDivider.astro`, legacy, no longer used by the home page) blends one section's background into the next; its `from` and `to` props take `'cream' | 'charcoal' | 'green' | 'orange' | 'black'`.
 
 ### Contact Form (src/pages/contact.astro, src/actions/contact.ts)
 - An Astro server action validates the form, verifies the Cloudflare Turnstile token with `TURNSTILE_SECRET_KEY`, and sends the message through the `EMAIL` send-email binding to `CONTACT_EMAIL`
@@ -82,7 +77,7 @@ Built to `docs/relaunch/mockups/pages/home.html` (C3): hero (`hero`) → banded 
 ### Styling Approach
 - **Design tokens** in `src/styles/global.css` are the single source of truth — all colors, typography, spacing, shadows, and transitions derive from CSS custom properties in `:root`.
 - **Custom properties** in component-scoped `<style>` blocks remain the preferred pattern for site-layout Astro components where they provide better readability than utility classes.
-- **Tailwind CSS v4** (through `@tailwindcss/vite`) is available; its utilities read from the same `:root` token block via `@theme inline`. `clsx` and `tailwind-merge` are installed for composing classes.
+- **Tailwind CSS v4** (through `@tailwindcss/vite`) is available; its utilities read from the same `:root` token block via `@theme inline`.
 - **RGB channel variants** (`--color-black-rgb`, `--color-orange-rgb`, etc.) enable alpha compositing: `rgb(var(--color-black-rgb) / 0.8)`. Prefer these over hardcoded `rgba()` values.
 - **fonts**: Playfair Display (serif, `--font-serif`; normal and italic faces, `styles: ['normal', 'italic']`) and Inter (sans, `--font-sans`; normal only, as in the mockups) via Astro's `fonts` config. CSS vars `--font-playfair` and `--font-inter` also available. `<Font preload>` in `BaseLayout` preloads every face, the Playfair italic included.
 - **Base element rules** (the reset in `global.css`) match the reset and base of `mockups.css` (findings G1 to G3): links inherit their colour with no underline and no hover colour, `ul`/`ol` have no markers, `p` has no max-width and `h1` to `h4` set no colour. Mockup parts need no overrides for these; rich text gets its markers and link style from the `.prose` rules. Tailwind's preflight is also imported (`@import "tailwindcss"`, `base` layer); the site's unlayered rules win over it, and over Tailwind utilities on the same element and property (a `list-disc` class on a `ul` loses to the base rule), because unlayered styles beat layered ones ([MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer)).
@@ -90,21 +85,16 @@ Built to `docs/relaunch/mockups/pages/home.html` (C3): hero (`hero`) → banded 
 - **Relaunch tokens** (from `docs/relaunch/mockups/mockups.css`): `--radius-sm|md|pill`, `--space-xl-half`, `--rule`, `--rule-dark`, `--stripe`. Shared parts use the mockups' class names and values; keep them in step with `mockups.css`.
 
 ### Animations (src/styles/animations.css)
-All scroll-driven — no JavaScript animation libraries:
-- **Reveal**: `data-animate="fade-up|fade-left|fade-right|scale-in"` triggers CSS `animation-timeline: view()`
-- **Parallax**: `data-parallax` on background elements, GPU-composited via `transform: translateY()`
-- **Stagger**: Components pass `--stagger` CSS variable for sequential reveal delays
-- **Reduced motion**: Respected via `@media (prefers-reduced-motion: reduce)`
+Imported by `BaseLayout`. Its `::view-transition-*(root)` rules set the cross-fade between pages (`<ClientRouter />`). Its other rules (the `data-animate` reveal, `data-parallax`, the decorative keyframes, the `update-post` transition) match no element since B7 removed the legacy components that used them (finding U1).
 
 ### TypeScript
 - Strict mode with `strictNullChecks`
 - Worker runtime and binding types come from `wrangler types` (`worker-configuration.d.ts`, listed in `tsconfig.json` `types`); secrets are declared in `src/env.d.ts`
-- Path aliases: `@components/*`, `@layouts/*`, `@styles/*`, `@loaders/*`
+- Path aliases: `@components/*`, `@layouts/*`, `@styles/*`
 - Requires Node.js >= 22.23.4 (Astro 7.4 minimum); `.nvmrc` selects Node 24
 
 ### Security
-- `src/utils/sanitize.ts` (legacy, no longer imported since C7; deleted in B7) stripped dangerous HTML from legacy update content; EmDash entries render through `RichText` instead
-- Loaders validate endpoint URLs (HTTPS, host allowlist)
+- Rich text is EmDash Portable Text rendered through `RichText`; the site renders no stored HTML (the legacy `sanitize.ts` was deleted in B7)
 - The contact form is protected by Turnstile, length limits on every field, a CR/LF check on `name` and `subject`, and a per-IP rate limit
 
 ## Code Style

@@ -44,7 +44,6 @@ Workers Builds is connected to this repository: `main` deploys to production, an
 
 | Variable | Required | Description |
 |---|---|---|
-| `KNOWLEDGE_API_URL` | No | HTTPS endpoint for the SuperBenefit knowledge server (host must be `knowledge.superbenefit.org`). Omit to use bundled mock data. |
 | `CONTACT_EMAIL` | Production | Recipient of the `/contact` form. A Worker secret in production (`wrangler secret put CONTACT_EMAIL`). |
 | `TURNSTILE_SECRET_KEY` | Production | Turnstile secret for the `/contact` form. A Worker secret in production; local dev uses the always-pass test key. |
 | `EMDASH_SITE_URL` | Production | Origin EmDash uses for setup and emails; the site's sitemap uses it when Settings > General has no Site URL. Production sets `https://superbenefit.org` in `vars` in `wrangler.jsonc`; branch previews set none. Local dev reads those `vars` too, so `.env` overrides it with `http://localhost:4321`. |
@@ -60,12 +59,10 @@ src/
   assets/         # Images imported by Astro (processed at build time)
   actions/        # Astro server actions (the /contact form)
   components/     # Reusable Astro components
-  data/           # Static JSON mock data (used when API is unavailable)
   layouts/        # BaseLayout.astro: head (EmDashHead), header, closing band, footer
-  loaders/        # Custom Astro content loaders (knowledge server, projects)
   pages/          # File-based routes
   styles/         # Global CSS, design tokens, animations
-  utils/          # HTML sanitizer, nav helpers
+  utils/          # Nav, sitemap and updates helpers
   live.config.ts  # EmDash live content collection
   worker.ts       # Worker entry: Astro handler, EmDash scheduled handler, EMDASH_ROOMS export
 public/
@@ -80,7 +77,7 @@ astro.config.mjs  # Astro configuration
 
 **URLs** — `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22; `'always'` made the EmDash admin's URLs without a trailing slash return 404, see finding T1 in `docs/relaunch/findings.md`). Internal links end in `/`. Pages render on demand, so both `/about` and `/about/` answer 200; the canonical uses the slash form.
 
-**Content loaders** — `src/loaders/knowledge-server.ts` loads the `updates` collection from `KNOWLEDGE_API_URL` at build time, and falls back to `src/data/mock-updates.json` when it is unset, not an allowed HTTPS host, or unreachable. `src/loaders/projects.ts` is called with no endpoint, so `projects` always comes from `src/data/mock-projects.json`.
+**Content** — every page reads its content from EmDash at request time (`getEmDashEntry()`, `getEmDashCollection()`; `src/live.config.ts` registers EmDash's loader). There is no build-time loader, `src/content.config.ts` or mock data (removed in B7, #34).
 
 **Security headers** — none are set by this repo: there is no `public/_headers` file.
 
