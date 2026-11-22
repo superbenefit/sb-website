@@ -1,0 +1,27 @@
+---
+import UpdatesIndex from '../../../components/UpdatesIndex.astro';
+import { getUpdatesPage } from '../../../utils/updates';
+
+// Pages 2 and on of the updates index: /updates/page/{n}/. A path segment,
+// not a query string, so each page has its own canonical URL (BaseLayout
+// writes the canonical from the path). This route has more segments than
+// /updates/[...slug] and a static `page` segment, so Astro matches it first
+// (https://docs.astro.build/en/guides/routing/#route-priority-order).
+// /updates/page/1/ is a 301 to /updates/; a page number that is not a whole
+// number from 2 to the last page is the 404 page.
+const raw = Astro.params.page ?? '';
+const page = /^[1-9][0-9]*$/.test(raw) ? Number(raw) : NaN;
+if (page === 1) {
+  if (Astro.cache?.enabled) Astro.cache.set(false);
+  return Astro.redirect(`/updates/${Astro.url.search}`, 301);
+}
+if (!Number.isSafeInteger(page)) {
+  return Astro.rewrite('/404');
+}
+const data = await getUpdatesPage(page);
+if (page > data.totalPages) {
+  return Astro.rewrite('/404');
+}
+---
+
+<UpdatesIndex items={data.items} page={page} totalPages={data.totalPages} cacheHints={data.cacheHints} />

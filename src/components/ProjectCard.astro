@@ -1,0 +1,68 @@
+---
+/**
+ * Project card: the `cc` card in docs/relaunch/mockups/pages/projects.html,
+ * rules in src/styles/parts/cc.css. Cover, then logo, status and place,
+ * the name linking to the project page (the link covers the whole card),
+ * the summary and "View project". The logo and the place are left out when
+ * the project has none, as the mockup's Pacto card shows; so is the cover.
+ * Put cards in `<ul class="pgrid">`, one per `<li>`.
+ *
+ * `coverRatio` replaces the cover's 16:9 (the `cc__cover` rule) with another
+ * CSS aspect-ratio, as the update page's card does (pages/update.html,
+ * `style="aspect-ratio: 3 / 1;"`). Without it the card is unchanged.
+ */
+import type { InferCollectionData } from 'emdash';
+import ImageSlot from './ImageSlot.astro';
+import StatusBadge from './StatusBadge.astro';
+import '../styles/parts/cc.css';
+
+interface Props {
+  project: { id: string; data: InferCollectionData<'projects'> };
+  /** Heading level of the name: h2 on the projects page. */
+  as?: 'h2' | 'h3';
+  /** CSS aspect-ratio for the cover, e.g. "3 / 1"; the rule's 16:9 otherwise. */
+  coverRatio?: string;
+}
+
+const { project, as: Heading = 'h2', coverRatio } = Astro.props;
+const { title, summary, project_status, location, logo, cover, slug } = project.data;
+const href = `/projects/${slug ?? project.id}/`;
+---
+
+<article class="cc">
+  {cover && (
+    <div class="cc__cover" style={coverRatio ? `aspect-ratio: ${coverRatio};` : undefined}>
+      <ImageSlot image={cover} sizes="(min-width: 1200px) 552px, (min-width: 760px) 50vw, 100vw" />
+    </div>
+  )}
+  <div class="cc__body">
+    <div class="cc__head">
+      {logo && <ImageSlot image={logo} kind="logo" sizes="56px" />}
+      <p class="cc__meta">
+        <StatusBadge status={project_status} />
+        {location && <span class="caps">{location}</span>}
+      </p>
+    </div>
+    <Heading><a href={href}>{title}</a></Heading>
+    <p class="sum">{summary}</p>
+    <div class="cc__foot">
+      <span class="caps">View project</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+    </div>
+  </div>
+</article>
+
+<style>
+  /* The mockups' links take the text colour (mockups.css `a`); the legacy
+     base rule in global.css makes every link orange (findings.md, G3). */
+  .cc a,
+  .cc a:hover {
+    color: inherit;
+  }
+
+  /* `contain: size` keeps a real cover's own height out of the frame's size,
+     so the frame's aspect-ratio alone sets its height, as with the
+     placeholder (https://developer.mozilla.org/en-US/docs/Web/CSS/contain). */
+  .cc__cover :global(.has-image) {
+    contain: size;
+  }
+</style>
