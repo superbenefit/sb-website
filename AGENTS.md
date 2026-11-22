@@ -48,6 +48,7 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 - **Every page renders on demand**: the layout reads EmDash menus and the closing band per request, so menu and band edits show without a rebuild. Route caching is B6 (`docs/relaunch/architecture.md`, Caching)
 - **Layout** (`src/layouts/BaseLayout.astro`, built to `docs/relaunch/mockups/`): `<EmDashHead>` with a context from `createPublicPageContext()` writes the meta tags and JSON-LD; then `Header` (menu `header`; its last item is the Contact pill and the mobile sheet's button), the page, `ClosingBand` (widget area `closing-band`), `FooterFade` and `Footer` (menus `footer-site` and `footer-elsewhere`). Props: `bandFrom` (colour of the last section, for the wave), `bandLabel`/`bandHref` (the band's first button, default "Get in touch" to `/contact/`), `closingBand={false}` (error pages; contact keeps its own band until C9), `canonical={null}` (error pages)
 - **Shared parts**: `PageHero` (`ph`; `variant` black, charcoal, gold, green, orange or red, `compact`, slots `meta`, `actions`, `art`), `WaveDivider` (`dv`; `bg` above, `fill` below, `bands`), `Button` (`btn--accent|ink|line`, `arrow`), `StatusBadge` (from `project_status`). Global classes in `global.css`: `.wrap`, `.caps`, `.display`, `.btn`, `.status`, `.stripe`, `:focus-visible`
+- **Rich text** (`src/components/rich-text/`, C2): `<RichText value={entry.data.body} />` renders a Portable Text field with EmDash's `<PortableText>` inside `.prose` (rules in `global.css`, from `mockups.css`). It replaces EmDash's `image`, `code` and `iframe` renderers and wraps its `table`; YouTube and Vimeo iframes load only when Play is pressed. `/updates/{slug}/` uses it for EmDash `updates` entries until C7
 - **Styles**: all component CSS is inlined into the HTML (`build.inlineStylesheets: 'always'`)
 
 ### Content Collections & Data Loading
@@ -93,7 +94,7 @@ All scroll-driven — no JavaScript animation libraries:
 - Requires Node.js >= 22.23.4 (Astro 7.4 minimum); `.nvmrc` selects Node 24
 
 ### Security
-- `src/utils/sanitize.ts` strips dangerous HTML from update content before rendering with `set:html` (`src/pages/updates/[...slug].astro`)
+- `src/utils/sanitize.ts` strips dangerous HTML from legacy update content before rendering with `set:html` (`src/pages/updates/[...slug].astro`); EmDash entries render through `RichText` instead
 - Loaders validate endpoint URLs (HTTPS, host allowlist)
 - The contact form is protected by Turnstile, length limits on every field, a CR/LF check on `name` and `subject`, and a per-IP rate limit
 

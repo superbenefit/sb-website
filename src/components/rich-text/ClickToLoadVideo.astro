@@ -1,0 +1,37 @@
+---
+/**
+ * Click-to-load video: the mockup's `video` frame with a Play button
+ * (docs/relaunch/mockups/pages/update.html). The player is EmDash's own
+ * Iframe output, passed in as the default slot, so its sandbox, `allow` list
+ * and referrer policy are EmDash's. It is held in a <template>, whose content
+ * the browser does not load, and moved into the frame when Play is pressed.
+ * No autoplay parameter is added. Without JavaScript the button does nothing.
+ *
+ * Renders nothing when EmDash renders no iframe (a source it rejects).
+ */
+const html = await Astro.slots.render('default');
+const hasPlayer = /<iframe\s/i.test(html);
+---
+
+{hasPlayer && (
+  <figure>
+    <div class="frame video on-ink" data-click-to-load>
+      <button class="btn btn--accent" type="button">Play video <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+      <template set:html={html} />
+    </div>
+  </figure>
+)}
+
+<script>
+  // One listener on the document, so it keeps working after <ClientRouter />
+  // swaps the page (a bundled script runs once per visit).
+  document.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-click-to-load] > button') : null;
+    const frame = button?.parentElement;
+    const player = frame?.querySelector('template')?.content.querySelector('iframe');
+    if (!frame || !player) return;
+    const iframe = document.importNode(player, true);
+    frame.replaceChildren(iframe);
+    iframe.focus();
+  });
+</script>
