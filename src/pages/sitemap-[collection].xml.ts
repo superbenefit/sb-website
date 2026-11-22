@@ -1,7 +1,7 @@
 /**
- * One collection's sitemap: `/sitemap-{collection}.xml` and, past 2,000
- * entries, `/sitemap-{collection}-{n}.xml` (the route receives `pages-2` as
- * `collection`, https://docs.emdashcms.com/guides/seo/#robotstxt). Each
+ * One collection's sitemap: `/sitemap-{collection}.xml` and, past 500
+ * published entries, `/sitemap-{collection}-{n}.xml` (the route receives
+ * `pages-2` as `collection`, https://docs.emdashcms.com/guides/seo/#robotstxt). Each
  * `<url>` has the entry's canonical URL, its `lastmod` and its SEO image as
  * an `<image:image>`, as EmDash's built-in (emdash 1.5.0
  * src/astro/routes/sitemap-[collection].xml.ts), which this file replaces.
@@ -13,7 +13,7 @@
  * queries' hints are passed to the cache. 404s and failures are not cached.
  */
 import type { APIRoute } from 'astro';
-import { SITEMAP_PAGE_SIZE, escapeXml, getSitemapUrls, parseSitemapName, sitemapSiteUrl, xmlResponse } from '../utils/sitemap';
+import { escapeXml, getSitemapUrls, parseSitemapName, sitemapSiteUrl, xmlResponse } from '../utils/sitemap';
 
 export const GET: APIRoute = async ({ params, url, cache }) => {
   const parsed = params.collection ? parseSitemapName(params.collection) : null;
@@ -24,8 +24,7 @@ export const GET: APIRoute = async ({ params, url, cache }) => {
 
   try {
     const { siteUrl, cacheHint: settingsHint } = await sitemapSiteUrl(url);
-    const { urls, cacheHint } = await getSitemapUrls(parsed.collection, siteUrl);
-    const pageUrls = urls.slice((parsed.page - 1) * SITEMAP_PAGE_SIZE, parsed.page * SITEMAP_PAGE_SIZE);
+    const { urls: pageUrls, cacheHint } = await getSitemapUrls(parsed.collection, parsed.page, siteUrl);
     if (pageUrls.length === 0) {
       if (cache?.enabled) cache.set(false);
       return xmlResponse('<!-- Collection not found or empty -->', 404);

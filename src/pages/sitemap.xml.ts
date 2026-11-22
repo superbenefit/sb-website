@@ -1,6 +1,8 @@
 /**
- * Sitemap index: one child sitemap per page of each collection with listed
- * entries, `/sitemap-{collection}.xml` and from the second page
+ * Sitemap index: one child sitemap per page of 500 published entries of each
+ * collection with an entry that has a route (getSitemapPages; it reads the
+ * collection lists only, never single entries, so its query count does not
+ * grow with the content), `/sitemap-{collection}.xml` and from the second page
  * `/sitemap-{collection}-{n}.xml`, each with the latest `lastmod` on that
  * page, as EmDash's built-in index (emdash 1.5.0
  * src/astro/routes/sitemap.xml.ts). This file replaces EmDash's route
@@ -15,9 +17,8 @@
 import type { APIRoute } from 'astro';
 import {
   SITEMAP_COLLECTIONS,
-  SITEMAP_PAGE_SIZE,
   escapeXml,
-  getSitemapUrls,
+  getSitemapPages,
   sitemapName,
   sitemapSiteUrl,
   xmlResponse,
@@ -33,13 +34,9 @@ export const GET: APIRoute = async ({ url, cache }) => {
     ];
     const hints = [settingsHint];
     for (const collection of Object.keys(SITEMAP_COLLECTIONS) as SitemapCollection[]) {
-      const { urls, cacheHint } = await getSitemapUrls(collection, siteUrl);
+      const { pages, cacheHint } = await getSitemapPages(collection);
       hints.push(cacheHint);
-      for (let start = 0, page = 1; start < urls.length; start += SITEMAP_PAGE_SIZE, page++) {
-        const lastmod = urls
-          .slice(start, start + SITEMAP_PAGE_SIZE)
-          .map((entry) => entry.lastmod)
-          .reduce((latest, value) => (value > latest ? value : latest), '');
+      for (const { page, lastmod } of pages) {
         lines.push('  <sitemap>');
         lines.push(`    <loc>${escapeXml(`${siteUrl}/sitemap-${sitemapName(collection, page)}.xml`)}</loc>`);
         lines.push(`    <lastmod>${escapeXml(lastmod)}</lastmod>`);
