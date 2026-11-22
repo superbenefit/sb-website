@@ -1,0 +1,124 @@
+---
+/**
+ * Accelerator page, /accelerator/: docs/relaunch/mockups/pages/accelerator.html.
+ *
+ * Content comes from EmDash on each request (docs/relaunch/architecture.md,
+ * Rendering per route): the `pages` entry `accelerator` and the `supports`
+ * collection. Both queries go through EmDash's helpers, so a draft preview
+ * link (`?_preview=`) for the page or for a support shows the draft here
+ * (https://docs.emdashcms.com/guides/preview/). Their cache hints tag the
+ * response `pages` and `supports` for EmDash's purge on publish; the route
+ * rule in astro.config.mjs sets the lifetime
+ * (https://docs.emdashcms.com/deployment/route-caching/).
+ *
+ * Fields (seed/seed.json): hero kicker `eyebrow`, title `title`, intro
+ * `intro`, hero button `cta_label` and `cta_url` ("Book an onboarding call":
+ * rendered only when `cta_url` is filled), the "How it works" split from
+ * `section_label`, `section_heading` and `body`, and the note beside the
+ * Supports heading from `cost_summary`. Each support is a block: `title`,
+ * `summary` and `body`, ordered by `order`.
+ *
+ * Missing content: an absent entry or field is not rendered; the title falls
+ * back to "Accelerator" so the page always has one h1. The split is left out
+ * when it has no label, heading or body, and the waves join the sections
+ * that remain. With no published supports the Supports section shows a
+ * one-line notice in a `block`.
+ *
+ * /support and /supports answer 301 to /accelerator/ through EmDash
+ * redirects from seed/seed.json (https://docs.emdashcms.com/guides/seo/#redirects-and-the-404-log).
+ */
+import { getEmDashCollection, getEmDashEntry } from 'emdash';
+import { PortableText } from 'emdash/ui';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import PageHero from '../components/PageHero.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import '../styles/parts/sec.css';
+import '../styles/parts/split.css';
+import '../styles/parts/blocks.css';
+
+const { entry: page, cacheHint: pageHint } = await getEmDashEntry('pages', 'accelerator');
+const { entries: supports, cacheHint: supportsHint } = await getEmDashCollection('supports', {
+  orderBy: { order: 'asc', created_at: 'asc' },
+});
+if (Astro.cache?.enabled) {
+  Astro.cache.set(pageHint);
+  Astro.cache.set(supportsHint);
+}
+
+const data = page?.data;
+const title = data?.title || 'Accelerator';
+const ctaUrl = data?.cta_url;
+const ctaLabel = data?.cta_label || 'Book an onboarding call';
+const hasBody = Boolean(data?.body?.length);
+const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody);
+---
+
+<BaseLayout
+  title={title}
+  description={data?.intro || title}
+  bandLabel="Talk to us about joining"
+  bandHref="/contact/"
+  bandFrom="cream"
+>
+  {/* Two branches: Astro.slots.has() only checks that a slot was passed,
+      not that it renders anything
+      (node_modules/@astrojs/runtime/dist/internal/core/render/slots.js,
+      Slots.has), so a slotted child inside a false condition would still
+      give PageHero an empty actions row. */}
+  {ctaUrl ? (
+    <PageHero title={title} kicker={data?.eyebrow} intro={data?.intro} variant="green">
+      <Fragment slot="actions"><Button href={ctaUrl} variant="ink" arrow>{ctaLabel}</Button></Fragment>
+    </PageHero>
+  ) : (
+    <PageHero title={title} kicker={data?.eyebrow} intro={data?.intro} variant="green" />
+  )}
+
+  {hasSplit ? (
+    <>
+      <WaveDivider bg="green" fill="charcoal" />
+      <section class="sec sec--ink on-ink">
+        <div class="wrap split">
+          <div>
+            {data?.section_label && <p class="caps">{data.section_label}</p>}
+            {data?.section_heading && <h2 class="display">{data.section_heading}</h2>}
+          </div>
+          {hasBody && (
+            <div class="split__body">
+              <PortableText value={data?.body} />
+            </div>
+          )}
+        </div>
+      </section>
+      <WaveDivider bg="charcoal" fill="cream" />
+    </>
+  ) : (
+    <WaveDivider bg="green" fill="cream" />
+  )}
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec__head">
+        <h2 class="display">Supports</h2>
+        {data?.cost_summary && <p class="caps sec__note">{data.cost_summary}</p>}
+      </div>
+      <div class="blocks">
+        {supports.length > 0 ? (
+          supports.map((support) => (
+            <article class="block">
+              <h3>{support.data.title}</h3>
+              <div class="block__main">
+                {support.data.summary && <p class="block__sum">{support.data.summary}</p>}
+                {support.data.body?.length ? <PortableText value={support.data.body} /> : null}
+              </div>
+            </article>
+          ))
+        ) : (
+          <div class="block">
+            <p class="block__sum">No supports are published yet.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

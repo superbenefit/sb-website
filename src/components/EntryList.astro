@@ -1,0 +1,67 @@
+---
+/**
+ * A list of updates: the `entries` and `entry` rules in
+ * src/styles/parts/entries.css, copied from docs/relaunch/mockups/mockups.css
+ * (pages/home.html, updates.html, project.html). Each entry shows its date,
+ * title (linked), excerpt, linked project and cover. Optional parts that are
+ * missing (excerpt, project, cover, date) are left out, as the mockup's
+ * entries without a cover or project show.
+ */
+import type { ImageValue } from 'emdash';
+import ImageSlot from './ImageSlot.astro';
+import '../styles/parts/entries.css';
+
+export interface EntryItem {
+  href: string;
+  title: string;
+  date?: Date | null;
+  excerpt?: string;
+  cover?: ImageValue | null;
+  project?: { title: string; href: string } | null;
+}
+
+interface Props {
+  entries: EntryItem[];
+}
+
+const { entries } = Astro.props;
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<div class="entries">
+  {entries.map((entry) => (
+    <article class="entry">
+      {entry.date && (
+        <p class="caps">
+          <time datetime={entry.date.toISOString()}>{formatDate(entry.date)}</time>
+        </p>
+      )}
+      <h3><a href={entry.href}>{entry.title}</a></h3>
+      {entry.excerpt && <p>{entry.excerpt}</p>}
+      {entry.project && (
+        <p class="entry__proj caps">Project: <a href={entry.project.href}>{entry.project.title}</a></p>
+      )}
+      {entry.cover && (
+        <div class="entry__cover">
+          <ImageSlot image={entry.cover} />
+        </div>
+      )}
+    </article>
+  ))}
+</div>
+
+<style>
+  /* The mockups' base rule is a { color: inherit } with no hover colour; the
+     site's base link rule is orange with a red hover. */
+  .entry a,
+  .entry a:hover {
+    color: inherit;
+  }
+
+  /* The site's base h1 to h4 rule adds text-wrap: balance; the mockups'
+     entry title has none. */
+  h3 {
+    text-wrap: wrap;
+  }
+</style>

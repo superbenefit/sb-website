@@ -18,7 +18,8 @@
  * split from `section_label`, `section_heading` and `body`. Each service is
  * a block: `title`, then the ledger of `audience` ("Who it is for"),
  * `deliverables` (a repeater, sub-field `item`: "What you get") and
- * `service_terms` ("Terms"), then `body`; ordered by `order`.
+ * `service_terms` ("Terms"), shown with the shared `Ledger` component, then
+ * `body`; ordered by `order`.
  *
  * Missing content: an absent entry or field is not rendered; the title falls
  * back to "Services" so the page always has one h1. The split is left out
@@ -31,12 +32,12 @@ import { getEmDashCollection, getEmDashEntry } from 'emdash';
 import { PortableText } from 'emdash/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Button from '../../components/Button.astro';
+import Ledger from '../../components/Ledger.astro';
 import PageHero from '../../components/PageHero.astro';
 import WaveDivider from '../../components/WaveDivider.astro';
 import '../../styles/parts/sec.css';
 import '../../styles/parts/split.css';
 import '../../styles/parts/blocks.css';
-import '../../styles/parts/ledger.css';
 
 const { entry: page, cacheHint: pageHint } = await getEmDashEntry('pages', 'services');
 const { entries: services, cacheHint: servicesHint } = await getEmDashCollection('services', {
@@ -103,38 +104,18 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
         {services.length > 0 ? (
           services.map((service) => {
             const { audience, service_terms: terms, body } = service.data;
-            const deliverables = (service.data.deliverables ?? []).map((d) => d.item).filter(Boolean);
-            const hasLedger = Boolean(audience || deliverables.length || terms);
+            const deliverables = (service.data.deliverables ?? []).map((d) => d.item ?? '');
             return (
               <article class="block">
                 <h3>{service.data.title}</h3>
                 <div class="block__main">
-                  {hasLedger && (
-                    <dl class="ledger">
-                      {audience && (
-                        <div>
-                          <dt class="caps">Who it is for</dt>
-                          <dd>{audience}</dd>
-                        </div>
-                      )}
-                      {deliverables.length > 0 && (
-                        <div>
-                          <dt class="caps">What you get</dt>
-                          <dd>
-                            <ul>
-                              {deliverables.map((item) => <li>{item}</li>)}
-                            </ul>
-                          </dd>
-                        </div>
-                      )}
-                      {terms && (
-                        <div>
-                          <dt class="caps">Terms</dt>
-                          <dd>{terms}</dd>
-                        </div>
-                      )}
-                    </dl>
-                  )}
+                  <Ledger
+                    rows={[
+                      { label: 'Who it is for', text: audience },
+                      { label: 'What you get', items: deliverables },
+                      { label: 'Terms', text: terms },
+                    ]}
+                  />
                   {body?.length ? <PortableText value={body} /> : null}
                 </div>
               </article>
@@ -150,10 +131,3 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
   </section>
 </BaseLayout>
 
-<style>
-  /* mockups.css resets `ul, ol` to `list-style: none`; global.css has no
-     such reset (findings.md, G1), so the deliverables list sets it here. */
-  .ledger ul {
-    list-style: none;
-  }
-</style>

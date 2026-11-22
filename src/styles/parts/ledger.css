@@ -1,39 +1,32 @@
-/*
- * "Who it is for / What you get / What it costs" list: `.ledger`.
- * Copied from docs/relaunch/mockups/mockups.css; keep the values in step.
- * Placement rules that belong to one layout stay with it (`.block .ledger`
- * in blocks.css, `.pd__aside .ledger` with the project page).
- */
-.ledger {
-  margin-top: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  border-bottom: var(--rule);
-}
+/* "What you get / What it costs" list: .ledger.
+   Copied unchanged from docs/relaunch/mockups/mockups.css (.ledger rules; .block .ledger and .pd__aside .ledger stay with their components). Shared part:
+   import it from the page or component that uses these classes. */
 
-.ledger > div {
-  display: grid;
-  grid-template-columns: 8.5rem minmax(0px, 1fr);
-  gap: var(--space-md);
-  padding-block: 0.9rem;
-  border-top: var(--rule);
+.ledger  {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    border-bottom: var(--rule);
 }
-
-.ledger dt {
-  padding-top: 0.2em;
+.ledger > div  {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0px, 1fr);
+    gap: var(--space-md);
+    padding-block: 0.9rem;
+    border-top: var(--rule);
 }
-
-.ledger dd {
-  font-weight: 500;
-  line-height: 1.45;
+.ledger dt  {
+    padding-top: 0.2em;
 }
-
-.ledger dd li + li {
-  margin-top: 0.15em;
+.ledger dd  {
+    font-weight: 500;
+    line-height: 1.45;
 }
-
-@media (max-width: 480px) {
-  .ledger > div {
-    grid-template-columns: 1fr;
-    gap: 0.15rem;
+.ledger dd li + li  {
+    margin-top: 0.15em;
+}
+@media (max-width: 480px)  {
+  .ledger > div  {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
   }
 }
