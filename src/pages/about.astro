@@ -68,7 +68,7 @@ const bandLabel = bandHref ? data?.cta_label : undefined;
           </div>
           {hasBody && (
             <div class="split__body">
-              <RichText value={data?.body} />
+              <RichText value={data?.body} inherit />
             </div>
           )}
         </div>
@@ -77,11 +77,3 @@ const bandLabel = bandHref ? data?.cta_label : undefined;
   )}
 </BaseLayout>
 
-<style>
-  /* The mockup sets `style="font-size: inherit; line-height: inherit;"` on
-     this page's prose box, so the body takes the split's type. */
-  .split__body :global(.prose) {
-    font-size: inherit;
-    line-height: inherit;
-  }
-</style>
