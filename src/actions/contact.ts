@@ -10,19 +10,30 @@ const TURNSTILE_VERIFY_URL =
 export const contact = defineAction({
   accept: 'form',
   input: z.object({
-    name: z
-      .string()
-      .trim()
-      .min(1, 'Name is required')
-      .max(120, 'Name must be 120 characters or fewer')
-      .refine(hasNoLineBreak, 'Name cannot contain line breaks'),
+    // null (an empty form field, see the Turnstile field below) becomes ''
+    // so "Name is required" is the message, not Zod's default.
+    name: z.preprocess(
+      (v) => (v == null ? '' : v),
+      z
+        .string()
+        .trim()
+        .min(1, 'Name is required')
+        .max(120, 'Name must be 120 characters or fewer')
+        .refine(hasNoLineBreak, 'Name cannot contain line breaks'),
+    ),
     email: z.email({ message: 'Please enter a valid email address' }).trim().toLowerCase().max(200, 'Email must be 200 characters or fewer'),
-    subject: z
-      .string()
-      .trim()
-      .min(1, 'Subject is required')
-      .max(200, 'Subject must be 200 characters or fewer')
-      .refine(hasNoLineBreak, 'Subject cannot contain line breaks'),
+    // Optional, as in the mockup (docs/relaunch/mockups/pages/contact.html
+    // labels it "Subject", not "(required)"). Astro passes an empty form
+    // field as `null` (see the Turnstile field below), so it becomes ''.
+    // An empty subject gets a default in the handler.
+    subject: z.preprocess(
+      (v) => (v == null ? '' : v),
+      z
+        .string()
+        .trim()
+        .max(200, 'Subject must be 200 characters or fewer')
+        .refine(hasNoLineBreak, 'Subject cannot contain line breaks'),
+    ),
     message: z
       .string()
       .trim()
@@ -148,7 +159,8 @@ export const contact = defineAction({
         to: recipient,
         from: SENDER,
         replyTo: { email: input.email, name: input.name },
-        subject: input.subject,
+        // `name` has no line breaks (schema), so the default is one line.
+        subject: input.subject || `Message from ${input.name}`,
         text,
         html,
       });
