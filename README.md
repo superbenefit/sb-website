@@ -48,6 +48,7 @@ Workers Builds is connected to this repository: `main` deploys to production, an
 | `CONTACT_EMAIL` | Production | Recipient of the `/contact` form. A Worker secret in production (`wrangler secret put CONTACT_EMAIL`). |
 | `TURNSTILE_SECRET_KEY` | Production | Turnstile secret for the `/contact` form. A Worker secret in production; local dev uses the always-pass test key. |
 | `EMDASH_SITE_URL` | Production | Origin EmDash uses for setup, passkeys, emails and the sitemap. Production sets `https://superbenefit.org` in `vars` in `wrangler.jsonc`; branch previews set none. Local dev reads those `vars` too, so `.env` overrides it with `http://localhost:4321`. |
+| `CF_ACCESS_AUDIENCE` | Previews and production | Application Audience (AUD) tag of the Cloudflare Access application in front of the CMS, which EmDash checks the Access JWT against. A Worker secret set in the dashboard: one value under Previews Base (the previews Access application), one under Production (the `superbenefit.org/_emdash/*` application). Never in the repo or `.env`; local dev does not use it. Unset, every admin request returns 401 "Authentication failed". |
 | `PUBLIC_TURNSTILE_SITE_KEY` | No | Turnstile site key, fixed at build time. `.env` sets the test key for local dev; other builds take the production key from `vars` in `wrangler.jsonc`. |
 
 See `.env.example` for a template.
@@ -82,5 +83,12 @@ astro.config.mjs  # Astro configuration
 **Content loaders** — `src/loaders/knowledge-server.ts` loads the `updates` collection from `KNOWLEDGE_API_URL` at build time, and falls back to `src/data/mock-updates.json` when it is unset, not an allowed HTTPS host, or unreachable. `src/loaders/projects.ts` is called with no endpoint, so `projects` always comes from `src/data/mock-projects.json`.
 
 **Security headers** — none are set by this repo: there is no `public/_headers` file.
+
+**CMS sign-in** — Cloudflare Access with GitHub, configured with `access()` in `astro.config.mjs` ([EmDash guide](https://docs.emdashcms.com/guides/authentication/#cloudflare-access)). Org members get the Contributor role on first sign-in; members of the GitHub team "Web Admins" get Admin.
+- Production: Access protects `superbenefit.org/_emdash/*` and asks for GitHub; a Bypass application keeps `/_emdash/api/media/file/*` public for images. The Worker verifies the Access JWT against `CF_ACCESS_AUDIENCE`.
+- Previews: the whole `<branch-name>.superbenefit.dev` hostname is behind Access, so signing in to the preview signs you in to its admin.
+- Locally: there is no Access, and EmDash 1.5.0 offers no passkey while `access()` is configured. After the setup wizard, open `http://localhost:4321/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin` to sign in as a local development Admin.
+
+Details and the owner's dashboard steps: `docs/relaunch/architecture.md` (Auth) and `docs/relaunch/issues.md` (B3).
 
 **Contact form** — `src/actions/contact.ts` verifies the Turnstile token and sends the message through the `EMAIL` send-email binding declared in `wrangler.jsonc`.
