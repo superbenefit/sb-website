@@ -3,13 +3,20 @@ import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import emdash from 'emdash/astro';
-import { d1, r2 } from '@emdash-cms/cloudflare';
+import { access, d1, r2 } from '@emdash-cms/cloudflare';
 
 // EmDash on Cloudflare, as https://docs.emdashcms.com/deployment/cloudflare/
 // describes. No `siteUrl` here: production sets EMDASH_SITE_URL in
 // wrangler.jsonc `vars`, because a `siteUrl` is built into every preview.
 // No `sandboxRunner`: the site uses no marketplace, registry or sandboxed
 // plugins.
+// Sign-in is Cloudflare Access with GitHub, as
+// https://docs.emdashcms.com/guides/authentication/#cloudflare-access
+// describes. The AUD tag is the Worker secret CF_ACCESS_AUDIENCE (production
+// and Previews Base), never a value in this repo. `npm run dev` has no Access
+// JWT, and EmDash 1.5.0 offers no passkey while access() is configured: local
+// sign-in uses /_emdash/api/auth/dev-bypass (docs/relaunch/architecture.md,
+// Auth).
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
@@ -20,6 +27,19 @@ export default defineConfig({
     emdash({
       database: d1({ binding: 'DB' }),
       storage: r2({ binding: 'MEDIA' }),
+      auth: access({
+        teamDomain: 'superbenefit.cloudflareaccess.com',
+        audienceEnvVar: 'CF_ACCESS_AUDIENCE',
+        // Contributor (drafts only) for every member the Access policy lets
+        // in; Editor for the "Knowledge Stewardship" GitHub team; Admin for
+        // "Web Admins". Keys are compared, exactly and case-sensitively, with
+        // the group names Access returns; the first matching group wins.
+        // EmDash 1.5.0 reads the identity's `groups`; GitHub sign-in returns
+        // teams under `teams`, so the mapping matches nothing yet and an
+        // Admin sets these roles under Users (architecture.md, Auth; R1).
+        defaultRole: 20,
+        roleMapping: { 'Web Admins': 50, 'Knowledge Stewardship': 40 },
+      }),
     }),
   ],
   build: {
