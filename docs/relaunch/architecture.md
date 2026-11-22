@@ -33,7 +33,7 @@ URLs (owner decision, 2026-11-22; finding T1): `trailingSlash: 'ignore'`, Astro'
 | `/about/` | on demand, cached | `pages` entry |
 | `/contact/` | on demand, cached | `pages` entry; form posts to the existing Astro action |
 | `/home` | on demand, not cached | 301 to `/`, keeping the query string (Content model, URLs and previews) |
-| `/404`, `/500` | on demand, not cached (`Astro.cache.set(false)`) | code |
+| `/404`, `/500` | on demand, not cached (`Astro.cache.set(false)`); `/404` also answers every URL that matches no route, with status 404, and `/500` any page that throws, with status 500 ([Astro](https://docs.astro.build/en/basics/astro-pages/#custom-404-error-page)) | code |
 | `/_emdash/*` | on demand, never cached | EmDash admin and API |
 | `/sitemap.xml`, `/robots.txt` | EmDash | replaces `@astrojs/sitemap` and `public/robots.txt` ([SEO](https://docs.emdashcms.com/guides/seo/)) |
 

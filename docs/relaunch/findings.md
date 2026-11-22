@@ -23,7 +23,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
 | C11 | No tests, lint or Dependabot. Workers Builds builds, type-checks and previews every branch (A1). | Dependabot: decided at launch. |
-| N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
 | R1 | EmDash does not assign roles from GitHub teams. It resolves the role from the Access identity's `groups` only (`@emdash-cms/cloudflare` 1.5.0 and `main`); with GitHub sign-in, Access returns `orgs` and `teams` and no `groups` (owner's `get-identity` on the B4 preview, 2026-11-22). Neither EmDash's nor Cloudflare's docs give a setting for it. | Owner decision: an Admin sets roles under Users; the `roleMapping` stays in the code; an upstream issue is drafted for the owner to file. Recheck when EmDash is upgraded. |
 | M1 | The content model in `architecture.md` names two fields EmDash 1.5.0 reserves: `status` (projects) and `terms` (services). `RESERVED_FIELD_SLUGS` in `emdash/src/schema/types.ts` lists both (an entry's publish status and its taxonomy terms), and `emdash seed --validate` rejects the seed with `field slug "status" is reserved` and `field slug "terms" is reserved`. | B5 (#32): the fields are `project_status` and `service_terms`, labels unchanged; recorded in `architecture.md`, Content model. Pages read those slugs. |
 | P2 | EmDash's sitemap URLs differ from the site's canonical URLs (EmDash 1.5.0, local `npm run dev` on a fresh database, 2026-11-22). (1) Sitemap URLs have no trailing slash (`/about`, `/projects/demo-project`): under `trailingSlash: 'ignore'` EmDash writes the pattern URL as it is (`resolveLocalizedContentRoutePath` in `i18n/resolve.ts`), while `BaseLayout` writes the canonical with the slash (`/about/`); both forms answer 200. (2) The home entry is listed as `/home`, which answers 301 to `/`. (3) `/` is not listed: the sitemap lists only published entries with a slug, at their pattern URL (`api/handlers/seo.ts`). | Recorded (B6, #33); not changed. `architecture.md`, Content model, URLs and previews. |
@@ -43,6 +42,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### Content
 - Old messaging throughout; nothing on the accelerator, local capacity building, Pacto or ICS.
 - Owner to confirm or cut: "Governance Innovation Lab", the "NFT Energy Labeling Experiment" description, the service SLAs and $5,000 tiers.
+- `public/manifest.json` `description` still reads "A node in the regenerative ecosystem, harnessing web3 and AI…", words the content standard rules out (`brief.md`). Copy (D3); found in C10.
 - Links are consistent inside this repo (one Discord invite, Paragraph only). Across the fleet they are not: two Discord invites, Mirror and Paragraph, knowledge `.org` and `.dev`.
 
 ## Fixed
@@ -66,6 +66,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |
 | N4 | Comments said prerendered pages cannot read `wrangler.jsonc` vars. They can: the adapter loads them at build (tested). | Comments and docs corrected. |
 | N8 (part) | `AGENTS.md` called the fonts API experimental. | Corrected. |
+| N8 | `manifest.json` declared a 192×192 icon that was 400×272 (`public/images/superbenefit-logo.webp`); the favicon and the `apple-touch-icon` were an SVG "S" mark, not the SuperBenefit icon, and iOS home-screen icons are not SVG. The hidden microdata block in `Footer.astro` had no `itemscope`. | C10 (#44): `public/icons/icon-192.png` and `icon-512.png`, `public/apple-touch-icon.png` (180×180) and `public/favicon.ico` (16, 32, 48) are built from `src/assets/sb-icon.jpg` (400×400); the manifest lists the two PNGs at their real sizes; `favicon.svg` is deleted. Checked under `astro preview`: each manifest icon decodes square at its declared size. The microdata block went with C1's footer (#35). |
 | SEO (part) | Internal links used the extensionless form, which 307s to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). | A4 (#26): every internal link ends in `/`. A4 also set `trailingSlash: 'always'`; since 2026-11-22 it is `'ignore'` (T1). |
 | N6 | Links to `www.allinforsport.org`, which does not resolve, in `about.astro` and `projects.astro`. | A4 (#26): links point at the apex. |
 
