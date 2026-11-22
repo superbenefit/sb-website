@@ -28,7 +28,8 @@ URLs (owner decision, 2026-11-22; finding T1): `trailingSlash: 'ignore'`, Astro'
 | `/` | on demand, cached | `pages` entry `home`, featured `projects`, latest `updates` |
 | `/accelerator/` | on demand, cached | `pages` entry + `supports` |
 | `/services/` | on demand, cached | `pages` entry + `services` |
-| `/projects/`, `/projects/{slug}/` | on demand, cached | `projects` |
+| `/projects/` | on demand, cached | `pages` entry `projects` + `projects` |
+| `/projects/{slug}/` | on demand, cached | `projects` entry + related `updates` |
 | `/updates/`, `/updates/{slug}/` | on demand, cached | `updates` |
 | `/about/` | on demand, cached | `pages` entry |
 | `/contact/` | on demand, cached | `pages` entry; form posts to the existing Astro action |
