@@ -39,6 +39,12 @@
   max-width: 62ch;
 }
 
+/* Not in mockups.css: an item's body is rich text in a prose box
+   (RichText), held to the same measure as the paragraph it stands for. */
+.block__main > .prose {
+  max-width: 62ch;
+}
+
 .block .ledger {
   margin: 0px;
 }

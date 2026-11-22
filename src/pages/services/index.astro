@@ -29,7 +29,7 @@
  * `block`.
  */
 import { getEmDashCollection, getEmDashEntry } from 'emdash';
-import { PortableText } from 'emdash/ui';
+import RichText from '../../components/rich-text/RichText.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Button from '../../components/Button.astro';
 import Ledger from '../../components/Ledger.astro';
@@ -84,7 +84,7 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
           </div>
           {hasBody && (
             <div class="split__body">
-              <PortableText value={data?.body} />
+              <RichText value={data?.body} inherit />
             </div>
           )}
         </div>
@@ -116,7 +116,7 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
                       { label: 'Terms', text: terms },
                     ]}
                   />
-                  {body?.length ? <PortableText value={body} /> : null}
+                  <RichText value={body} inherit />
                 </div>
               </article>
             );

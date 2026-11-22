@@ -574,6 +574,26 @@ p {
   margin: 0;
 }
 
+/* Rich text inside a box that sets its own type size (a split body, a
+   support or service item, the contact aside). The mockup's About page puts
+   `style="font-size: inherit; line-height: inherit;"` on that prose box;
+   this class is the same two declarations (RichText's `inherit` prop). */
+.prose--inherit {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* On a dark section the quote's rules and inline code take the dark-section
+   values (`--rule-dark`; code keeps its light box, so its text is charcoal).
+   The mockups show rich text on light sections only. */
+.on-ink .prose blockquote {
+  border-block: var(--rule-dark);
+}
+
+.on-ink .prose :not(pre) > code {
+  color: var(--color-charcoal);
+}
+
 /* ===== REDUCED MOTION ===== */
 
 @media (prefers-reduced-motion: reduce) {
