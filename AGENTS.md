@@ -8,7 +8,7 @@ The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `featu
 - Claims about Astro, EmDash or Cloudflare come from current official docs or source, with a link.
 - Worker domain and Cloudflare Access settings are configured by a human in the dashboard. Do not put them in config files or change them through the API.
 
-EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/`, but the public pages do not read EmDash content yet. The content model (five collections, three menus, the closing-band widget area) is `seed/seed.json` (B5, issue #32), applied by the setup wizard on an empty database; see `docs/relaunch/architecture.md`, Content model. The sections below describe the code as it is today.
+EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/`. The base layout (C1, issue #35) reads the header and footer menus and the closing band from EmDash and writes the head with `<EmDashHead>`; the page bodies do not read EmDash content yet. The content model (five collections, three menus, the closing-band widget area) is `seed/seed.json` (B5, issue #32), applied by the setup wizard on an empty database; see `docs/relaunch/architecture.md`, Content model. The sections below describe the code as it is today.
 
 ## Commands
 
@@ -30,6 +30,7 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 
 - **Dev server holds stdin** — Run `npm run dev` in a dedicated background process. Do not chain it with other commands or the shell will appear unresponsive.
 - **Draft pages** — `/about`, `/projects`, `/services`, `/support` and `/updates/*` set `pageIsDraft = true`: they render fully in `npm run dev` but show a "Coming soon" placeholder in production builds. The finished routes are `/`, `/contact`, `/404` and `/500`.
+- **Pages need a set-up database** — every page reads menus and the closing band from EmDash, so on a fresh local database finish setup first (`POST /_emdash/api/setup/dev-bypass` applies `seed/seed.json`, which holds the menus and the band). Until then the header and footer have no links and the band is not shown.
 - **Local CMS setup** — `wrangler.jsonc` sets `EMDASH_SITE_URL=https://superbenefit.org` and local dev reads it, so `.env` sets `EMDASH_SITE_URL=http://localhost:4321` (as `.env.example` does). The local database, bucket and sessions live in `.wrangler/state`.
 - **Local CMS sign-in** — `npm run dev` has no Access JWT. With Access configured, EmDash 1.5.0 offers no passkey locally (the wizard skips the administrator step and the login page redirects in a loop). Finish the setup wizard, then open `http://localhost:4321/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin`, EmDash's documented development bypass: it signs in `dev@emdash.local` as Admin and only works under `astro dev`. Access roles cannot be tested locally. See `docs/relaunch/architecture.md`, Auth.
 - **Generated files** — `wrangler types` writes `worker-configuration.d.ts`; builds write `.emdash/migrations.json`; `npm run dev` writes `emdash-env.d.ts` (collection types from the local database's schema). None are edited by hand. `emdash-env.d.ts` is committed and listed in `tsconfig.json`, as in EmDash's official templates, so builds without a dev server type-check against it; commit it again after a schema change.
@@ -37,14 +38,16 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 ## Architecture
 
 ### Rendering & Deployment
-- **Output mode**: `server` (SSR via Cloudflare Workers, with per-page `prerender` opt-in)
-- **URLs**: `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22, finding T1: `'always'` made the EmDash admin's URLs without a trailing slash 404). Internal links still end in `/` (`/contact/`, not `/contact`): prerendered pages are served by Workers static assets, which 307 the extensionless form to it ([`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). Pages rendered on demand answer both forms with 200
+- **Output mode**: `server`; every page renders on demand on the Worker (`docs/relaunch/architecture.md`, Rendering per route). No page sets `prerender`
+- **URLs**: `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22, finding T1: `'always'` made the EmDash admin's URLs without a trailing slash 404). Internal links still end in `/` (`/contact/`, not `/contact`). Pages rendered on demand answer both forms with 200; the canonical uses the slash form
 - **Adapter**: `@astrojs/cloudflare` with no options; images are transformed through the Cloudflare Images (`IMAGES`) binding, at build for prerendered pages and on demand otherwise. The adapter also adds the `SESSION` KV binding and the static assets config to the Wrangler config it generates (`dist/server/wrangler.json`)
 - **Worker entry**: `src/worker.ts`, EmDash's documented entry: Astro's handler, the co-editing room classes and the `scheduled` handler for the every-minute Cron Trigger (scheduled publishing, maintenance)
 - **CMS**: EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`), configured in `astro.config.mjs` and `wrangler.jsonc` as `docs/relaunch/architecture.md` describes. Admin and API under `/_emdash/`; `/sitemap.xml` and `/robots.txt` come from EmDash. Branch previews bind the shared staging resources in the `previews` block
 - **CMS sign-in**: Cloudflare Access with GitHub (`access()` from `@emdash-cms/cloudflare` in `astro.config.mjs`), the only sign-in method on previews and production. The Worker checks the Access JWT on `/_emdash/admin` and the private `/_emdash/api` routes against the AUD tag in the secret `CF_ACCESS_AUDIENCE` and answers 401 "Authentication failed" without it. New accounts are Contributor; members of the GitHub team "Web Admins" become Admin (`roleMapping` keys are compared exactly with the group names Access returns). With GitHub sign-in this mapping does not take effect in EmDash 1.5.0 (finding R1): every new account is a Contributor, and an Admin sets Editor and Admin under Users in the CMS. Previews: the whole preview hostname is behind the previews Access application. Production: `superbenefit.org/_emdash/*` is behind its own Access application, with a Bypass application for `/_emdash/api/media/file/*`. Access applications and the secret are set by the owner in the dashboard (`docs/relaunch/issues.md`, B3)
 - **Static assets**: Served from `dist/client`. No custom security headers are set: there is no `public/_headers` file
-- **Every page is prerendered** (`export const prerender = true`), so the Worker runs only server actions such as the contact form, and EmDash's admin and API
+- **Every page renders on demand**: the layout reads EmDash menus and the closing band per request, so menu and band edits show without a rebuild. Route caching is B6 (`docs/relaunch/architecture.md`, Caching)
+- **Layout** (`src/layouts/BaseLayout.astro`, built to `docs/relaunch/mockups/`): `<EmDashHead>` with a context from `createPublicPageContext()` writes the meta tags and JSON-LD; then `Header` (menu `header`; its last item is the Contact pill and the mobile sheet's button), the page, `ClosingBand` (widget area `closing-band`), `FooterFade` and `Footer` (menus `footer-site` and `footer-elsewhere`). Props: `bandFrom` (colour of the last section, for the wave), `bandLabel`/`bandHref` (the band's first button, default "Get in touch" to `/contact/`), `closingBand={false}` (error pages; contact keeps its own band until C9), `canonical={null}` (error pages)
+- **Shared parts**: `PageHero` (`ph`; `variant` black, charcoal, gold, green, orange or red, `compact`, slots `meta`, `actions`, `art`), `WaveDivider` (`dv`; `bg` above, `fill` below, `bands`), `Button` (`btn--accent|ink|line`, `arrow`), `StatusBadge` (from `project_status`). Global classes in `global.css`: `.wrap`, `.caps`, `.display`, `.btn`, `.status`, `.stripe`, `:focus-visible`
 - **Styles**: all component CSS is inlined into the HTML (`build.inlineStylesheets: 'always'`)
 
 ### Content Collections & Data Loading
@@ -54,7 +57,7 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 - Loader endpoint validation: HTTPS-only, host allowlist restricted to `knowledge.superbenefit.org`
 
 ### Homepage Composition (src/pages/index.astro)
-Hero → SectionDivider → MissionStatement → SectionDivider → InternalServices → SectionDivider → ExternalServices → SectionDivider → CallToAction.
+Hero → SectionDivider → MissionStatement → SectionDivider → InternalServices → SectionDivider → ExternalServices, then the layout's closing band (`bandFrom="green"`). The page is rebuilt to the mockup in C3.
 
 **SectionDivider** (`src/components/SectionDivider.astro`) blends one section's background into the next; its `from` and `to` props take `'cream' | 'charcoal' | 'green' | 'orange' | 'black'`.
 
@@ -64,7 +67,7 @@ Hero → SectionDivider → MissionStatement → SectionDivider → InternalServ
 - `name` and `subject` must not contain CR or LF; a line break returns a field error
 - The `CONTACT_RATE_LIMITER` [`ratelimits` binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/) allows 5 posts per client IP (`CF-Connecting-IP`) per 60 seconds and returns `TOO_MANY_REQUESTS` after that. Cloudflare counts per location and approximately. It is declared at the top level and again in `previews` (own `namespace_id`), because previews inherit no bindings
 - Server faults (an unset secret, a missing binding) show visitors one generic message; the detail is logged with `console.error`. Do not put configuration detail in an `ActionError` message: Astro sends it to the browser as is
-- `contact.astro` is prerendered, so the Turnstile site key is fixed at build time: `PUBLIC_TURNSTILE_SITE_KEY` from `.env` locally, otherwise from `vars` in `wrangler.jsonc`
+- The Turnstile site key is fixed at build time (`PUBLIC_` variables are inlined): `PUBLIC_TURNSTILE_SITE_KEY` from `.env` locally, otherwise from `vars` in `wrangler.jsonc`
 - Turnstile uses explicit rendering. The widget is rendered and the form handler attached on `astro:page-load`, and the widget is removed on `astro:before-swap`, because `<ClientRouter />` runs a page's bundled script only once per visit
 
 ### Styling Approach
@@ -74,12 +77,12 @@ Hero → SectionDivider → MissionStatement → SectionDivider → InternalServ
 - **RGB channel variants** (`--color-black-rgb`, `--color-orange-rgb`, etc.) enable alpha compositing: `rgb(var(--color-black-rgb) / 0.8)`. Prefer these over hardcoded `rgba()` values.
 - **fonts**: Playfair Display (serif, `--font-serif`) and Inter (sans, `--font-sans`) via Astro's `fonts` config. CSS vars `--font-playfair` and `--font-inter` also available.
 - **Fluid typography**: `clamp()`-based scale from `--text-xs` to `--text-hero`.
+- **Relaunch tokens** (from `docs/relaunch/mockups/mockups.css`): `--radius-sm|md|pill`, `--space-xl-half`, `--rule`, `--rule-dark`, `--stripe`. Shared parts use the mockups' class names and values; keep them in step with `mockups.css`.
 
 ### Animations (src/styles/animations.css)
 All scroll-driven — no JavaScript animation libraries:
 - **Reveal**: `data-animate="fade-up|fade-left|fade-right|scale-in"` triggers CSS `animation-timeline: view()`
 - **Parallax**: `data-parallax` on background elements, GPU-composited via `transform: translateY()`
-- **Header solidify**: Transparent → blurred over first 300px via `animation-timeline: scroll()`
 - **Stagger**: Components pass `--stagger` CSS variable for sequential reveal delays
 - **Reduced motion**: Respected via `@media (prefers-reduced-motion: reduce)`
 
@@ -96,5 +99,5 @@ All scroll-driven — no JavaScript animation libraries:
 
 ## Code Style
 
-- **Prerender opt-in**: Static pages declare `export const prerender = true` in frontmatter. Without this, pages render on the Worker at request time. Every current page opts in.
+- **Rendering**: pages do not set `prerender`; they render on the Worker at request time, as `docs/relaunch/architecture.md` decides. A prerendered page would freeze the layout's menus and band at build time.
 - **Responsive breakpoints**: 1024px (tablet landscape), 768px (tablet), 480px (mobile). 768px is the main one; reuse these values rather than adding new ones.

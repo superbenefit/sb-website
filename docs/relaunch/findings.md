@@ -11,7 +11,6 @@ Recon at commit b643382 (2026-11-20), then validated the same day against curren
 | S3 | `src/utils/sanitize.ts` is bypassed by `<img/onerror=…>`, unquoted `href=javascript:`, `<form action>` and nested `<scr<script></script>ipt>` (all reproduced). | CMS build: file deleted; EmDash renders Portable Text. |
 | S4 | Mock update titles and the fake author "Alex Chen" are in the `<head>` of public pages such as `/updates/governance-primitives-web3/`. | CMS build: loaders and mock data deleted. |
 | S5 | Branch previews on `superbenefit.dev` are public and indexable; knowledge.superbenefit.dev is an unprotected public copy. The workers.dev URL is now off. | Owner: protect this Worker's previews with Access (A5). The knowledge copy belongs to the knowledge-garden repo. |
-| N1 | JSON-LD uses `set:html={JSON.stringify(…)}` (`SEO.astro:111`, `updates/[...slug].astro:48`). A title containing `</script>` breaks out ([docs](https://docs.astro.build/en/reference/directives-reference/#sethtml)). | CMS build: `<EmDashHead>` writes the JSON-LD. Must land before CMS content reaches these pages. |
 
 Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protections.
 
@@ -22,7 +21,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C3, C4 | Two near-identical loaders; a production build with no content source silently ships mock data. | CMS build. |
 | C5 | `projects.astro` hardcodes its projects and ignores the collection. | CMS build. |
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
-| C9 | `WebSite` schema has a `SearchAction` for a search that does not exist. | CMS build. |
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
 | C11 | No tests, lint or Dependabot. Workers Builds builds, type-checks and previews every branch (A1). | Dependabot: decided at launch. |
 | N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
@@ -33,7 +31,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### SEO
 - No `<h1>` on the homepage; title is "Make Better Faster".
 - `/sitemap.xml` comes from EmDash since B2 and lists nothing until pages read EmDash content.
-- `404.html` and `500.html` set their canonical to `/404/` and `/500/`, which 307 to `/404` and `/500` (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/) serves a file asset without the slash). The canonical comes from `Astro.url.pathname` in `SEO.astro`; it was the same before A4.
 - Homepage has hidden links to noindexed drafts.
 - governance.superbenefit.org's canonical points to governance.superbenefit.dev (fleet).
 - `/robots.txt` comes from EmDash since B2. Until the "Disallow AI training" setting is on (D2) it no longer lists the AI training crawlers the old `public/robots.txt` blocked.
@@ -57,6 +54,9 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C7 | Stale comments: `.opencode` reference, `nav.ts` duplication note, "Astro v6". | Comments corrected. |
 | N2 | Images were shipped unresized (adapter bug, fixed in 14.2.0). | PR #18. |
 | N5 | The `assets` block in `wrangler.jsonc` was ignored; the adapter generates its own. | B2 (#29): block removed. |
+| N1 | JSON-LD used `set:html={JSON.stringify(…)}` (`SEO.astro`, `BaseLayout.astro`, both `updates` pages); a title containing `</script>` broke out ([docs](https://docs.astro.build/en/reference/directives-reference/#sethtml)). | C1 (#35): `<EmDashHead>` writes the JSON-LD (`WebSite` on pages, `BlogPosting` on articles) with EmDash's escaping; every `set:html` JSON-LD block is removed. The `Organization` and `BreadcrumbList` blocks are not replaced. |
+| C9 | `WebSite` schema had a `SearchAction` for a search that does not exist. | C1 (#35): EmDash's `WebSite` JSON-LD has none. |
+| SEO (part) | `404.html` and `500.html` set their canonical to `/404/` and `/500/`, which 307 to `/404` and `/500`. | C1 (#35): the error pages render on demand at the requested URL and write no canonical. |
 | T1 | With `trailingSlash: 'always'` (A4), the EmDash admin did not work: `/_emdash/admin/` redirected to `/_emdash/admin/setup`, which returned 404, and `/_emdash/api/setup/status` returned 404 while `/_emdash/api/setup/status/` returned 200 (local `astro preview`, EmDash 1.5.0, 2026-11-21). Astro skips its trailing-slash redirect for paths starting with `/_` (`isInternalPath` in `@astrojs/internal-helpers`) but still matches routes against the setting. With Astro's default `trailingSlash: 'ignore'` the wizard, sign-in and a media upload all worked. | B2 (#29), owner decision 2026-11-22: `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash), which EmDash's official templates also use. Verified locally on 2026-11-22: `/_emdash/admin` and `/_emdash/admin/` redirect to `/_emdash/admin/setup` (200), and `/_emdash/api/setup/status` returns 200 with and without the slash. Prerendered pages are still redirected to the slash form by Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/); once pages render on demand, both `/about` and `/about/` answer 200 (see `architecture.md`, Stack). |
 | N7 | `public/robots.txt` comments claimed a Content-Signal the file did not contain. | B2 (#29): file removed; EmDash serves `/robots.txt`. |
 | N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |

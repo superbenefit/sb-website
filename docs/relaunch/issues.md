@@ -110,6 +110,13 @@ Created at the owner's request. All previews share them. They are bound in the `
 
 "Matches" means: side by side with `mockups/screenshots/{page}-1440.jpg` and `-390.jpg`, layout, spacing, type and colour agree, using the values in `mockups/mockups.css`.
 
+### C1 notes (branch `c1-base-layout`, #35)
+- Built: tokens and shared classes in `global.css`; `BaseLayout`, `Header` (menu `header`, mobile sheet), `Footer` (menus `footer-site`, `footer-elsewhere`), `ClosingBand` (widget area `closing-band`), `FooterFade`, `PageHero`, `WaveDivider`, `Button`, `StatusBadge`. `Nav.astro`, `SEO.astro` and `src/data/nav.ts` are deleted. Head tags and JSON-LD come from `<EmDashHead>`; no `set:html` JSON-LD remains.
+- Every page now renders on demand (architecture.md, Rendering per route), because the layout reads menus and the band per request. Caching stays B6: EmDash 1.5.0 also has `getMenuWithCacheHint` and `getWidgetAreaWithCacheHint`, which its own `<WidgetArea>` passes to `Astro.cache.set()`, for B6 to tag the layout's reads.
+- Two dynamic routes under `/updates/` collide in on-demand mode, so `updates/[...page].astro` became `updates/index.astro` and shows the newest ten entries without pagination; the paginated index is C7's.
+- Decisions where the mockups show nothing, for review: the last item of the header menu is the Contact pill and the mobile sheet's button; the band's first button is a layout prop (default "Get in touch" to `/contact/`, as most mockup pages show) because the widget area holds only the second; Elsewhere icons are chosen by the link's host (Discord, X, GitHub), other links get none; the "past" badge label is "Past"; the menu button toggles a sheet under the header (Escape closes it), and without JavaScript the footer's Site menu is the way round on narrow screens; the sheet reaches the foot of the viewport where 780 px is shorter. No skip link: the mockups show none (C11).
+- Left for the page issues: contact keeps its old band and divider (C9; its mockup band has its own heading, text and buttons, which one widget area cannot hold); old page bodies, home hero and error pages are unchanged (C3 to C10). Pages that used the old `PageHero` now use the new one with the mockup's colour for that route and their existing text.
+
 ## D. Content and launch
 | # | Outcome | Accept when | Depends on | Size |
 | --- | --- | --- | --- | --- |
