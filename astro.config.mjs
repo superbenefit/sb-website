@@ -30,11 +30,12 @@ export default defineConfig({
       auth: access({
         teamDomain: 'superbenefit.cloudflareaccess.com',
         audienceEnvVar: 'CF_ACCESS_AUDIENCE',
-        // Contributor for every member the Access policy lets in; Admin for
-        // the "Web Admins" GitHub team. Keys are compared, exactly and
-        // case-sensitively, with the group names Access returns.
+        // Contributor (drafts only) for every member the Access policy lets
+        // in; Editor for the "Knowledge Stewardship" GitHub team; Admin for
+        // "Web Admins". Keys are compared, exactly and case-sensitively, with
+        // the group names Access returns; the first matching group wins.
         defaultRole: 20,
-        roleMapping: { 'Web Admins': 50 },
+        roleMapping: { 'Web Admins': 50, 'Knowledge Stewardship': 40 },
       }),
     }),
   ],
