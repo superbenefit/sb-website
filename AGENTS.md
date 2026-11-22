@@ -8,7 +8,7 @@ The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `featu
 - Claims about Astro, EmDash or Cloudflare come from current official docs or source, with a link.
 - Worker domain and Cloudflare Access settings are configured by a human in the dashboard. Do not put them in config files or change them through the API.
 
-EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/` (blocked by `trailingSlash: 'always'` until finding T1 in `docs/relaunch/findings.md` is decided), but the public pages do not read EmDash content yet. The sections below describe the code as it is today.
+EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/`, but the public pages do not read EmDash content yet. The sections below describe the code as it is today.
 
 ## Commands
 
@@ -37,7 +37,7 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 
 ### Rendering & Deployment
 - **Output mode**: `server` (SSR via Cloudflare Workers, with per-page `prerender` opt-in)
-- **URLs**: `trailingSlash: 'always'`. Internal links end in `/` (`/contact/`, not `/contact`); Workers static assets 307 the extensionless form to it
+- **URLs**: `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22, finding T1: `'always'` made the EmDash admin's URLs without a trailing slash 404). Internal links still end in `/` (`/contact/`, not `/contact`): prerendered pages are served by Workers static assets, which 307 the extensionless form to it ([`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). Pages rendered on demand answer both forms with 200
 - **Adapter**: `@astrojs/cloudflare` with no options; images are transformed through the Cloudflare Images (`IMAGES`) binding, at build for prerendered pages and on demand otherwise. The adapter also adds the `SESSION` KV binding and the static assets config to the Wrangler config it generates (`dist/server/wrangler.json`)
 - **Worker entry**: `src/worker.ts`, EmDash's documented entry: Astro's handler, the co-editing room classes and the `scheduled` handler for the every-minute Cron Trigger (scheduled publishing, maintenance)
 - **CMS**: EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`), configured in `astro.config.mjs` and `wrangler.jsonc` as `docs/relaunch/architecture.md` describes. Admin and API under `/_emdash/`; `/sitemap.xml` and `/robots.txt` come from EmDash. Branch previews bind the shared staging resources in the `previews` block

@@ -7,7 +7,7 @@ Approved by the owner on 2026-11-21 and created on GitHub as superbenefit/sb-web
 - **Design:** page and component issues are built to match `mockups/`. Read `mockups/README.md` first.
 
 ## Needs the owner
-Five things only a person can do or decide. Agents do not change Cloudflare domain or Access settings.
+Four things only a person can do or provide. Agents do not change Cloudflare domain or Access settings.
 
 | # | What is needed | Why | Blocks |
 | --- | --- | --- | --- |
@@ -15,7 +15,6 @@ Five things only a person can do or decide. Agents do not change Cloudflare doma
 | B3 | An Access application for `superbenefit.org/_emdash/*` with a policy for GitHub org members. The AUD tag of that application as the production secret `CF_ACCESS_AUDIENCE`, and the AUD tag of the previews application (A5) as the preview base secret of the same name. | CMS sign-in goes through Access. The GitHub identity provider already exists. The Zero Trust team domain is `superbenefit.cloudflareaccess.com` (seen in the Access sign-in redirect, 2026-11-21). | B4 |
 | D1 | The new service offerings: for each, a title, who it is for, what they get (a short list), and terms. | The owner is redoing the offerings. The three in the mockups are real but will be replaced. | D3, D4 |
 | D4 | Logos, cover images and alt text for the five projects. | The mockups use labelled placeholders. | D4 |
-| T1 | Decide how to resolve finding T1: `trailingSlash: 'always'` (A4) breaks every `/_emdash/` URL without a trailing slash, which the EmDash admin uses. Astro's default `'ignore'` worked locally. | Raised by B2 on 2026-11-21; see `findings.md`. | B2 acceptance |
 
 Also needed later, with no decision involved: a human edit of all copy (D3), and Web Analytics and Search Console setup at launch (D6).
 
@@ -53,7 +52,7 @@ Created at the owner's request. All previews share them. They are bound in the `
 | A1 | Every branch is type-checked. `npm run build` runs `astro check` before `astro build`, so Workers Builds fails on a type error. No GitHub Actions workflow; Dependabot is decided at launch (owner decision, 2026-11-21). | A branch with a type error fails the Workers Builds check. | none | S |
 | A2 | `compatibility_date` is current. | Preview build passes; contact form sends on the preview with test keys. | none | S |
 | A3 | Contact action is hardened: CR/LF rejected in subject and name, visitors see a generic message on server faults, a `ratelimits` binding limits posts per IP. | A subject with a line break returns a field error. An unset secret shows the generic message and logs the detail. Repeated posts from one IP are refused. | none | M |
-| A4 | Internal links use the trailing-slash form and `trailingSlash: 'always'` is set. `www.allinforsport.org` links point at the apex. | No internal link on the preview returns 307. | none | S |
+| A4 | Internal links use the trailing-slash form. `www.allinforsport.org` links point at the apex. A4 also set `trailingSlash: 'always'`; the owner replaced it with Astro's default `'ignore'` on 2026-11-22 (finding T1) because `'always'` made the EmDash admin URLs 404. | No internal link on the preview returns 307. | none | S |
 | A5 | Owner: a test message sends from the contact form on a new preview. (Access on previews: done. Preview secrets: done.) | The message arrives. | none | Owner |
 
 ## B. CMS

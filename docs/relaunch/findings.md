@@ -26,7 +26,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
 | C11 | No tests, lint or Dependabot. Workers Builds builds, type-checks and previews every branch (A1). | Dependabot: decided at launch. |
 | N8 | `manifest.json` declares a 192×192 icon that is 400×272. The hidden microdata block in `Footer.astro` has no `itemscope` and does nothing. | Design and hygiene. |
-| T1 | With `trailingSlash: 'always'` (A4), the EmDash admin does not work: `/_emdash/admin/` redirects to `/_emdash/admin/setup`, which returns 404, and `/_emdash/api/setup/status` returns 404 while `/_emdash/api/setup/status/` returns 200 (local `astro preview`, EmDash 1.5.0, 2026-11-21). Astro skips its trailing-slash redirect for paths starting with `/_` (`isInternalPath` in `@astrojs/internal-helpers`) but still matches routes against the setting. With Astro's default `trailingSlash: 'ignore'` the wizard, sign-in and a media upload all worked. | Owner decision: change A4's setting, or another fix. Blocks B2 acceptance. |
 
 ### SEO
 - No `<h1>` on the homepage; title is "Make Better Faster".
@@ -55,11 +54,12 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | C7 | Stale comments: `.opencode` reference, `nav.ts` duplication note, "Astro v6". | Comments corrected. |
 | N2 | Images were shipped unresized (adapter bug, fixed in 14.2.0). | PR #18. |
 | N5 | The `assets` block in `wrangler.jsonc` was ignored; the adapter generates its own. | B2 (#29): block removed. |
+| T1 | With `trailingSlash: 'always'` (A4), the EmDash admin did not work: `/_emdash/admin/` redirected to `/_emdash/admin/setup`, which returned 404, and `/_emdash/api/setup/status` returned 404 while `/_emdash/api/setup/status/` returned 200 (local `astro preview`, EmDash 1.5.0, 2026-11-21). Astro skips its trailing-slash redirect for paths starting with `/_` (`isInternalPath` in `@astrojs/internal-helpers`) but still matches routes against the setting. With Astro's default `trailingSlash: 'ignore'` the wizard, sign-in and a media upload all worked. | B2 (#29), owner decision 2026-11-22: `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash), which EmDash's official templates also use. Verified locally on 2026-11-22: `/_emdash/admin` and `/_emdash/admin/` redirect to `/_emdash/admin/setup` (200), and `/_emdash/api/setup/status` returns 200 with and without the slash. Prerendered pages are still redirected to the slash form by Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/); once pages render on demand, both `/about` and `/about/` answer 200 (see `architecture.md`, Stack). |
 | N7 | `public/robots.txt` comments claimed a Content-Signal the file did not contain. | B2 (#29): file removed; EmDash serves `/robots.txt`. |
 | N3 | Turnstile failed on any return visit to `/contact/` and after a rejected submission; `.env.example` had an invalid test site key. | PR #18: explicit rendering. |
 | N4 | Comments said prerendered pages cannot read `wrangler.jsonc` vars. They can: the adapter loads them at build (tested). | Comments and docs corrected. |
 | N8 (part) | `AGENTS.md` called the fonts API experimental. | Corrected. |
-| SEO (part) | Internal links used the extensionless form, which 307s to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). | A4 (#26): `trailingSlash: 'always'` and every internal link ends in `/`. |
+| SEO (part) | Internal links used the extensionless form, which 307s to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). | A4 (#26): every internal link ends in `/`. A4 also set `trailingSlash: 'always'`; since 2026-11-22 it is `'ignore'` (T1). |
 | N6 | Links to `www.allinforsport.org`, which does not resolve, in `about.astro` and `projects.astro`. | A4 (#26): links point at the apex. |
 
 ## Withdrawn

@@ -15,7 +15,12 @@ Settings that conflicted with this were removed in B2: `prerenderEnvironment: 'n
 
 docs.emdashcms.com tracks unreleased `main`, ahead of the npm release (1.5.0 on 2026-11-20). Check doc-derived behaviour against the installed version.
 
-Open (needs the owner, 2026-11-21): `trailingSlash: 'always'` (A4) makes every `/_emdash/` URL without a trailing slash return 404, and the admin uses those URLs (it redirects to `/_emdash/admin/setup` and calls `/_emdash/api/...`). See finding T1 in `findings.md`.
+URLs (owner decision, 2026-11-22; finding T1): `trailingSlash: 'ignore'`, Astro's default ([`trailingSlash`](https://docs.astro.build/en/reference/configuration-reference/#trailingslash): "Match URLs regardless of whether a trailing '/' exists"). A4 had set `'always'`, under which every `/_emdash/` URL without a trailing slash returned 404, and the EmDash admin uses those URLs (it redirects to `/_emdash/admin/setup` and calls `/_emdash/api/...`). EmDash's docs say nothing about `trailingSlash`, and its [official templates](https://github.com/emdash-cms/emdash/tree/main/templates) set none. Consequences:
+- Internal links still end in `/`.
+- Prerendered pages: Astro does not control their trailing slash ("Trailing slashes on prerendered pages are handled by the hosting platform"). Workers static assets' default [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/) still 307s `/about` to `/about/`.
+- On-demand pages, once the page issues render them on demand: both `/about` and `/about/` answer 200. `Astro.url.pathname` keeps the form requested, which `SEO.astro` builds the canonical from and `isNavLinkActive` (`src/utils/nav.ts`) compares against `/about/`.
+- EmDash reads the host setting (`emdash/dist/astro/index.mjs`, 1.5.0). Under `'ignore'` it leaves the URLs it builds for content (sitemap, menus) as the collection's URL pattern gives them, without a trailing slash.
+- Verified locally (`astro preview`, EmDash 1.5.0, 2026-11-22): `/_emdash/admin` and `/_emdash/admin/` 302 to `/_emdash/admin/setup`, which returns 200 with and without the slash; `/_emdash/api/setup/status` returns 200 with and without the slash.
 
 ## Rendering per route
 | Route | Mode | Content source |
@@ -124,5 +129,6 @@ The setup above is taken from the docs and source, not yet deployed. The first b
 5. `.dev` is the preview domain, set up by the owner. Domain and Access settings are dashboard-only (see Ownership).
 6. No preview-specific Cloudflare resources (2026-11-21). See Environments and CI.
 7. AI crawlers: block training, allow everything else. Projects awaiting acceptance are marked "Applicant".
+8. `trailingSlash: 'ignore'` (2026-11-22), replacing A4's `'always'`, so the EmDash admin works. See Stack.
 
 Owner items still open are listed at the top of `issues.md`. Already in place: the GitHub identity provider, the www redirect, HSTS, the `.dev` preview domain and the Turnstile preview hostname.

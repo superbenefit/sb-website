@@ -77,6 +77,8 @@ astro.config.mjs  # Astro configuration
 
 **Rendering strategy** — `output: 'server'` with per-page `export const prerender = true`. Every page currently opts in, including `/updates/*`, so the Worker only runs server actions (the contact form) and EmDash's admin and API under `/_emdash/`, plus `/sitemap.xml` and `/robots.txt`, which EmDash serves. `/about`, `/projects`, `/services`, `/support` and `/updates/*` are drafts: they show a "Coming soon" placeholder in production builds until their `pageIsDraft` flag is set to `false`.
 
+**URLs** — `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22; `'always'` made the EmDash admin's URLs without a trailing slash return 404, see finding T1 in `docs/relaunch/findings.md`). Internal links end in `/`. Workers static assets 307 `/about` to `/about/` for prerendered pages ([`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)); pages rendered on demand answer both forms with 200.
+
 **Content loaders** — `src/loaders/knowledge-server.ts` loads the `updates` collection from `KNOWLEDGE_API_URL` at build time, and falls back to `src/data/mock-updates.json` when it is unset, not an allowed HTTPS host, or unreachable. `src/loaders/projects.ts` is called with no endpoint, so `projects` always comes from `src/data/mock-projects.json`.
 
 **Security headers** — none are set by this repo: there is no `public/_headers` file.

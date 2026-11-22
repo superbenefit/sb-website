@@ -1,6 +1,6 @@
 # SuperBenefit web relaunch: brief
 
-Last updated 2026-11-20. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
+Last updated 2026-11-22. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
 
 Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `mockups/` (the owner's design; start with its README), `issues.md` (the work, broken into issues), `design-handoff.md` (the prompt the design session was given), `execution-prompt.md` (the prompt that runs the build in a new session), `planning-prompt.md` (the five planning stages).
 
@@ -74,6 +74,9 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - Pacto and Social Lean Canvas are shown as applicants.
 - The GitHub OAuth app and Zero Trust identity provider already exist.
 - X handle stays `SuperBenefitDAO`. "Book an onboarding call" has no link yet; the button is hidden until an editor adds one.
+
+## Answered (2026-11-22)
+- `trailingSlash` is `'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash), not A4's `'always'`, which made the EmDash admin URLs 404 (finding T1). Internal links keep the trailing slash; see `architecture.md`, Stack.
 
 ## Open questions
 - The new service offerings (owner is redoing them).
