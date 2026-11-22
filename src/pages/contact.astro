@@ -28,7 +28,7 @@
  */
 import { getEmDashEntry } from 'emdash';
 import type { PortableTextBlock } from 'emdash';
-import { PortableText } from 'emdash/ui';
+import RichText from '../components/rich-text/RichText.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import WaveDivider from '../components/WaveDivider.astro';
@@ -96,7 +96,7 @@ const bandLabel = bandHref ? data?.cta_label : undefined;
       {hasAside && (
         <aside class="contact__aside">
           {data?.section_heading && <h2 class="display">{data.section_heading}</h2>}
-          {text.length > 0 && <PortableText value={text} />}
+          <RichText value={text} inherit />
           {more && <a class="more" href={more.href}>{more.label}</a>}
         </aside>
       )}
