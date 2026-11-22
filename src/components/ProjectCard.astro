@@ -1,0 +1,65 @@
+---
+/**
+ * Project card: the `cc` rules in src/styles/parts/cc.css, copied from
+ * docs/relaunch/mockups/mockups.css (pages/projects.html, update.html). Cover,
+ * logo, status badge, linked title, summary and the "View project" foot; the
+ * whole card is the title link's target (`.cc h2 a::after`).
+ *
+ * A project with no logo shows the mockup's `logo-slot--initial` (the first
+ * letter of its name), as the home mockup does for a project without one.
+ * `coverRatio` overrides the cover's 16:9, as the update page's 3:1 card does.
+ */
+import type { ImageValue } from 'emdash';
+import ImageSlot from './ImageSlot.astro';
+import StatusBadge from './StatusBadge.astro';
+import '../styles/parts/cc.css';
+
+interface Props {
+  href: string;
+  title: string;
+  summary?: string;
+  status?: 'active' | 'applicant' | 'past';
+  cover?: ImageValue | null;
+  logo?: ImageValue | null;
+  /** CSS aspect-ratio for the cover, e.g. "3 / 1"; the rule's 16:9 otherwise. */
+  coverRatio?: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { href, title, summary, status, cover, logo, coverRatio, headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+const initial = title.trim().charAt(0).toUpperCase();
+---
+
+<article class="cc">
+  {cover && (
+    <div class="cc__cover" style={coverRatio ? `aspect-ratio: ${coverRatio};` : undefined}>
+      <ImageSlot image={cover} />
+    </div>
+  )}
+  <div class="cc__body">
+    <div class="cc__head">
+      <ImageSlot kind="logo" image={logo} initial={initial} />
+      {status && (
+        <p class="cc__meta">
+          <StatusBadge status={status} />
+        </p>
+      )}
+    </div>
+    <Heading><a href={href}>{title}</a></Heading>
+    {summary && <p class="sum">{summary}</p>}
+    <div class="cc__foot">
+      <span class="caps">View project</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+    </div>
+  </div>
+</article>
+
+<style>
+  /* The mockups' base rule is a { color: inherit }; the site's base link rule
+     is orange with a red hover. */
+  .cc a,
+  .cc a:hover {
+    color: inherit;
+  }
+</style>

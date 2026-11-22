@@ -55,8 +55,11 @@ export default defineConfig({
     '/projects': rule(['projects']),
     '/services': rule(['pages', 'services']),
     '/support': rule(['pages', 'supports']),
-    '/updates': rule(['updates']),
-    '/updates/[...slug]': rule(['updates']),
+    // The index shows the `updates` pages entry and each update's project;
+    // an update shows its project's card (C7).
+    '/updates': rule(['pages', 'updates', 'projects']),
+    '/updates/page/[page]': rule(['pages', 'updates', 'projects']),
+    '/updates/[...slug]': rule(['updates', 'projects']),
     // The collections EmDash lists in the sitemap: routable ones with SEO.
     // services and supports are not routable (seed/seed.json), so not listed.
     '/sitemap.xml': rule(['pages', 'projects', 'updates']),
