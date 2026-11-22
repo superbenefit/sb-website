@@ -13,7 +13,8 @@ import { d1, r2 } from '@emdash-cms/cloudflare';
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
-  trailingSlash: 'always',
+  // 'ignore' (Astro's default): EmDash admin URLs have no trailing slash. https://docs.astro.build/en/reference/configuration-reference/#trailingslash
+  trailingSlash: 'ignore',
   integrations: [
     react(), // Required: the admin UI is a React app
     emdash({
