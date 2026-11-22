@@ -1,6 +1,6 @@
 # SuperBenefit Website
 
-Public website for SuperBenefit — an Astro 7 site deployed to Cloudflare Workers. Presents SuperBenefit's work across governance, DAOs, and systems innovation through a scroll-animated homepage and a contact form.
+Public website for SuperBenefit — an Astro 7 site deployed to Cloudflare Workers. Presents SuperBenefit's work across governance, DAOs, and systems innovation through a homepage with an auto-advancing project selector, project and update pages, and a contact form.
 
 ## Relaunch in progress
 
