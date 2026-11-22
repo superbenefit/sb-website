@@ -61,9 +61,11 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
   bandHref="/contact/"
   bandFrom="cream"
 >
-  {/* Two branches: with astro 7.4.13 a slotted child inside a false
-      condition still made Astro.slots.has('actions') true in PageHero,
-      leaving an empty actions row (observed locally). */}
+  {/* Two branches: Astro.slots.has() only checks that a slot was passed,
+      not that it renders anything
+      (node_modules/@astrojs/runtime/dist/internal/core/render/slots.js,
+      Slots.has), so a slotted child inside a false condition would still
+      give PageHero an empty actions row. */}
   {ctaUrl ? (
     <PageHero title={title} kicker={data?.eyebrow} intro={data?.intro} variant="green">
       <Fragment slot="actions"><Button href={ctaUrl} variant="ink" arrow>{ctaLabel}</Button></Fragment>
