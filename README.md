@@ -76,7 +76,7 @@ astro.config.mjs  # Astro configuration
 
 ## Architecture Notes
 
-**Rendering strategy** — `output: 'server'`, and every page renders on demand on the Worker: the layout reads the header and footer menus and the closing band from EmDash on each request, so an edit in the admin shows without a rebuild (`docs/relaunch/architecture.md`, Rendering per route). EmDash also serves its admin and API under `/_emdash/`, `/sitemap.xml` and `/robots.txt`. `/about`, `/projects`, `/services`, `/support` and `/updates/*` are drafts: they show a "Coming soon" placeholder in production builds until their `pageIsDraft` flag is set to `false`.
+**Rendering strategy** — `output: 'server'`, and every page renders on demand on the Worker: the layout reads the header and footer menus and the closing band from EmDash on each request, so an edit in the admin shows without a rebuild (`docs/relaunch/architecture.md`, Rendering per route). EmDash also serves its admin and API under `/_emdash/`, `/sitemap.xml` and `/robots.txt`. `/projects`, `/services`, `/support` and `/updates/*` are drafts: they show a "Coming soon" placeholder in production builds until their `pageIsDraft` flag is set to `false`.
 
 **URLs** — `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22; `'always'` made the EmDash admin's URLs without a trailing slash return 404, see finding T1 in `docs/relaunch/findings.md`). Internal links end in `/`. Pages render on demand, so both `/about` and `/about/` answer 200; the canonical uses the slash form.
 
