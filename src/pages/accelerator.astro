@@ -29,7 +29,7 @@
  * (https://docs.astro.build/en/guides/routing/#configured-redirects).
  */
 import { getEmDashCollection, getEmDashEntry } from 'emdash';
-import { PortableText } from 'emdash/ui';
+import RichText from '../components/rich-text/RichText.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import PageHero from '../components/PageHero.astro';
@@ -86,7 +86,7 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
           </div>
           {hasBody && (
             <div class="split__body">
-              <PortableText value={data?.body} />
+              <RichText value={data?.body} inherit />
             </div>
           )}
         </div>
@@ -110,7 +110,7 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
               <h3>{support.data.title}</h3>
               <div class="block__main">
                 {support.data.summary && <p class="block__sum">{support.data.summary}</p>}
-                {support.data.body?.length ? <PortableText value={support.data.body} /> : null}
+                <RichText value={support.data.body} inherit />
               </div>
             </article>
           ))
