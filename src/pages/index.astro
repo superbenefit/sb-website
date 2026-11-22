@@ -1,25 +1,227 @@
 ---
+/**
+ * Home page, built to docs/relaunch/mockups/pages/home.html (C3).
+ *
+ * Content (docs/relaunch/architecture.md, Content model; issues.md, B6 notes):
+ * - Hero and about section: the `pages` entry `home` (eyebrow, title, intro,
+ *   cta_label and cta_url, section_label, section_heading, body).
+ * - The two audience panels: the `pages` entries `accelerator` and
+ *   `services` (eyebrow, title, intro, cost_summary); "What you get" lists
+ *   the titles of the `supports` and `services` entries.
+ * - Projects: the featured `projects`, in their `order`.
+ * - Updates: the three newest `updates`, each with its linked project. The
+ *   section is left out when there are none (D5).
+ * Every query's cache hint goes to Astro.cache.set(), so a publish in any of
+ * these collections purges the page
+ * (https://docs.emdashcms.com/deployment/route-caching/). The route rule for
+ * `/` in astro.config.mjs carries the same collection tags.
+ *
+ * Missing content: an empty field is not rendered; with no `home` entry the
+ * hero title is "Home", so the page always has its one <h1>.
+ */
+import { Image } from 'astro:assets';
+import { getEmDashCollection, getEmDashEntry, getEmDashReferences } from 'emdash';
+import type { CacheHint } from 'emdash';
+import { PortableText } from 'emdash/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import SectionDivider from '../components/SectionDivider.astro';
-import MissionStatement from '../components/MissionStatement.astro';
-import InternalServices from '../components/InternalServices.astro';
-import ExternalServices from '../components/ExternalServices.astro';
+import Button from '../components/Button.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import Ledger from '../components/Ledger.astro';
+import EntryList from '../components/EntryList.astro';
+import type { EntryItem } from '../components/EntryList.astro';
+import ProjectSelector from '../components/ProjectSelector.astro';
+import type { SelectorProject } from '../components/ProjectSelector.astro';
+import icon from '../assets/sb-icon.jpg';
+import '../styles/parts/sec.css';
+import '../styles/parts/more.css';
+import '../styles/home.css';
+
+const [homeResult, acceleratorResult, servicesPageResult, supportsResult, servicesResult, projectsResult, updatesResult] =
+  await Promise.all([
+    getEmDashEntry('pages', 'home'),
+    getEmDashEntry('pages', 'accelerator'),
+    getEmDashEntry('pages', 'services'),
+    getEmDashCollection('supports', { orderBy: { order: 'asc', title: 'asc' } }),
+    getEmDashCollection('services', { orderBy: { order: 'asc', title: 'asc' } }),
+    getEmDashCollection('projects', { orderBy: { order: 'asc', title: 'asc' } }),
+    getEmDashCollection('updates', { limit: 3, orderBy: { published_at: 'desc' } }),
+  ]);
+
+const hints: (CacheHint | undefined)[] = [
+  homeResult.cacheHint,
+  acceleratorResult.cacheHint,
+  servicesPageResult.cacheHint,
+  supportsResult.cacheHint,
+  servicesResult.cacheHint,
+  projectsResult.cacheHint,
+  updatesResult.cacheHint,
+];
+
+const home = homeResult.entry?.data;
+const accelerator = acceleratorResult.entry?.data;
+const servicesPage = servicesPageResult.entry?.data;
+
+// Each update's linked project: one page of its `project` reference field
+// (https://docs.emdashcms.com/guides/querying-content/#paginate-a-reference-field).
+const updates: EntryItem[] = await Promise.all(
+  updatesResult.entries.map(async ({ data }) => {
+    const refs = await getEmDashReferences<{ title: string; slug: string | null }>('updates', data.id, 'project', {
+      limit: 1,
+    });
+    hints.push(refs.cacheHint);
+    const project = refs.entries[0]?.data;
+    return {
+      href: `/updates/${data.slug ?? data.id}/`,
+      title: data.title,
+      date: data.publishedAt,
+      excerpt: data.excerpt,
+      cover: data.cover,
+      project: project?.slug ? { title: project.title, href: `/projects/${project.slug}/` } : null,
+    };
+  }),
+);
+
+if (Astro.cache?.enabled) {
+  for (const hint of hints) if (hint) Astro.cache.set(hint);
+}
+
+const projects: SelectorProject[] = projectsResult.entries
+  .filter(({ data }) => data.featured === true)
+  .map(({ data }) => ({
+    href: `/projects/${data.slug ?? data.id}/`,
+    title: data.title,
+    summary: data.summary,
+    status: data.project_status,
+    location: data.location,
+    cover: data.cover,
+    logo: data.logo,
+  }));
+
+const doors = [
+  {
+    variant: 'teams',
+    page: accelerator,
+    items: supportsResult.entries.map(({ data }) => data.title),
+    label: 'See the accelerator',
+    href: '/accelerator/',
+  },
+  {
+    variant: 'orgs',
+    page: servicesPage,
+    items: servicesResult.entries.map(({ data }) => data.title),
+    label: 'See services and terms',
+    href: '/services/',
+  },
+];
+
+// Head title and description: the entry's SEO fields when set (EmDash puts
+// them on `data.seo`: emdash 1.5.0 src/loader.ts), else the site name and the
+// intro.
+const seo = (homeResult.entry?.data as { seo?: { title?: string | null; description?: string | null } } | undefined)
+  ?.seo;
+const pageTitle = seo?.title || 'SuperBenefit';
+const description = seo?.description || home?.intro || '';
+const arrow = 'M5 12h14M13 6l6 6-6 6';
+const wave = 'M0,0 C360,80 1080,0 1440,60 L1440,400 L0,400 Z';
+const edge = 'M0,0 C360,80 1080,0 1440,60';
 ---
 
-<BaseLayout
-  bandFrom="green"
-  title="Make Better Faster"
-  description="SuperBenefit — a node in the regenerative ecosystem, harnessing web3 and AI to grow new systems of coordination. Open source, peer-to-peer, built to be forked."
->
-  <Hero />
-  <SectionDivider from="black" to="cream" />
-  <MissionStatement />
+<BaseLayout title={pageTitle} description={description} bandFrom={updates.length > 0 ? 'cream' : 'charcoal'}>
+  <section class="hero on-ink">
+    <div class="wrap hero__grid">
+      <div>
+        {home?.eyebrow && <p class="hero__kicker">{home.eyebrow}</p>}
+        <h1 class="display">{home?.title || 'Home'}</h1>
+        {home?.intro && <p class="hero__intro">{home.intro}</p>}
+        <div class="hero__actions">
+          {home?.cta_label && home.cta_url && (
+            <Button href={home.cta_url} variant="accent" arrow>{home.cta_label}</Button>
+          )}
+          <Button href="/projects/" variant="line">See the projects</Button>
+        </div>
+      </div>
+      <Image
+        class="hero__art"
+        src={icon}
+        alt="SuperBenefit icon: a head made of the words Make Better Faster, inside rainbow rings"
+        width={400}
+        height={400}
+        loading="eager"
+      />
+    </div>
+  </section>
 
-  <SectionDivider from="cream" to="charcoal" />
-  <InternalServices />
+  <WaveDivider bg="black" fill="cream" bands />
 
-  <SectionDivider from="charcoal" to="green" />
-  <ExternalServices />
+  <section class="sec about" id="about">
+    <div class="wrap about__grid">
+      <div>
+        {home?.section_label && <p class="caps">{home.section_label}</p>}
+        {home?.section_heading && <h2 class="display">{home.section_heading}</h2>}
+      </div>
+      <div class="about__body">
+        {home?.body && <PortableText value={home.body} />}
+        <a class="more" href="/about/">More about SuperBenefit <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>
+      </div>
+    </div>
+  </section>
 
+  <div class="doors-wrap">
+    <div class="dv bg-cream" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <svg class="f-green" x="0" width="50%" height="100%" viewBox="0 0 720 80" preserveAspectRatio="none"><path transform="translate(0,3)" d={wave} /></svg>
+        <svg class="f-orange dv__r" x="50%" width="50%" height="100%" viewBox="720 0 720 80" preserveAspectRatio="none"><path transform="translate(0,3)" d={wave} /></svg>
+        <path class="dv__ink" transform="translate(0,3)" d={edge} />
+      </svg>
+    </div>
+    <section class="doors" aria-label="Two ways to work with SuperBenefit">
+      {doors.map((door) => (
+        <div class={`door door--${door.variant}`}>
+          <div class="door__in">
+            {door.page?.eyebrow && <p class="caps">{door.page.eyebrow}</p>}
+            {door.page?.title && <h2 class="display">{door.page.title}</h2>}
+            {door.page?.intro && <p class="door__lede">{door.page.intro}</p>}
+            <Ledger
+              rows={[
+                { label: 'What you get', items: door.items },
+                { label: 'What it costs', text: door.page?.cost_summary },
+              ]}
+            />
+            <Button href={door.href} variant="ink" arrow>{door.label}</Button>
+          </div>
+        </div>
+      ))}
+    </section>
+    <div class="dv bg-doors" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path class="f-charcoal" transform="translate(0,3)" d={wave} />
+        <path class="dv__ink" transform="translate(0,3)" d={edge} />
+      </svg>
+    </div>
+  </div>
+
+  <section class="sec sec--ink on-ink" id="projects">
+    <div class="wrap">
+      <div class="sec__head">
+        <h2 class="display">Projects</h2>
+        <a class="more" href="/projects/">All projects <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>
+      </div>
+      <ProjectSelector projects={projects} />
+    </div>
+  </section>
+
+  {updates.length > 0 && (
+    <>
+      <WaveDivider bg="charcoal" fill="cream" />
+      <section class="sec">
+        <div class="wrap">
+          <div class="sec__head">
+            <h2 class="display">Updates</h2>
+            <a class="more" href="/updates/">All updates <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>
+          </div>
+          <EntryList entries={updates} />
+        </div>
+      </section>
+    </>
+  )}
 </BaseLayout>

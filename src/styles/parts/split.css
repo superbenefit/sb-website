@@ -1,0 +1,36 @@
+/*
+ * Two-column split: `.split` and `.split__body`.
+ * Copied from docs/relaunch/mockups/mockups.css; keep the values in step.
+ */
+.split {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.split h2 {
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  margin-top: var(--space-md);
+  max-width: 16ch;
+}
+
+.split__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: flex-start;
+  font-size: var(--text-lg);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0px, 1fr) minmax(0px, 1fr);
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .split__body {
+    padding-top: 2.4rem;
+  }
+}

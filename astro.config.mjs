@@ -45,18 +45,25 @@ export default defineConfig({
   trailingSlash: 'ignore',
   cache: { provider: cacheCloudflare() },
   // Patterns match the request path, with or without the trailing slash
-  // (trailingSlash 'ignore'). /support becomes a redirect to /accelerator/ in
-  // C4, which replaces its rule; /projects/[slug] arrives with C6. /home has
-  // no rule: it is a 301 to / that calls Astro.cache.set(false).
+  // (trailingSlash 'ignore'). /projects/[slug] shows the project's updates,
+  // so it is tagged with both collections. /home has no rule: it is a 301 to /
+  // that calls Astro.cache.set(false). /support and /supports have none
+  // either: they match no route and EmDash's redirect middleware answers them
+  // with a 301 to /accelerator/ (seed/seed.json).
+  // The home page also lists the titles of the services and supports entries.
   routeRules: {
-    '/': rule(['pages', 'projects', 'updates']),
+    '/': rule(['pages', 'projects', 'updates', 'services', 'supports']),
     '/about': rule(['pages']),
+    '/accelerator': rule(['pages', 'supports']),
     '/contact': rule(['pages']),
-    '/projects': rule(['projects']),
+    '/projects': rule(['pages', 'projects']),
+    '/projects/[slug]': rule(['projects', 'updates']),
     '/services': rule(['pages', 'services']),
-    '/support': rule(['pages', 'supports']),
-    '/updates': rule(['updates']),
-    '/updates/[...slug]': rule(['updates']),
+    // The index shows the `updates` pages entry and each update's project;
+    // an update shows its project's card.
+    '/updates': rule(['pages', 'updates', 'projects']),
+    '/updates/page/[page]': rule(['pages', 'updates', 'projects']),
+    '/updates/[...slug]': rule(['updates', 'projects']),
     // The collections EmDash lists in the sitemap: routable ones with SEO.
     // services and supports are not routable (seed/seed.json), so not listed.
     '/sitemap.xml': rule(['pages', 'projects', 'updates']),

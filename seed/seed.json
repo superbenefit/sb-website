@@ -128,6 +128,10 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/support", "destination": "/accelerator/", "type": 301 },
+    { "source": "/supports", "destination": "/accelerator/", "type": 301 }
+  ],
   "widgetAreas": [
     {
       "name": "closing-band",
