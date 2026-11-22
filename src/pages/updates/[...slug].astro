@@ -134,8 +134,8 @@ const project = update.references?.project.entries[0] ?? null;
     border-top: var(--rule);
   }
 
-  /* The mockups' base rule is a { color: inherit }; the site's base link
-     rule is orange with a red hover. */
+  /* The same as the base a rule in global.css (mockups.css `a`: inherit).
+     Kept from before global.css's base matched mockups.css (findings.md, G3). */
   .more,
   .more:hover {
     color: inherit;

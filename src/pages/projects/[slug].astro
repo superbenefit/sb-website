@@ -134,8 +134,8 @@ const hasFacts = Boolean(partner || website);
 </BaseLayout>
 
 <style>
-  /* The mockups' links take the text colour (mockups.css `a`); the legacy
-     base rule in global.css makes every link orange (findings.md, G3). */
+  /* The mockups' links take the text colour (mockups.css `a`), as the base a
+     rule in global.css now does. Kept from before global.css's base matched mockups.css (findings.md, G3). */
   .more,
   .more:hover {
     color: inherit;

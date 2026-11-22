@@ -202,9 +202,9 @@
   }
 }
 
-/* Differences from the mockups' base rules, which the site does not share:
-   the mockups' links inherit their colour (the site's are orange, red on
-   hover), and their paragraphs have no max-width (the site's are 70ch). */
+/* Kept from before global.css's base matched mockups.css (findings.md, G3):
+   links inherit their colour and paragraphs have no max-width, which the
+   base rules now give as well. */
 .more,
 .more:hover {
     color: inherit;

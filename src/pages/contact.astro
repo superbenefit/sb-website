@@ -346,8 +346,8 @@ const bandLabel = bandHref ? data?.cta_label : undefined;
     align-items: flex-start;
     max-width: 40ch;
   }
-  /* The mockups' base rule is a { color: inherit }; the site's legacy base
-     link rule (orange, red on hover) is not, so the link inherits here. */
+  /* The same as the base a rule in global.css (mockups.css `a`: inherit).
+     Kept from before global.css's base matched mockups.css (findings.md, G3). */
   .contact__aside .more,
   .contact__aside .more:hover {
     color: inherit;

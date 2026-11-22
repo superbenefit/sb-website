@@ -53,13 +53,14 @@ const rows = Astro.props.rows
 )}
 
 <style>
-  /* The mockups' base rule is ul { list-style: none }; the site has none. */
+  /* The same as the base ul rule in global.css (mockups.css's list reset).
+     Kept from before global.css had it (findings.md, G1). */
   ul {
     list-style: none;
   }
 
-  /* The mockups' base rule is a { color: inherit } with no hover colour; the
-     site's base link rule is orange with a red hover. */
+  /* The same as the base a rule in global.css (mockups.css `a`: inherit, no
+     hover colour). Kept from before global.css's base matched mockups.css (findings.md, G3). */
   a,
   a:hover {
     color: inherit;
