@@ -54,6 +54,7 @@ const project = update.references?.project.entries[0] ?? null;
 <BaseLayout
   title={title}
   description={data.excerpt ?? ''}
+  seo={update}
   type="article"
   publishedAt={date ?? undefined}
   dateModified={data.updatedAt}

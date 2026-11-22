@@ -41,7 +41,7 @@ const title = page?.data.title || 'Projects';
 const intro = page?.data.intro;
 ---
 
-<BaseLayout title={title} description={intro ?? ''} bandFrom="cream">
+<BaseLayout title={title} description={intro ?? ''} seo={page ?? undefined} bandFrom="cream">
   <PageHero title={title} intro={intro} kicker={page?.data.eyebrow} variant="red" />
   <WaveDivider bg="red" fill="cream" />
   <section class="sec">

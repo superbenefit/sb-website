@@ -14,6 +14,17 @@
  * https://docs.emdashcms.com/guides/site-settings/; emdash 1.5.0
  * src/components/EmDashHead.astro). The <title> stays the layout's.
  *
+ * Title, description and canonical (D6): a page that renders an entry passes
+ * it as `seo`, and getSeoMeta() resolves the SEO panel's title, description
+ * and canonical first, then the page's `title` and `description` (built from
+ * the entry's own fields, else fixed text), as the SEO guide documents
+ * (emdash 1.5.0 src/seo/index.ts). The <title> is "{page title} — {site
+ * name}"; `siteFirst` (home) puts the site name first and uses the whole
+ * title for og:title. `pageNumber` above 1 (a later page of a list) adds
+ * ", page n" to the title and "Page n." before the description, and keeps
+ * the canonical on the page's own URL, since the entry's panel belongs to
+ * page 1. With no description at all, the full title stands in.
+ *
  * Caching (docs/relaunch/architecture.md, Caching;
  * https://docs.emdashcms.com/deployment/route-caching/): the route rule in
  * astro.config.mjs sets the lifetime and the collection tags. The layout and
@@ -25,7 +36,7 @@
  */
 import { ClientRouter } from 'astro:transitions';
 import { Font } from 'astro:assets';
-import { getSiteSettingsWithCacheHint } from 'emdash';
+import { getSeoMeta, getSiteSettingsWithCacheHint } from 'emdash';
 import { createPublicPageContext } from 'emdash/page';
 import { EmDashHead } from 'emdash/ui';
 // Global styles first, so component styles come after them in the cascade.
@@ -39,8 +50,16 @@ import ClosingBand from '../components/ClosingBand.astro';
 type BandFrom = 'black' | 'charcoal' | 'cream' | 'paper' | 'green' | 'orange' | 'gold' | 'red';
 
 interface Props {
+  /** Page title, without the site name: the entry's own title, else fixed text. */
   title: string;
+  /** The entry's own description field, else fixed text; may be empty. */
   description: string;
+  /** The entry this page renders: its SEO panel title, description and canonical win. */
+  seo?: Parameters<typeof getSeoMeta>[0];
+  /** Site name first in the <title>, and the whole title as og:title (home). */
+  siteFirst?: boolean;
+  /** Page of a paginated list; above 1 the title and description name it. */
+  pageNumber?: number;
   ogImage?: string;
   bodyClass?: string;
   type?: 'website' | 'article';
@@ -70,8 +89,11 @@ interface Props {
 }
 
 const {
-  title,
-  description,
+  title: fallbackTitle,
+  description: fallbackDescription,
+  seo,
+  siteFirst = false,
+  pageNumber = 1,
   ogImage = '/images/brand-showcase.webp',
   bodyClass = '',
   type = 'website',
@@ -94,11 +116,26 @@ const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCac
 if (Astro.cache?.enabled) Astro.cache.set(cache ? settingsHint : false);
 const siteName = settings.title || 'SuperBenefit';
 const siteUrl = (settings.url || Astro.url.origin).replace(/\/$/, '');
-const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
 
 // Internal links end in "/" (architecture.md, Stack), so the canonical does too.
 const path = Astro.url.pathname === '/' ? '/' : `${Astro.url.pathname.replace(/\/+$/, '')}/`;
-const canonicalUrl = canonical === null ? null : (canonical ?? `${siteUrl}${path}`);
+
+// SEO panel first, then the page's own values (https://docs.emdashcms.com/guides/seo/).
+const meta = seo
+  ? getSeoMeta(seo, {
+      siteUrl,
+      path,
+      defaultTitle: fallbackTitle || undefined,
+      defaultDescription: fallbackDescription || undefined,
+    })
+  : undefined;
+const later = pageNumber > 1;
+const title = `${meta?.title || fallbackTitle}${later ? `, page ${pageNumber}` : ''}`;
+const fullTitle = title.includes(siteName) ? title : siteFirst ? `${siteName} — ${title}` : `${title} — ${siteName}`;
+const ownDescription = meta?.description || fallbackDescription;
+const description = later ? `Page ${pageNumber}. ${ownDescription || fullTitle}` : ownDescription || fullTitle;
+const canonicalUrl =
+  canonical === null ? null : (canonical ?? ((!later && meta?.canonical) || `${siteUrl}${path}`));
 const image = new URL(coverImage ?? ogImage, `${siteUrl}/`).href;
 
 const page = createPublicPageContext({
@@ -106,7 +143,7 @@ const page = createPublicPageContext({
   kind: 'custom',
   pageType: type,
   title: fullTitle,
-  pageTitle: title,
+  pageTitle: siteFirst ? fullTitle : title,
   description,
   canonical: canonicalUrl,
   image,

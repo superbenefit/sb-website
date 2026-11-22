@@ -86,7 +86,7 @@ const { title, summary, project_status, location, logo, cover, body, partner, we
 const hasFacts = Boolean(partner || website);
 ---
 
-<BaseLayout title={title} description={summary} bandFrom={updates.length > 0 ? 'green' : 'cream'}>
+<BaseLayout title={title} description={summary} seo={project} bandFrom={updates.length > 0 ? 'green' : 'cream'}>
   <PageHero title={title} intro={summary} variant="red" compact>
     <Fragment slot="meta">
       {logo && <ImageSlot image={logo} kind="logo" sizes="72px" priority />}

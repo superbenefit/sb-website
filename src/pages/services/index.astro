@@ -59,6 +59,7 @@ const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody
 <BaseLayout
   title={title}
   description={data?.intro || title}
+  seo={page ?? undefined}
   bandLabel={ctaUrl ? ctaLabel : undefined}
   bandHref={ctaUrl || undefined}
   bandFrom="cream"

@@ -42,14 +42,13 @@ if (Astro.cache?.enabled) {
 
 const title = pageEntry?.data.title || 'Updates';
 const intro = pageEntry?.data.intro || undefined;
-const docTitle = page > 1 ? `${title}, page ${page}` : title;
 
 const pageHref = (n: number) => (n <= 1 ? '/updates/' : `/updates/page/${n}/`);
 const newer = page > 1 ? pageHref(page - 1) : null;
 const older = page < totalPages ? pageHref(page + 1) : null;
 ---
 
-<BaseLayout title={docTitle} description={intro ?? ''} bandFrom="cream">
+<BaseLayout title={title} description={intro ?? ''} seo={pageEntry ?? undefined} pageNumber={page} bandFrom="cream">
   <PageHero title={title} intro={intro} variant="gold" />
   <WaveDivider bg="gold" fill="cream" />
   <section class="sec">
