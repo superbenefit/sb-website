@@ -79,8 +79,9 @@ export default defineConfig({
     '/updates': rule(['pages', 'updates', 'projects']),
     '/updates/page/[page]': rule(['pages', 'updates', 'projects']),
     '/updates/[...slug]': rule(['updates', 'projects']),
-    // The collections EmDash lists in the sitemap: routable ones with SEO.
-    // services and supports are not routable (seed/seed.json), so not listed.
+    // The site's own sitemap routes (src/pages/sitemap*.xml.ts), which list
+    // the routable collections with SEO (src/utils/sitemap.ts). services and
+    // supports are not routable (seed/seed.json), so not listed.
     '/sitemap.xml': rule(['pages', 'projects', 'updates']),
     '/sitemap-[collection].xml': rule(['pages', 'projects', 'updates']),
   },
