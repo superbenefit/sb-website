@@ -1,332 +1,316 @@
 ---
+/**
+ * Site header: brand, the "header" menu from EmDash, the menu button and the
+ * mobile menu sheet, then the four-colour stripe. Built to the `hd`,
+ * `sheet-menu` and `stripe` rules in docs/relaunch/mockups/mockups.css and
+ * pages/mobile-menu-open.html.
+ *
+ * The menu is read with getMenu() at request time
+ * (https://docs.emdashcms.com/guides/menus/), so an edit in the admin shows on
+ * the next request. The last item of the menu is shown as the call-to-action
+ * pill (desktop) and the full-width button under the list (mobile), as the
+ * mockups show for Contact.
+ */
 import { Image } from 'astro:assets';
+import { getMenu } from 'emdash';
 import icon from '../assets/sb-icon.jpg';
-import Nav from './Nav.astro';
-import { mainNavLinks, contactNavLink } from '../data/nav';
 import { isNavLinkActive } from '../utils/nav';
 
+const menu = await getMenu('header');
+const items = menu?.items ?? [];
+const links = items.slice(0, -1);
+const cta = items.at(-1);
 const currentPath = Astro.url.pathname;
-
-const links = mainNavLinks;
-const contact = contactNavLink;
-const contactActive = isNavLinkActive(currentPath, contact.href);
+const current = (href: string) => (isNavLinkActive(currentPath, href) ? 'page' : undefined);
+const relFor = (target?: string) => (target === '_blank' ? 'noopener noreferrer' : undefined);
 ---
 
-<header class="site-header" transition:persist>
-  <div class="header-inner">
-    <a href="/" class="logo-link" aria-label="SuperBenefit home">
-      <Image src={icon} alt="" class="logo-icon" width={36} height={36} densities={[2, 3]} />
-      <span class="logo-text">SuperBenefit</span>
+<header class="hd on-ink">
+  <div class="wrap hd__bar">
+    <a class="hd__brand" href="/">
+      <Image src={icon} alt="" width={36} height={36} densities={[2, 3]} />SuperBenefit
     </a>
-    <Nav currentPath={currentPath} />
-    <button class="mobile-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-      <span class="hamburger"></span>
-    </button>
+    {items.length > 0 && (
+      <nav class="hd__nav" aria-label="Main">
+        {links.map((item) => (
+          <a
+            href={item.url}
+            target={item.target || undefined}
+            rel={relFor(item.target)}
+            title={item.titleAttr || undefined}
+            aria-current={current(item.url)}
+          >
+            {item.label}
+          </a>
+        ))}
+        {cta && (
+          <a
+            class="hd__contact"
+            href={cta.url}
+            target={cta.target || undefined}
+            rel={relFor(cta.target)}
+            title={cta.titleAttr || undefined}
+            aria-current={current(cta.url)}
+          >
+            {cta.label}
+          </a>
+        )}
+      </nav>
+    )}
+    {items.length > 0 && (
+      <button class="hd__menu" type="button" aria-expanded="false" aria-controls="site-menu">
+        <span class="hd__menu-open">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg> Menu
+        </span>
+        <span class="hd__menu-close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg> Close
+        </span>
+      </button>
+    )}
   </div>
-  <div class="header-rainbow"></div>
-
-  <dialog class="mobile-nav-dialog" id="mobile-nav" aria-label="Mobile navigation">
-    <form method="dialog" class="mobile-nav-close-form">
-      <button class="mobile-nav-close" aria-label="Close menu" type="submit">×</button>
-    </form>
-    <nav class="mobile-nav" aria-label="Mobile navigation">
-      <ul class="mobile-nav-links">
-        {links.map(({ href, label }) => {
-          const active = isNavLinkActive(currentPath, href);
-          return (
+  <div class="stripe"></div>
+  {items.length > 0 && (
+    <nav class="sheet-menu on-ink" id="site-menu" aria-label="Main" hidden>
+      <div class="wrap">
+        <ul>
+          {links.map((item) => (
             <li>
               <a
-                href={href}
-                class:list={['mobile-nav-link', { active }]}
-                aria-current={active ? 'page' : undefined}
+                href={item.url}
+                target={item.target || undefined}
+                rel={relFor(item.target)}
+                title={item.titleAttr || undefined}
+                aria-current={current(item.url)}
               >
-                {label}
+                {item.label}
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
               </a>
             </li>
-          );
-        })}
-        <li>
+          ))}
+        </ul>
+        {cta && (
           <a
-            href={contact.href}
-            class:list={['mobile-nav-link mobile-nav-contact', { active: contactActive }]}
-            aria-current={contactActive ? 'page' : undefined}
+            class="btn btn--accent"
+            href={cta.url}
+            target={cta.target || undefined}
+            rel={relFor(cta.target)}
+            title={cta.titleAttr || undefined}
+            aria-current={current(cta.url)}
           >
-            {contact.label}
+            {cta.label}
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
-        </li>
-      </ul>
+        )}
+      </div>
     </nav>
-  </dialog>
+  )}
 </header>
 
 <script>
-  import { navigate } from 'astro:transitions/client';
-
+  // The header is re-rendered on every page (it is not persisted across view
+  // transitions), so the button is wired up again after each navigation.
   document.addEventListener('astro:page-load', () => {
-    const toggle = document.querySelector<HTMLButtonElement>('.mobile-toggle');
-    const dialog = document.querySelector<HTMLDialogElement>('#mobile-nav');
-    if (!toggle || !dialog) return;
+    const button = document.querySelector<HTMLButtonElement>('.hd__menu');
+    const sheet = document.getElementById('site-menu');
+    if (!button || !sheet || button.dataset.ready === 'true') return;
+    button.dataset.ready = 'true';
 
-    // The <header> is transition:persist-ed across view transitions, so its
-    // DOM nodes (and this handler) re-fire on every astro:page-load.
-    // Guard against re-attaching listeners to the same persisted nodes.
-    if (toggle.dataset.menuInit === 'true') return;
-    toggle.dataset.menuInit = 'true';
-
-    // Logo link: the view transitions router doesn't reliably intercept
-    // clicks on links inside transition:persist elements. Handle it here.
-    const logoLink = document.querySelector<HTMLAnchorElement>('.logo-link');
-    if (logoLink) {
-      logoLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        navigate('/');
-      });
-    }
-
-    const isOpen = (): boolean => dialog.open;
-
-    const openMenu = (): void => {
-      dialog.showModal();
-      toggle.setAttribute('aria-expanded', 'true');
-      document.body.classList.add('nav-open');
+    const setOpen = (open: boolean) => {
+      button.setAttribute('aria-expanded', String(open));
+      sheet.hidden = !open;
     };
 
-    const closeMenu = (): void => {
-      dialog.close();
-    };
-
-    // The dialog emits a close event when dismissed via the form button,
-    // backdrop click, or Escape key — keep ARIA and body lock in sync.
-    dialog.addEventListener('close', () => {
-      toggle.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('nav-open');
+    button.addEventListener('click', () => {
+      setOpen(button.getAttribute('aria-expanded') !== 'true');
     });
 
-    // Close mobile menu when a homepage section anchor link is clicked.
-    // Anchor links (hrefs containing "/#") scroll to sections on the
-    // current page; the menu should close before the scroll happens.
-    dialog.addEventListener('click', (e) => {
-      const link = (e.target as Element).closest('a[href*="/#"]');
-      if (link && isOpen()) {
-        closeMenu();
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        button.focus();
       }
-    });
-
-    toggle.addEventListener('click', () => {
-      isOpen() ? closeMenu() : openMenu();
-    });
-
-    // Auto-close before view-transition navigation so the menu doesn't
-    // persist open on the next page (the header itself is persisted).
-    document.addEventListener('astro:before-preparation', () => {
-      if (isOpen()) closeMenu();
     });
   });
 </script>
 
 <style>
-  .site-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
+  .hd {
+    position: relative;
+    background: var(--color-black);
     color: var(--color-cream);
-    background-color: rgb(var(--color-black-rgb) / 0.8);
-    backdrop-filter: blur(10px);
-    /* Scroll-driven animation in animations.css will further solidify this */
   }
 
-  .header-inner {
+  .hd__bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: var(--header-height);
-    max-width: var(--max-width);
-    margin-inline: auto;
-    padding-inline: var(--space-lg);
+    gap: var(--space-md);
+    min-height: var(--header-height);
   }
 
-  .logo-link {
-    display: flex;
+  .hd__brand {
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-sm);
-    color: var(--color-cream);
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    font-family: var(--font-serif);
     font-weight: 700;
     font-size: var(--text-lg);
-    text-decoration: none;
+    letter-spacing: -0.02em;
+    color: inherit;
   }
 
-  .logo-link:hover {
-    color: var(--color-orange);
-  }
-
-  .logo-icon {
+  .hd__brand img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    object-fit: cover;
   }
 
-  .logo-text {
-    font-family: var(--font-serif);
-    letter-spacing: -0.02em;
-  }
-
-  .header-rainbow {
-    height: 2px;
-    background: var(--gradient-rainbow);
-  }
-
-  .mobile-toggle {
+  .hd__nav {
     display: none;
-    width: 36px;
-    height: 36px;
-    position: relative;
+    align-items: center;
+    gap: var(--space-xs);
   }
 
-  .mobile-toggle:focus-visible {
-    outline: 2px solid var(--color-orange);
-    outline-offset: 2px;
-    border-radius: 4px;
+  .hd__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: inherit;
+    text-decoration: underline 2px transparent;
+    text-underline-offset: 0.5em;
+    transition: text-decoration-color var(--transition-fast);
   }
 
-  .hamburger,
-  .hamburger::before,
-  .hamburger::after {
-    display: block;
-    width: 22px;
-    height: 2px;
+  .hd__nav a:hover,
+  .hd__nav a[aria-current='page'] {
+    text-decoration-color: var(--color-orange);
+  }
+
+  .hd__nav .hd__contact {
+    margin-inline-start: var(--space-sm);
+    padding-inline: 1.1rem;
+    min-height: 2.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-orange);
+    color: var(--color-black);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .hd__nav .hd__contact:hover,
+  .hd__nav .hd__contact[aria-current='page'] {
     background: var(--color-cream);
-    border-radius: 2px;
+  }
+
+  .hd__menu {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border: 2px solid var(--color-cream);
+    border-radius: var(--radius-pill);
+    color: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hd__menu > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .hd__menu-close,
+  .hd__menu[aria-expanded='true'] .hd__menu-open {
+    display: none !important;
+  }
+
+  .hd__menu[aria-expanded='true'] .hd__menu-close {
+    display: inline-flex !important;
+  }
+
+  .hd__menu svg {
+    width: 1.25em;
+    height: 1.25em;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+  }
+
+  .sheet-menu {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    transition: var(--transition-fast);
-  }
-
-  .hamburger { top: 50%; transform: translate(-50%, -50%); }
-  .hamburger::before { content: ''; top: -7px; left: 0; transform: none; }
-  .hamburger::after { content: ''; top: 7px; left: 0; transform: none; }
-
-  .mobile-toggle[aria-expanded="true"] .hamburger {
-    background: transparent;
-  }
-  .mobile-toggle[aria-expanded="true"] .hamburger::before {
-    top: 0;
-    transform: rotate(45deg);
-  }
-  .mobile-toggle[aria-expanded="true"] .hamburger::after {
-    top: 0;
-    transform: rotate(-45deg);
-  }
-
-  .mobile-nav-dialog {
-    margin: 0;
-    padding: 0;
-    border: none;
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
-    max-height: 100%;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
     background: var(--color-black);
     color: var(--color-cream);
-    overflow: hidden;
+    /* mockups.css gives 780px; the sheet also reaches the foot of the viewport */
+    min-height: max(780px, calc(100dvh - var(--header-height) - 12px));
+    padding-block: var(--space-lg) var(--space-xl);
   }
 
-  .mobile-nav-dialog[open] {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mobile-nav-dialog::backdrop {
-    background: rgb(var(--color-black-rgb) / 0.8);
-    backdrop-filter: blur(10px);
-  }
-
-  .mobile-nav-close-form {
-    position: absolute;
-    top: var(--space-lg);
-    right: var(--space-lg);
-    z-index: 1;
-    margin: 0;
-    padding: 0;
-  }
-
-  .mobile-nav-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    font-size: var(--text-2xl);
-    line-height: 1;
-    color: var(--color-cream);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-  }
-
-  .mobile-nav-close:focus-visible {
-    outline: 2px solid var(--color-orange);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  .mobile-nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-block-start: var(--space-2xl);
-    padding-block-end: var(--space-2xl);
-    padding-inline: var(--space-lg);
-  }
-
-  .mobile-nav-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-md);
+  .sheet-menu ul {
     list-style: none;
   }
 
-  .mobile-nav-link {
-    color: var(--color-cream);
-    font-size: var(--text-xl);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: color var(--transition-fast);
+  .sheet-menu li {
+    border-top: 2px solid rgba(237, 221, 200, 0.25);
   }
 
-  .mobile-nav-link:hover,
-  .mobile-nav-link.active {
-    color: var(--color-orange);
+  .sheet-menu li:last-child {
+    border-bottom: 2px solid rgba(237, 221, 200, 0.25);
   }
 
-  .mobile-nav-contact {
-    color: var(--color-orange);
+  .sheet-menu li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.25rem;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
+    color: inherit;
   }
 
-  .mobile-nav-contact:hover,
-  .mobile-nav-contact.active {
-    color: var(--color-cream);
+  .sheet-menu li a[aria-current='page'] {
+    text-decoration: underline 3px var(--color-orange);
+    text-underline-offset: 0.3em;
   }
 
-  @media (max-width: 768px) {
-    .mobile-toggle {
+  .sheet-menu li a svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .sheet-menu .btn {
+    width: 100%;
+    margin-top: var(--space-lg);
+  }
+
+  @media (min-width: 1024px) {
+    .hd__nav {
       display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* Scroll lock while mobile menu is open. Set by JS in openMenu(),
-       cleared by closeMenu(). Note: iOS Safari can be touchy with
-       overflow:hidden on body — consider position:fixed+top:-scrollY
-       if real-device testing reveals scroll bleed. */
-    body.nav-open {
-      overflow: hidden;
+    .hd__menu,
+    .sheet-menu {
+      display: none;
     }
   }
 </style>

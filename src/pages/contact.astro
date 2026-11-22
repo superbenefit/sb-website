@@ -1,39 +1,32 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import WaveDivider from '../components/WaveDivider.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 import CallToAction from '../components/CallToAction.astro';
 
-export const prerender = true;
-
-// The page is prerendered, so the site key is fixed at build time. It comes
-// from PUBLIC_TURNSTILE_SITE_KEY: `.env` in local development, otherwise the
-// `vars` block in wrangler.jsonc, which the Cloudflare adapter loads during
-// the build. The literal below is the production key, as a last fallback.
+// PUBLIC_ variables are inlined at build time, so the site key is fixed at
+// build. It comes from PUBLIC_TURNSTILE_SITE_KEY: `.env` in local
+// development, otherwise the `vars` block in wrangler.jsonc. The literal
+// below is the production key, as a last fallback.
 const siteKey =
   import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADtinm8-q80lFVL-';
 
 const hero = {
   title: 'Get in touch',
   subtitle: "We read every message. Tell us what you're working on.",
-  overlayGradient: `linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
-    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
-    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
-  )`,
-  showStars: true,
 };
 ---
 
 <BaseLayout
+  closingBand={false}
   title="Contact — SuperBenefit"
   description="Get in touch with SuperBenefit. We work with aligned organizations, networks, and contributors on governance, research, and regenerative systems."
   preconnect={['https://challenges.cloudflare.com']}
 >
-  <PageHero {...hero} />
+  <PageHero title={hero.title} intro={hero.subtitle} variant="charcoal" />
 
-  <SectionDivider from="black" to="cream" />
+  <WaveDivider bg="charcoal" fill="cream" bands />
 
   <section class="contact-form-section">
     <div class="container">
