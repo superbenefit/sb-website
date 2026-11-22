@@ -3,18 +3,36 @@
  * Site footer: brand, the "footer-site" and "footer-elsewhere" menus from
  * EmDash, the stripe rule and the base line. Built to the `ft` rules in
  * docs/relaunch/mockups/mockups.css. Each menu's label (Site, Elsewhere) is
- * its heading. Menus are read with getMenu() at request time
- * (https://docs.emdashcms.com/guides/menus/).
+ * its heading. Menus are read with getMenuWithCacheHint() at request time
+ * (https://docs.emdashcms.com/guides/menus/); their cache hints tag the page
+ * `emdash:menu:footer-site` and `emdash:menu:footer-elsewhere`, which EmDash
+ * purges when a menu is edited
+ * (https://docs.emdashcms.com/deployment/route-caching/).
  *
  * The Elsewhere icons are chosen by the link's host; a link to any other
  * site is shown without an icon.
  */
 import { Image } from 'astro:assets';
-import { getMenu } from 'emdash';
+import { getMenuWithCacheHint } from 'emdash';
 import icon from '../assets/sb-icon.jpg';
 import builtOnEth from '../assets/built-on-ethereum.webp';
 
-const [site, elsewhere] = await Promise.all([getMenu('footer-site'), getMenu('footer-elsewhere')]);
+interface Props {
+  /** Pass the cache hints to Astro.cache; the layout turns them off for pages that are not cached. */
+  cache?: boolean;
+}
+
+const { cache = true } = Astro.props;
+const [siteMenu, elsewhereMenu] = await Promise.all([
+  getMenuWithCacheHint('footer-site'),
+  getMenuWithCacheHint('footer-elsewhere'),
+]);
+if (cache && Astro.cache?.enabled) {
+  Astro.cache.set(siteMenu.cacheHint);
+  Astro.cache.set(elsewhereMenu.cacheHint);
+}
+const site = siteMenu.data;
+const elsewhere = elsewhereMenu.data;
 const year = new Date().getFullYear();
 const relFor = (target?: string) => (target === '_blank' ? 'noopener noreferrer' : undefined);
 

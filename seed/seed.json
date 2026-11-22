@@ -30,6 +30,8 @@
       "label": "Services",
       "labelSingular": "Service",
       "supports": ["drafts", "revisions", "preview", "seo"],
+      "routable": false,
+      "urlPattern": "/services",
       "fields": [
         { "slug": "title", "label": "Title", "type": "string", "required": true },
         { "slug": "audience", "label": "Audience", "type": "text" },
@@ -49,6 +51,8 @@
       "label": "Supports",
       "labelSingular": "Support",
       "supports": ["drafts", "revisions", "preview", "seo"],
+      "routable": false,
+      "urlPattern": "/accelerator",
       "fields": [
         { "slug": "title", "label": "Title", "type": "string", "required": true },
         { "slug": "summary", "label": "Summary", "type": "text" },
@@ -75,6 +79,7 @@
       "label": "Pages",
       "labelSingular": "Page",
       "supports": ["drafts", "revisions", "preview", "seo"],
+      "urlPattern": "/{slug}",
       "fields": [
         { "slug": "eyebrow", "label": "Eyebrow", "type": "string" },
         { "slug": "title", "label": "Title", "type": "string", "required": true },

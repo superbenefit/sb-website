@@ -5,18 +5,27 @@
  * `sheet-menu` and `stripe` rules in docs/relaunch/mockups/mockups.css and
  * pages/mobile-menu-open.html.
  *
- * The menu is read with getMenu() at request time
- * (https://docs.emdashcms.com/guides/menus/), so an edit in the admin shows on
- * the next request. The last item of the menu is shown as the call-to-action
+ * The menu is read with getMenuWithCacheHint() at request time
+ * (https://docs.emdashcms.com/guides/menus/). Its cache hint tags the page
+ * `emdash:menu:header`, which EmDash purges when the menu is edited, so an
+ * edit shows on cached pages too
+ * (https://docs.emdashcms.com/deployment/route-caching/). The last item of the menu is shown as the call-to-action
  * pill (desktop) and the full-width button under the list (mobile), as the
  * mockups show for Contact.
  */
 import { Image } from 'astro:assets';
-import { getMenu } from 'emdash';
+import { getMenuWithCacheHint } from 'emdash';
 import icon from '../assets/sb-icon.jpg';
 import { isNavLinkActive } from '../utils/nav';
 
-const menu = await getMenu('header');
+interface Props {
+  /** Pass the cache hint to Astro.cache; the layout turns it off for pages that are not cached. */
+  cache?: boolean;
+}
+
+const { cache = true } = Astro.props;
+const { data: menu, cacheHint } = await getMenuWithCacheHint('header');
+if (cache && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const items = menu?.items ?? [];
 const links = items.slice(0, -1);
 const cta = items.at(-1);
