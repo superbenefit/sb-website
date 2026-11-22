@@ -27,7 +27,6 @@
  * (the mockups show neither case).
  */
 import { getEmDashCollection, getEmDashEntry, getEmDashReferences } from 'emdash';
-import type { InferCollectionData } from 'emdash';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import WaveDivider from '../../components/WaveDivider.astro';
@@ -35,6 +34,7 @@ import StatusBadge from '../../components/StatusBadge.astro';
 import ImageSlot from '../../components/ImageSlot.astro';
 import Ledger from '../../components/Ledger.astro';
 import EntryList from '../../components/EntryList.astro';
+import type { EntryItem } from '../../components/EntryList.astro';
 import RichText from '../../components/rich-text/RichText.astro';
 import '../../styles/parts/sec.css';
 import '../../styles/parts/more.css';
@@ -53,8 +53,7 @@ if (!project) {
 }
 if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
 
-type Update = { id: string; data: InferCollectionData<'updates'> };
-const updates: Update[] = [];
+const updates: EntryItem[] = [];
 let cursor: string | undefined;
 do {
   const page = await getEmDashCollection('updates', {
@@ -69,7 +68,16 @@ do {
   page.entries.forEach((update, i) => {
     const target = refs[i].entries[0];
     const targetId = (target?.data as { id?: string } | undefined)?.id ?? target?.id;
-    if (targetId && targetId === project.data.id && updates.length < UPDATES_SHOWN) updates.push(update);
+    if (targetId && targetId === project.data.id && updates.length < UPDATES_SHOWN) {
+      const { data } = update;
+      updates.push({
+        href: `/updates/${data.slug ?? update.id}/`,
+        title: data.title,
+        date: data.publishedAt ?? data.createdAt,
+        excerpt: data.excerpt ?? undefined,
+        cover: data.cover,
+      });
+    }
   });
   cursor = page.nextCursor;
 } while (cursor && updates.length < UPDATES_SHOWN);
@@ -81,7 +89,7 @@ const hasFacts = Boolean(partner || website);
 <BaseLayout title={title} description={summary} bandFrom={updates.length > 0 ? 'green' : 'cream'}>
   <PageHero title={title} intro={summary} variant="red" compact>
     <Fragment slot="meta">
-      {logo && <ImageSlot image={logo} logo alt={`${title} logo`} sizes="72px" priority />}
+      {logo && <ImageSlot image={logo} kind="logo" sizes="72px" priority />}
       <StatusBadge status={project_status} />
       {location && <span class="caps">{location}</span>}
     </Fragment>
@@ -92,29 +100,19 @@ const hasFacts = Boolean(partner || website);
       <div>
         {cover && (
           <div class="pd__cover">
-            <ImageSlot image={cover} label="Cover image, 16:9" sizes="(min-width: 1200px) 736px, (min-width: 900px) 64vw, 100vw" priority />
+            <ImageSlot image={cover} sizes="(min-width: 1200px) 736px, (min-width: 900px) 64vw, 100vw" priority />
           </div>
         )}
         <RichText value={body} />
       </div>
       {hasFacts && (
         <aside class="pd__aside">
-          <Ledger>
-            {partner && (
-              <div>
-                <dt class="caps">Partner</dt>
-                <dd>{partner}</dd>
-              </div>
-            )}
-            {website && (
-              <div>
-                <dt class="caps">Website</dt>
-                <dd>
-                  <a class="more" href={website}>Visit the website <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
-                </dd>
-              </div>
-            )}
-          </Ledger>
+          <Ledger
+            rows={[
+              { label: 'Partner', text: partner ?? '' },
+              { label: 'Website', link: website ? { href: website, label: 'Visit the website' } : null },
+            ]}
+          />
         </aside>
       )}
     </div>
@@ -137,7 +135,7 @@ const hasFacts = Boolean(partner || website);
 
 <style>
   /* The mockups' links take the text colour (mockups.css `a`); the legacy
-     base rule in global.css makes every link orange (findings.md, G1). */
+     base rule in global.css makes every link orange (findings.md, G3). */
   .more,
   .more:hover {
     color: inherit;
@@ -155,6 +153,13 @@ const hasFacts = Boolean(partner || website);
     border-radius: var(--radius-md);
     overflow: hidden;
     margin-bottom: var(--space-lg);
+  }
+
+  /* `contain: size` keeps a real cover's own height out of the frame's size,
+     so the frame's aspect-ratio alone sets its height, as with the
+     placeholder (https://developer.mozilla.org/en-US/docs/Web/CSS/contain). */
+  .pd__cover :global(.has-image) {
+    contain: size;
   }
 
   .pd__cover :global(.slot),

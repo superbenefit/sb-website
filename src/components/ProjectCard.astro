@@ -26,12 +26,12 @@ const href = `/projects/${slug ?? project.id}/`;
 <article class="cc">
   {cover && (
     <div class="cc__cover">
-      <ImageSlot image={cover} label="Cover image, 16:9" sizes="(min-width: 1200px) 552px, (min-width: 760px) 50vw, 100vw" />
+      <ImageSlot image={cover} sizes="(min-width: 1200px) 552px, (min-width: 760px) 50vw, 100vw" />
     </div>
   )}
   <div class="cc__body">
     <div class="cc__head">
-      {logo && <ImageSlot image={logo} logo alt={`${title} logo`} sizes="56px" />}
+      {logo && <ImageSlot image={logo} kind="logo" sizes="56px" />}
       <p class="cc__meta">
         <StatusBadge status={project_status} />
         {location && <span class="caps">{location}</span>}
@@ -47,9 +47,16 @@ const href = `/projects/${slug ?? project.id}/`;
 
 <style>
   /* The mockups' links take the text colour (mockups.css `a`); the legacy
-     base rule in global.css makes every link orange (findings.md, G1). */
+     base rule in global.css makes every link orange (findings.md, G3). */
   .cc a,
   .cc a:hover {
     color: inherit;
+  }
+
+  /* `contain: size` keeps a real cover's own height out of the frame's size,
+     so the frame's aspect-ratio alone sets its height, as with the
+     placeholder (https://developer.mozilla.org/en-US/docs/Web/CSS/contain). */
+  .cc__cover :global(.has-image) {
+    contain: size;
   }
 </style>

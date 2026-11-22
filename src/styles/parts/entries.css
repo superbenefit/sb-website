@@ -1,64 +1,56 @@
-/* Update list and entry: the `entries` and `entry` rules in
-   docs/relaunch/mockups/mockups.css, copied unchanged. */
+/* Update list and entry: .entries, .entry.
+   Copied unchanged from docs/relaunch/mockups/mockups.css (.entries and .entry rules). Shared part:
+   import it from the page or component that uses these classes. */
 
-.entries {
-  display: grid;
-  gap: var(--space-xl-half) var(--space-lg);
+.entries  {
+    display: grid;
+    gap: var(--space-xl-half) var(--space-lg);
 }
-
-.entry {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: var(--space-md);
-  border-top: var(--rule);
+.entry  {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: var(--space-md);
+    border-top: var(--rule);
 }
-
-.entry__cover {
-  order: -1;
-  aspect-ratio: 16 / 9;
-  border: var(--rule);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  margin-bottom: var(--space-sm);
+.entry__cover  {
+    order: -1;
+    aspect-ratio: 16 / 9;
+    border: var(--rule);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: var(--space-sm);
 }
-
-.entry h3 {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: var(--text-xl);
-  line-height: 1.18;
-  letter-spacing: -0.01em;
+.entry h3  {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
 }
-
-.entry h3 a:hover {
-  text-decoration: underline 2px var(--color-orange);
-  text-underline-offset: 0.2em;
+.entry h3 a:hover  {
+    text-decoration: underline 2px var(--color-orange);
+    text-underline-offset: 0.2em;
 }
-
-.entry p {
-  font-size: var(--text-sm);
-  line-height: 1.55;
+.entry p  {
+    font-size: var(--text-sm);
+    line-height: 1.55;
 }
-
-.entry__proj {
-  margin-top: auto;
-  padding-top: var(--space-sm);
+.entry__proj  {
+    margin-top: auto;
+    padding-top: var(--space-sm);
 }
-
-.entry__proj a {
-  text-decoration: underline 2px var(--color-orange);
-  text-underline-offset: 0.3em;
+.entry__proj a  {
+    text-decoration: underline 2px var(--color-orange);
+    text-underline-offset: 0.3em;
 }
-
-@media (min-width: 700px) {
-  .entries {
-    grid-template-columns: repeat(2, minmax(0px, 1fr));
+@media (min-width: 700px)  {
+  .entries  {
+      grid-template-columns: repeat(2, minmax(0px, 1fr));
   }
 }
-
-@media (min-width: 1024px) {
-  .entries {
-    grid-template-columns: repeat(3, minmax(0px, 1fr));
+@media (min-width: 1024px)  {
+  .entries  {
+      grid-template-columns: repeat(3, minmax(0px, 1fr));
   }
 }

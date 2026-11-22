@@ -1,76 +1,78 @@
 ---
 /**
- * An image where the mockups show a placeholder: `slot` (a cover, filling its
- * frame) or `logo-slot` (a logo in the bordered square). Rules in
- * src/styles/parts/slot.css, from docs/relaunch/mockups/mockups.css; the
- * frame around a cover (`cc__cover`, `pd__cover`, `entry__cover`) belongs to
- * the part that uses it.
+ * An image in a mockup image place: `slot` (a cover, filling its frame) or
+ * `logo` (the square `logo-slot`). Rules in src/styles/parts/slot.css, copied
+ * from docs/relaunch/mockups/mockups.css.
  *
  * With an image, it is EmDash's <Image> from `emdash/ui`
- * (https://docs.emdashcms.com/guides/querying-content/), which serves it
- * through `/_image` when it can be optimised. Without one, the mockup's
- * labelled placeholder is shown. A caller that should show nothing when the
- * field is empty (an optional logo or cover) leaves the slot out.
+ * (https://docs.emdashcms.com/guides/querying-content/), filling the place.
+ * Without one it is the mockup's labelled placeholder; a logo with an
+ * `initial` is the mockup's `logo-slot--initial` instead, which the mockups
+ * show for a project with no logo.
+ *
+ * `sizes` and `priority` are passed to <Image> when given (its props in
+ * node_modules/emdash/src/components/EmDashImage.astro): `sizes` for the
+ * responsive image, `priority` to load an image above the fold at once.
  */
-import type { MediaValue } from 'emdash';
+import type { ImageValue } from 'emdash';
 import { Image } from 'emdash/ui';
 import '../styles/parts/slot.css';
 
 interface Props {
-  image?: MediaValue | null;
-  /** `logo` is the bordered square; otherwise the image fills its frame. */
-  logo?: boolean;
-  /** Alt text when the image has none; also the placeholder's label. */
-  alt?: string;
-  /** The placeholder's visible text. */
+  image?: ImageValue | null;
+  kind?: 'slot' | 'logo';
+  /** Shown in the placeholder; also its accessible name. */
   label?: string;
+  /** For a logo with no image: the letter the mockup shows instead. */
+  initial?: string;
+  class?: string;
   /** `sizes` for the responsive image. */
   sizes?: string;
   /** Load at once (an image above the fold). */
   priority?: boolean;
 }
 
-const { image, logo = false, alt, label, sizes, priority = false } = Astro.props;
-const altText = image?.alt || alt || '';
+const { image, kind = 'slot', label, initial, class: className, sizes, priority } = Astro.props;
+const hasImage = Boolean(image);
+const placeholder = label ?? (kind === 'logo' ? 'Logo' : 'Cover image, 16:9');
+const name = kind === 'logo' ? 'Project logo' : 'Cover image';
+// Only the props a caller gave: <Image> spreads its other props onto the
+// <img>, so an undefined `sizes` would replace the one it works out itself.
+const imageProps = {
+  ...(sizes ? { sizes } : {}),
+  ...(priority ? { priority } : {}),
+};
 ---
 
-{logo ? (
-  image ? (
-    <span class="logo-slot slot-media"><Image image={image} alt={altText} sizes={sizes ?? '72px'} priority={priority} /></span>
+{kind === 'logo' ? (
+  hasImage ? (
+    <span class:list={['logo-slot', 'has-image', className]}><Image image={image} {...imageProps} /></span>
+  ) : initial ? (
+    <span class:list={['logo-slot', 'logo-slot--initial', className]} aria-hidden="true">{initial}</span>
   ) : (
-    <span class="logo-slot" role="img" aria-label={alt ?? 'Logo'}>{label ?? 'Logo'}</span>
+    <span class:list={['logo-slot', className]} role="img" aria-label={name}>{placeholder}</span>
   )
-) : image ? (
-  <div class="slot-media slot-media--cover"><Image image={image} alt={altText} sizes={sizes} priority={priority} /></div>
+) : hasImage ? (
+  <div class:list={['slot', 'has-image', className]}><Image image={image} {...imageProps} /></div>
 ) : (
-  <div class="slot caps" role="img" aria-label={alt ?? 'Image'}>{label ?? 'Image'}</div>
+  <div class:list={['slot', 'caps', className]} role="img" aria-label={name}>{placeholder}</div>
 )}
 
 <style>
-  /* The image takes the place of the placeholder and fills the same box. */
-  .slot-media {
+  /* A real image fills the place the placeholder marks: no inner padding,
+     cropped to the frame's shape, inside the logo's rounded border. */
+  .has-image {
+    padding: 0;
     overflow: hidden;
   }
 
-  /* `contain: size` keeps the image's own height out of the frame's size, so
-     the frame's aspect-ratio alone sets its height, as with the placeholder
-     (https://developer.mozilla.org/en-US/docs/Web/CSS/contain). */
-  .slot-media--cover {
+  .has-image :global(img) {
     width: 100%;
     height: 100%;
-    contain: size;
-  }
-
-  .slot-media :global(img) {
-    width: 100%;
-    height: 100%;
-  }
-
-  .slot-media--cover :global(img) {
     object-fit: cover;
   }
 
-  .logo-slot.slot-media :global(img) {
+  .logo-slot.has-image :global(img) {
     object-fit: contain;
   }
 </style>
