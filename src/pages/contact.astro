@@ -330,7 +330,8 @@ const bandLabel = bandHref ? data?.cta_label : undefined;
 <style>
   /* The `contact`, `form`, `field`, `btn[aria-disabled]`, `spin` and `banner`
      rules from docs/relaunch/mockups/mockups.css, unchanged except that the
-     design tool's `.is-focus` stand-in is left out. The state elements come
+     design tool's `.is-focus` stand-in is left out and the disabled-button
+     selector carries `.form` (see the note on that rule). The state elements come
      from this page's <template>s, so the scoped selectors reach them. The
      Turnstile container keeps the mockup placeholder's 65 px height so the
      form does not move when the widget appears; the widget is not restyled. */
@@ -420,7 +421,13 @@ const bandLabel = bandHref ? data?.cta_label : undefined;
     cursor: pointer;
     font-family: inherit;
   }
-  .btn[aria-disabled="true"] {
+  /* In mockups.css this rule and `.form .btn` tie on specificity, so the
+     later one wins. Astro's default "attribute" scoped-style strategy adds the
+     scope attribute to each compound selector (scopedStyleStrategy in
+     node_modules/astro/dist/core/config/schemas/base.js), which would let
+     `.form .btn` win and keep cursor: pointer while sending. Prefixing `.form`
+     restores the mockup's outcome; the declarations are unchanged. */
+  .form .btn[aria-disabled="true"] {
     opacity: 0.6;
     cursor: progress;
   }
