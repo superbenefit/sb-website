@@ -1,0 +1,137 @@
+---
+/**
+ * Closing call-to-action band: the `close` rules in
+ * docs/relaunch/mockups/mockups.css, with the wave from the section above.
+ *
+ * Heading, text and the second button come from the widget area
+ * `closing-band` (seed/seed.json; docs/relaunch/architecture.md, Content
+ * model), read with getWidgetArea() at request time
+ * (https://docs.emdashcms.com/guides/widgets/). Its first content widget is
+ * used: the widget title is the heading, the first paragraph is the text,
+ * and a paragraph whose only content is one link is the second button. The
+ * first button is the page's own action and defaults to "Get in touch",
+ * which most mockup pages show. Nothing is rendered when the area has no
+ * content widget.
+ */
+import { getWidgetArea } from 'emdash';
+import type { PortableTextBlock } from 'emdash';
+import { PortableText } from 'emdash/ui';
+import Button from './Button.astro';
+import WaveDivider from './WaveDivider.astro';
+
+interface Props {
+  /** Background of the section above the band, for the wave. */
+  from?: 'black' | 'charcoal' | 'cream' | 'paper' | 'green' | 'orange' | 'gold' | 'red';
+  primaryLabel?: string;
+  primaryHref?: string;
+}
+
+const { from = 'cream', primaryLabel = 'Get in touch', primaryHref = '/contact/' } = Astro.props;
+
+interface Span {
+  _type: string;
+  text?: string;
+  marks?: string[];
+}
+
+interface MarkDef {
+  _type: string;
+  _key: string;
+  href?: string;
+}
+
+type TextBlock = PortableTextBlock & { children?: Span[]; markDefs?: MarkDef[]; style?: string };
+
+/** A paragraph whose spans all carry the same link mark: its label and href. */
+function linkOnly(block: TextBlock): { label: string; href: string } | undefined {
+  if (block._type !== 'block' || !block.children?.length) return undefined;
+  const links = (block.markDefs ?? []).filter((def) => def._type === 'link' && def.href);
+  if (links.length !== 1) return undefined;
+  const [link] = links;
+  const spans = block.children.filter((child) => (child.text ?? '').trim() !== '');
+  if (spans.length === 0 || !spans.every((span) => span.marks?.includes(link._key))) return undefined;
+  return { label: spans.map((span) => span.text).join('').trim(), href: link.href as string };
+}
+
+const area = await getWidgetArea('closing-band');
+const widget = area?.widgets.find((w) => w.type === 'content');
+const blocks = (widget?.content ?? []) as TextBlock[];
+const paragraphs = blocks.filter((block) => block._type === 'block' && (block.style ?? 'normal') === 'normal');
+let second: { label: string; href: string } | undefined;
+let text: TextBlock | undefined;
+for (const block of paragraphs) {
+  const link = linkOnly(block);
+  if (link && !second) second = link;
+  else if (!link && !text) text = block;
+}
+const external = second ? /^https?:\/\//.test(second.href) : false;
+---
+
+{widget && (
+  <>
+    <WaveDivider bg={from} fill="charcoal" />
+    <section class="close on-ink">
+      <div class="wrap close__grid">
+        <div>
+          {widget.title && <h2 class="display">{widget.title}</h2>}
+          {text && <PortableText value={[text]} />}
+        </div>
+        <div class="close__actions">
+          <Button href={primaryHref} variant="accent" arrow>{primaryLabel}</Button>
+          {second && (
+            <Button href={second.href} variant="line" rel={external ? 'noopener noreferrer' : undefined}>
+              {second.label}
+            </Button>
+          )}
+        </div>
+      </div>
+    </section>
+  </>
+)}
+
+<style>
+  .close {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+    padding-block: var(--space-xl-half) calc(2.5rem + 80px);
+  }
+
+  .close__grid {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: end;
+  }
+
+  .close h2 {
+    font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4.25rem);
+    max-width: 14ch;
+  }
+
+  .close :global(p) {
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    max-width: 40ch;
+    margin-top: var(--space-md);
+  }
+
+  .close :global(p a) {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .close__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 900px) {
+    .close {
+      padding-block: 5.25rem calc(120px + 4.5rem);
+    }
+
+    .close__grid {
+      grid-template-columns: minmax(0, 1.5fr) auto;
+    }
+  }
+</style>

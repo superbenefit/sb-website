@@ -1,91 +1,148 @@
 ---
+/**
+ * Page hero for every page except home: the `ph` rules in
+ * docs/relaunch/mockups/mockups.css. Optional kicker above the title, an
+ * italic intro under it, and three slots: `meta` (above the title, e.g. logo,
+ * status and place on a project), `actions` (buttons) and `art` (an image
+ * beside the text, which switches to the two-column grid). `compact` is the
+ * smaller title the project and update pages use. Black, charcoal and red are
+ * dark heroes with cream text.
+ */
 interface Props {
   title: string;
-  subtitle?: string;
-  overlayGradient: string;
-  backgroundImage?: string;
-  minHeight?: string;
-  showStars?: boolean;
+  intro?: string;
+  kicker?: string;
+  variant?: 'black' | 'charcoal' | 'gold' | 'green' | 'orange' | 'red';
+  compact?: boolean;
 }
 
-const {
-  title,
-  subtitle,
-  overlayGradient,
-  backgroundImage = '/images/brand-showcase.webp',
-  minHeight = '40vh',
-  showStars = false,
-} = Astro.props;
+const { title, intro, kicker, variant = 'black', compact = false } = Astro.props;
+const dark = variant === 'black' || variant === 'charcoal' || variant === 'red';
+const hasArt = Astro.slots.has('art');
 ---
 
-<section
-  class="page-hero"
-  style={`min-height: ${minHeight}; background-image: url('${backgroundImage}')`}
->
-  <div
-    class="page-hero-overlay"
-    style={`background: ${overlayGradient}`}
-    aria-hidden="true"
-  ></div>
-  {showStars && <div class="page-hero-stars" aria-hidden="true"></div>}
-  <div class="container page-hero-content">
-    <h1>{title}</h1>
-    {subtitle && <p>{subtitle}</p>}
+<section class:list={['ph', `ph--${variant}`, { 'ph--compact': compact, 'on-ink': dark }]}>
+  <div class:list={['wrap', { ph__grid: hasArt }]}>
+    <div>
+      {Astro.slots.has('meta') && <div class="ph__meta"><slot name="meta" /></div>}
+      {kicker && <p class="caps ph__kicker">{kicker}</p>}
+      <h1 class="display">{title}</h1>
+      {intro && <p class="ph__intro">{intro}</p>}
+      {Astro.slots.has('actions') && <div class="ph__actions"><slot name="actions" /></div>}
+    </div>
+    {hasArt && <slot name="art" />}
   </div>
 </section>
 
 <style>
-  .page-hero {
-    position: relative;
-    background-color: var(--color-black);
-    background-size: cover;
-    background-position: center;
-    padding-block-start: calc(var(--header-height) + var(--space-2xl));
-    padding-block-end: var(--space-2xl);
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
+  .ph {
+    padding-block: var(--space-xl) var(--space-xl-half);
+    color: var(--color-charcoal);
   }
 
-  .page-hero-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
+  .ph .display {
+    font-size: clamp(2.75rem, 1.7rem + 4.4vw, 5.25rem);
+    max-width: 14ch;
+    margin-top: var(--space-md);
   }
 
-  .page-hero-stars {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.5;
-    background:
-      radial-gradient(1px 1px at 10% 30%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1.5px 1.5px at 30% 70%, rgba(245,135,44,0.6), transparent),
-      radial-gradient(1px 1px at 50% 20%, rgba(255,255,255,0.4), transparent),
-      radial-gradient(1px 1px at 70% 60%, rgba(212,168,67,0.5), transparent),
-      radial-gradient(1.5px 1.5px at 90% 40%, rgba(255,255,255,0.6), transparent);
-  }
-
-  .page-hero-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .page-hero h1 {
-    color: var(--color-cream);
-    font-size: var(--text-3xl);
-    margin-block-end: var(--space-sm);
-  }
-
-  .page-hero p {
-    color: var(--color-cream);
-    opacity: 0.8;
-    font-size: var(--text-lg);
+  .ph__intro {
     font-family: var(--font-serif);
     font-style: italic;
-    line-height: 1.7;
-    max-width: 56ch;
+    font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+    line-height: 1.4;
+    max-width: 34ch;
+    margin-top: var(--space-lg);
+  }
+
+  .ph__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-xl-half);
+  }
+
+  .ph__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+  }
+
+  .ph__grid {
+    display: grid;
+    gap: var(--space-xl-half);
+    align-items: center;
+  }
+
+  .ph__grid > :global(img),
+  .ph__grid > :global(.ph__art) {
+    justify-self: center;
+    width: min(100%, 280px);
+    border-radius: 50%;
+  }
+
+  .ph--green { background: var(--color-green-sage); }
+  .ph--orange { background: var(--color-orange); }
+  .ph--gold { background: var(--color-gold); }
+
+  .ph--red {
+    background: var(--color-red-deep);
+    color: var(--color-cream);
+  }
+
+  .ph--black {
+    background: var(--color-black);
+    color: var(--color-cream);
+  }
+
+  .ph--charcoal {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+  }
+
+  .ph--red :global(.status i),
+  .ph--black :global(.status i),
+  .ph--charcoal :global(.status i) {
+    border-color: var(--color-cream);
+  }
+
+  .ph--red :global(.logo-slot) {
+    background: var(--color-cream-light);
+    color: var(--color-charcoal);
+  }
+
+  .ph--black .ph__kicker,
+  .ph--charcoal .ph__kicker {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-lg);
+    color: var(--color-gold);
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 400;
+  }
+
+  .ph--compact .display {
+    font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+    max-width: 20ch;
+  }
+
+  @media (min-width: 900px) {
+    .ph {
+      padding-block: 5.5rem 4.5rem;
+    }
+
+    .ph__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      gap: var(--space-xl);
+    }
+
+    .ph__grid > :global(img),
+    .ph__grid > :global(.ph__art) {
+      justify-self: end;
+      width: 100%;
+      max-width: 360px;
+    }
   }
 </style>

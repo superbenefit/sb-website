@@ -4,7 +4,7 @@ Public website for [SuperBenefit](https://superbenefit.org) — a community expl
 
 ## Stack
 
-- [Astro 7](https://astro.build) — server output with every page prerendered
+- [Astro 7](https://astro.build) — server output, every page rendered on demand
 - [EmDash](https://docs.emdashcms.com) 1.5.0 — CMS, installed per its [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) guide (admin at `/_emdash/admin/`)
 - [@astrojs/cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/) — Cloudflare Workers adapter
 - [Wrangler 4](https://developers.cloudflare.com/workers/wrangler/) — local dev and deployment
@@ -61,7 +61,7 @@ src/
   actions/        # Astro server actions (the /contact form)
   components/     # Reusable Astro components
   data/           # Static JSON mock data (used when API is unavailable)
-  layouts/        # Page layout wrappers (BaseLayout.astro)
+  layouts/        # BaseLayout.astro: head (EmDashHead), header, closing band, footer
   loaders/        # Custom Astro content loaders (knowledge server, projects)
   pages/          # File-based routes
   styles/         # Global CSS, design tokens, animations
@@ -76,9 +76,9 @@ astro.config.mjs  # Astro configuration
 
 ## Architecture Notes
 
-**Rendering strategy** — `output: 'server'` with per-page `export const prerender = true`. Every page currently opts in, including `/updates/*`, so the Worker only runs server actions (the contact form) and EmDash's admin and API under `/_emdash/`, plus `/sitemap.xml` and `/robots.txt`, which EmDash serves. `/about`, `/projects`, `/services`, `/support` and `/updates/*` are drafts: they show a "Coming soon" placeholder in production builds until their `pageIsDraft` flag is set to `false`.
+**Rendering strategy** — `output: 'server'`, and every page renders on demand on the Worker: the layout reads the header and footer menus and the closing band from EmDash on each request, so an edit in the admin shows without a rebuild (`docs/relaunch/architecture.md`, Rendering per route). EmDash also serves its admin and API under `/_emdash/`, `/sitemap.xml` and `/robots.txt`. `/about`, `/projects`, `/services`, `/support` and `/updates/*` are drafts: they show a "Coming soon" placeholder in production builds until their `pageIsDraft` flag is set to `false`.
 
-**URLs** — `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22; `'always'` made the EmDash admin's URLs without a trailing slash return 404, see finding T1 in `docs/relaunch/findings.md`). Internal links end in `/`. Workers static assets 307 `/about` to `/about/` for prerendered pages ([`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)); pages rendered on demand answer both forms with 200.
+**URLs** — `trailingSlash: 'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash) (owner decision 2026-11-22; `'always'` made the EmDash admin's URLs without a trailing slash return 404, see finding T1 in `docs/relaunch/findings.md`). Internal links end in `/`. Pages render on demand, so both `/about` and `/about/` answer 200; the canonical uses the slash form.
 
 **Content loaders** — `src/loaders/knowledge-server.ts` loads the `updates` collection from `KNOWLEDGE_API_URL` at build time, and falls back to `src/data/mock-updates.json` when it is unset, not an allowed HTTPS host, or unreachable. `src/loaders/projects.ts` is called with no endpoint, so `projects` always comes from `src/data/mock-projects.json`.
 

@@ -1,16 +1,14 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 import MissionStatement from '../components/MissionStatement.astro';
 import InternalServices from '../components/InternalServices.astro';
 import ExternalServices from '../components/ExternalServices.astro';
-import CallToAction from '../components/CallToAction.astro';
 ---
 
 <BaseLayout
+  bandFrom="green"
   title="Make Better Faster"
   description="SuperBenefit — a node in the regenerative ecosystem, harnessing web3 and AI to grow new systems of coordination. Open source, peer-to-peer, built to be forked."
 >
@@ -24,6 +22,4 @@ import CallToAction from '../components/CallToAction.astro';
   <SectionDivider from="charcoal" to="green" />
   <ExternalServices />
 
-  <SectionDivider from="green" to="charcoal" />
-  <CallToAction />
 </BaseLayout>

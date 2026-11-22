@@ -1,10 +1,7 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import SectionDivider from '../components/SectionDivider.astro';
-import CallToAction from '../components/CallToAction.astro';
+import WaveDivider from '../components/WaveDivider.astro';
 
 /**
  * Projects data — loaded from mock projects at build time.
@@ -51,12 +48,6 @@ const projects = [
 const hero = {
   title: 'Projects & Initiatives',
   subtitle: "SuperBenefit's work is carried out by its cells — a purpose-aligned network of small, autonomous teams. We coordinate across cells to share capacity and costs as a collaborative commons.",
-  overlayGradient: `linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-red) 40%, transparent) 0%,
-    color-mix(in srgb, var(--color-red-deep) 60%, transparent) 50%,
-    color-mix(in srgb, var(--color-charcoal) 95%, transparent) 100%
-  )`,
 };
 
 // Draft mode: page renders fully in dev, "Coming soon" placeholder in production.
@@ -81,9 +72,9 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </section>
   ) : (
     <>
-      <PageHero {...hero} />
+      <PageHero title={hero.title} intro={hero.subtitle} variant="red" />
 
-  <SectionDivider from="black" to="cream" />
+  <WaveDivider bg="red" fill="cream" />
 
   {/* Projects Grid */}
   <section class="projects-grid-section">
@@ -116,9 +107,6 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </div>
   </section>
 
-  <SectionDivider from="cream" to="charcoal" />
-
-      <CallToAction />
     </>
   )}
 </BaseLayout>

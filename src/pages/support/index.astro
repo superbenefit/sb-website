@@ -1,21 +1,11 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import SectionDivider from '../../components/SectionDivider.astro';
-import CallToAction from '../../components/CallToAction.astro';
+import WaveDivider from '../../components/WaveDivider.astro';
 
 const hero = {
   title: 'Peer Support',
   subtitle: 'Shared services for projects in the SuperBenefit network',
-  overlayGradient: `linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-charcoal) 30%, transparent) 0%,
-    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
-    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
-  )`,
-  showStars: true,
 };
 
 const services = [
@@ -63,9 +53,9 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </section>
   ) : (
     <>
-      <PageHero {...hero} />
+      <PageHero title={hero.title} intro={hero.subtitle} variant="green" />
 
-  <SectionDivider from="black" to="cream" />
+  <WaveDivider bg="green" fill="cream" />
 
   {/* Lede */}
   <section class="supports-lede">
@@ -99,9 +89,6 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </div>
   </section>
 
-  <SectionDivider from="cream" to="charcoal" />
-
-      <CallToAction />
     </>
   )}
 </BaseLayout>

@@ -1,0 +1,22 @@
+---
+/**
+ * Link styled as a button: the `btn` rules in src/styles/global.css, taken
+ * from docs/relaunch/mockups/mockups.css. `accent` is orange, `ink` charcoal,
+ * `line` an outline in the current text colour. The mockups put an arrow on
+ * the main action of a group and none on the secondary one.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  variant?: 'accent' | 'ink' | 'line';
+  arrow?: boolean;
+}
+
+const { href, variant = 'accent', arrow = false, class: className, ...rest } = Astro.props;
+---
+
+<a class:list={['btn', `btn--${variant}`, className]} href={href} {...rest}>
+  <slot />
+  {arrow && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>}
+</a>

@@ -1,21 +1,11 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import SectionDivider from '../../components/SectionDivider.astro';
-import CallToAction from '../../components/CallToAction.astro';
+import WaveDivider from '../../components/WaveDivider.astro';
 
 const hero = {
   title: 'Services',
   subtitle: 'Community, co-stewardship, and development for aligned organizations and ecosystems',
-  overlayGradient: `linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-green-sage) 30%, transparent) 0%,
-    color-mix(in srgb, var(--color-charcoal) 70%, transparent) 50%,
-    color-mix(in srgb, var(--color-black) 95%, transparent) 100%
-  )`,
-  showStars: true,
 };
 
 const services = [
@@ -91,9 +81,9 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </section>
   ) : (
     <>
-      <PageHero {...hero} />
+      <PageHero title={hero.title} intro={hero.subtitle} variant="orange" />
 
-  <SectionDivider from="black" to="cream" />
+  <WaveDivider bg="orange" fill="cream" />
 
   {/* Lede */}
   <section class="services-lede">
@@ -139,9 +129,6 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </div>
   </section>
 
-  <SectionDivider from="cream" to="charcoal" />
-
-      <CallToAction />
     </>
   )}
 </BaseLayout>

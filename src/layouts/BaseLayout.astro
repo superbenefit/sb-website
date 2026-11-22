@@ -1,12 +1,33 @@
 ---
+/**
+ * Base layout for every public page: head tags from <EmDashHead>, then the
+ * header, the page, the closing band, the fade and the footer
+ * (docs/relaunch/mockups/). Header and footer menus and the closing band are
+ * read from EmDash on each request, so pages using this layout render on
+ * demand (docs/relaunch/architecture.md, Rendering per route).
+ *
+ * Head: the page context is built with createPublicPageContext() and passed
+ * to <EmDashHead>, which writes the description, canonical, Open Graph and
+ * Twitter tags and the JSON-LD (WebSite for pages, BlogPosting for
+ * articles), applies the site's staging noindex and any plugin metadata, and
+ * escapes it all (https://docs.emdashcms.com/guides/seo/,
+ * https://docs.emdashcms.com/guides/site-settings/; emdash 1.5.0
+ * src/components/EmDashHead.astro). The <title> stays the layout's.
+ */
 import { ClientRouter } from 'astro:transitions';
 import { Font } from 'astro:assets';
+import { getSiteSettings } from 'emdash';
+import { createPublicPageContext } from 'emdash/page';
+import { EmDashHead } from 'emdash/ui';
+// Global styles first, so component styles come after them in the cascade.
+import '../styles/global.css';
+import '../styles/animations.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FooterFade from '../components/FooterFade.astro';
-import SEO from '../components/SEO.astro';
-import '../styles/global.css';
-import '../styles/animations.css';
+import ClosingBand from '../components/ClosingBand.astro';
+
+type BandFrom = 'black' | 'charcoal' | 'cream' | 'paper' | 'green' | 'orange' | 'gold' | 'red';
 
 interface Props {
   title: string;
@@ -17,68 +38,74 @@ interface Props {
   publishedAt?: Date;
   noindex?: boolean;
   authorName?: string;
-  authorUrl?: string;
   coverImage?: string;
   dateModified?: Date;
+  /** Canonical URL; defaults to this page's path. `null` writes none (error pages). */
+  canonical?: string | null;
   /**
    * Origins to preconnect to from the document <head>. Should be limited to
-   * pages that actually fetch resources from these origins — emitting
-   * preconnects on every page triggers a "Unused preconnect" Lighthouse
-   * warning and wastes connection setup time on pages that don't need it.
+   * pages that actually fetch resources from these origins.
    */
   preconnect?: string[];
+  /** Closing band at the foot of the page; the error pages turn it off. */
+  closingBand?: boolean;
+  /** Background of the last section, for the wave into the band. */
+  bandFrom?: BandFrom;
+  /** The band's first button; defaults to "Get in touch" and /contact/. */
+  bandLabel?: string;
+  bandHref?: string;
 }
 
 const {
   title,
   description,
-  ogImage,
+  ogImage = '/images/brand-showcase.webp',
   bodyClass = '',
-  type,
+  type = 'website',
   publishedAt,
   noindex = false,
   authorName,
-  authorUrl,
   coverImage,
   dateModified,
+  canonical,
   preconnect = [],
+  closingBand = true,
+  bandFrom,
+  bandLabel,
+  bandHref,
 } = Astro.props;
 
-const siteUrl = Astro.site?.href ?? 'https://superbenefit.org/';
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': `${siteUrl}#organization`,
-  name: 'SuperBenefit',
-  url: siteUrl,
-  description: 'A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked.',
-  logo: new URL('/images/superbenefit-logo.webp', Astro.site).href,
-  sameAs: [
-    'https://discord.gg/DMezXT7UAt',
-    'https://github.com/superbenefit',
-    'https://twitter.com/SuperBenefitDAO',
-    'https://knowledge.superbenefit.org',
-    'https://paragraph.com/@superbenefit-2',
-  ],
-};
+const settings = await getSiteSettings();
+const siteName = settings.title || 'SuperBenefit';
+const siteUrl = (settings.url || Astro.url.origin).replace(/\/$/, '');
+const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
 
-const isHomepage = Astro.url.pathname === '/';
-const websiteSchema = isHomepage
-  ? {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      '@id': `${siteUrl}#website`,
-      name: 'SuperBenefit',
-      url: siteUrl,
-      description: 'A node in the regenerative ecosystem, harnessing web3 and AI to shift power and to grow new systems of coordination: open source, peer-to-peer, built to be forked.',
-      publisher: { '@id': `${siteUrl}#organization` },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: `${siteUrl}updates?q={search_term_string}`,
-        'query-input': 'required name=search_term_string',
-      },
-    }
-  : null;
+// Internal links end in "/" (architecture.md, Stack), so the canonical does too.
+const path = Astro.url.pathname === '/' ? '/' : `${Astro.url.pathname.replace(/\/+$/, '')}/`;
+const canonicalUrl = canonical === null ? null : (canonical ?? `${siteUrl}${path}`);
+const image = new URL(coverImage ?? ogImage, `${siteUrl}/`).href;
+
+const page = createPublicPageContext({
+  Astro,
+  kind: 'custom',
+  pageType: type,
+  title: fullTitle,
+  pageTitle: title,
+  description,
+  canonical: canonicalUrl,
+  image,
+  seo: noindex ? { robots: 'noindex, nofollow' } : undefined,
+  articleMeta:
+    type === 'article'
+      ? {
+          publishedTime: publishedAt?.toISOString() ?? null,
+          modifiedTime: dateModified?.toISOString() ?? null,
+          author: authorName ?? null,
+        }
+      : undefined,
+  siteName,
+  siteUrl,
+});
 ---
 
 <!doctype html>
@@ -86,12 +113,14 @@ const websiteSchema = isHomepage
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <SEO title={title} description={description} ogImage={ogImage} type={type} publishedAt={publishedAt} noindex={noindex} authorName={authorName} authorUrl={authorUrl} coverImage={coverImage} dateModified={dateModified} />
+    <title>{fullTitle}</title>
+    <EmDashHead page={page} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="theme-color" content="#1a1a1a" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="sitemap" href="/sitemap.xml" />
     {preconnect.map((origin) => <link rel="preconnect" href={origin} />)}
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-    {websiteSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
     <Font cssVariable="--font-playfair" preload />
     <Font cssVariable="--font-inter" preload />
     <ClientRouter />
@@ -100,43 +129,18 @@ const websiteSchema = isHomepage
     <Header />
     <main>
       <slot />
+      {closingBand && <ClosingBand from={bandFrom} primaryLabel={bandLabel} primaryHref={bandHref} />}
     </main>
     <FooterFade />
     <Footer />
     <script>
-      import { isNavLinkActive } from '../utils/nav';
-
-      function updateNavActive() {
-        const path = window.location.pathname;
-
-        function setActive(link: HTMLAnchorElement) {
-          const href = link.getAttribute('href');
-          if (!href || href.startsWith('http')) return;
-          const isActive = isNavLinkActive(path, href);
-          link.classList.toggle('active', isActive);
-          if (isActive) {
-            link.setAttribute('aria-current', 'page');
-          } else {
-            link.removeAttribute('aria-current');
-          }
-        }
-
-        // Links inside .site-nav (desktop nav links + CTA) and .mobile-nav
-        // (mobile menu links + Contact).
-        document.querySelectorAll<HTMLAnchorElement>('.site-nav a, .mobile-nav a').forEach(setActive);
-      }
-      document.addEventListener('astro:page-load', updateNavActive);
-
-      // Handle hash-based scrolling after view transitions.
-      // When navigating to /#section-id from another page, Astro's
-      // ClientRouter swaps the page content but may not scroll to the
-      // hash target. This ensures the section is scrolled into view.
+      // Scroll to the #fragment after a view-transition navigation, which
+      // ClientRouter does not always do on its own.
       function scrollToHash() {
         const hash = window.location.hash;
         if (hash) {
           const el = document.querySelector(hash);
           if (el) {
-            // Small delay to ensure DOM is settled after view transition
             setTimeout(() => {
               el.scrollIntoView({ behavior: 'smooth' });
             }, 100);
@@ -144,14 +148,7 @@ const websiteSchema = isHomepage
         }
       }
       document.addEventListener('astro:after-swap', scrollToHash);
-      // Also run on initial page load (e.g., direct link with hash)
       scrollToHash();
     </script>
   </body>
 </html>
-
-<style>
-  main {
-    min-height: 100vh;
-  }
-</style>
