@@ -8,7 +8,7 @@ The site is being relaunched on EmDash (CMS on D1 + R2). Work targets the `featu
 - Claims about Astro, EmDash or Cloudflare come from current official docs or source, with a link.
 - Worker domain and Cloudflare Access settings are configured by a human in the dashboard. Do not put them in config files or change them through the API.
 
-EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/`, but the public pages do not read EmDash content yet. The sections below describe the code as it is today.
+EmDash is installed (B2, issue #29): its admin is at `/_emdash/admin/`, but the public pages do not read EmDash content yet. The content model (five collections, three menus, the closing-band widget area) is `seed/seed.json` (B5, issue #32), applied by the setup wizard on an empty database; see `docs/relaunch/architecture.md`, Content model. The sections below describe the code as it is today.
 
 ## Commands
 
@@ -32,7 +32,7 @@ No test runner or linter is configured. Workers Builds is the only CI: it runs `
 - **Draft pages** — `/about`, `/projects`, `/services`, `/support` and `/updates/*` set `pageIsDraft = true`: they render fully in `npm run dev` but show a "Coming soon" placeholder in production builds. The finished routes are `/`, `/contact`, `/404` and `/500`.
 - **Local CMS setup** — `wrangler.jsonc` sets `EMDASH_SITE_URL=https://superbenefit.org` and local dev reads it, so `.env` sets `EMDASH_SITE_URL=http://localhost:4321` (as `.env.example` does). The local database, bucket and sessions live in `.wrangler/state`.
 - **Local CMS sign-in** — `npm run dev` has no Access JWT. With Access configured, EmDash 1.5.0 offers no passkey locally (the wizard skips the administrator step and the login page redirects in a loop). Finish the setup wizard, then open `http://localhost:4321/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin`, EmDash's documented development bypass: it signs in `dev@emdash.local` as Admin and only works under `astro dev`. Access roles cannot be tested locally. See `docs/relaunch/architecture.md`, Auth.
-- **Generated files** — `wrangler types` writes `worker-configuration.d.ts`; builds write `.emdash/migrations.json`; `npm run dev` writes `emdash-env.d.ts`. None are edited by hand.
+- **Generated files** — `wrangler types` writes `worker-configuration.d.ts`; builds write `.emdash/migrations.json`; `npm run dev` writes `emdash-env.d.ts` (collection types from the local database's schema). None are edited by hand. `emdash-env.d.ts` is committed and listed in `tsconfig.json`, as in EmDash's official templates, so builds without a dev server type-check against it; commit it again after a schema change.
 
 ## Architecture
 

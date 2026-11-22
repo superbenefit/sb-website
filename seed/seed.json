@@ -1,0 +1,159 @@
+{
+  "version": "1",
+  "meta": {
+    "name": "SuperBenefit",
+    "description": "Content model for superbenefit.org: five collections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
+  },
+  "collections": [
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "supports": ["drafts", "revisions", "preview", "seo"],
+      "urlPattern": "/projects/{slug}",
+      "fields": [
+        { "slug": "title", "label": "Title", "type": "string", "required": true },
+        { "slug": "summary", "label": "Summary", "type": "text", "required": true, "validation": { "minLength": 60, "maxLength": 240 } },
+        { "slug": "project_status", "label": "Status", "type": "select", "required": true, "validation": { "options": ["active", "applicant", "past"] } },
+        { "slug": "partner", "label": "Partner", "type": "string" },
+        { "slug": "location", "label": "Location", "type": "string" },
+        { "slug": "website", "label": "Website", "type": "url" },
+        { "slug": "logo", "label": "Logo", "type": "image" },
+        { "slug": "cover", "label": "Cover", "type": "image", "required": true },
+        { "slug": "body", "label": "Body", "type": "portableText" },
+        { "slug": "featured", "label": "Featured", "type": "boolean" },
+        { "slug": "order", "label": "Order", "type": "integer" }
+      ]
+    },
+    {
+      "slug": "services",
+      "label": "Services",
+      "labelSingular": "Service",
+      "supports": ["drafts", "revisions", "preview", "seo"],
+      "fields": [
+        { "slug": "title", "label": "Title", "type": "string", "required": true },
+        { "slug": "audience", "label": "Audience", "type": "text" },
+        {
+          "slug": "deliverables",
+          "label": "Deliverables",
+          "type": "repeater",
+          "validation": { "subFields": [{ "slug": "item", "label": "Deliverable", "type": "string", "required": true }] }
+        },
+        { "slug": "service_terms", "label": "Terms", "type": "string" },
+        { "slug": "body", "label": "Body", "type": "portableText" },
+        { "slug": "order", "label": "Order", "type": "integer" }
+      ]
+    },
+    {
+      "slug": "supports",
+      "label": "Supports",
+      "labelSingular": "Support",
+      "supports": ["drafts", "revisions", "preview", "seo"],
+      "fields": [
+        { "slug": "title", "label": "Title", "type": "string", "required": true },
+        { "slug": "summary", "label": "Summary", "type": "text" },
+        { "slug": "body", "label": "Body", "type": "portableText" },
+        { "slug": "order", "label": "Order", "type": "integer" }
+      ]
+    },
+    {
+      "slug": "updates",
+      "label": "Updates",
+      "labelSingular": "Update",
+      "supports": ["drafts", "revisions", "preview", "seo"],
+      "urlPattern": "/updates/{slug}",
+      "fields": [
+        { "slug": "title", "label": "Title", "type": "string", "required": true },
+        { "slug": "excerpt", "label": "Excerpt", "type": "text" },
+        { "slug": "cover", "label": "Cover", "type": "image" },
+        { "slug": "body", "label": "Body", "type": "portableText" },
+        { "slug": "project", "label": "Project", "type": "reference", "validation": { "targetCollection": "projects" } }
+      ]
+    },
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": ["drafts", "revisions", "preview", "seo"],
+      "fields": [
+        { "slug": "eyebrow", "label": "Eyebrow", "type": "string" },
+        { "slug": "title", "label": "Title", "type": "string", "required": true },
+        { "slug": "intro", "label": "Intro", "type": "text" },
+        { "slug": "cta_label", "label": "Call to action label", "type": "string" },
+        { "slug": "cta_url", "label": "Call to action URL", "type": "url" },
+        { "slug": "section_label", "label": "Section label", "type": "string" },
+        { "slug": "section_heading", "label": "Section heading", "type": "string" },
+        { "slug": "body", "label": "Body", "type": "portableText" },
+        { "slug": "cost_summary", "label": "Cost summary (accelerator and services only)", "type": "string" }
+      ]
+    }
+  ],
+  "menus": [
+    {
+      "name": "header",
+      "label": "Header",
+      "items": [
+        { "type": "custom", "label": "Accelerator", "url": "/accelerator/" },
+        { "type": "custom", "label": "Services", "url": "/services/" },
+        { "type": "custom", "label": "Projects", "url": "/projects/" },
+        { "type": "custom", "label": "Updates", "url": "/updates/" },
+        { "type": "custom", "label": "About", "url": "/about/" },
+        { "type": "custom", "label": "Contact", "url": "/contact/" }
+      ]
+    },
+    {
+      "name": "footer-site",
+      "label": "Site",
+      "items": [
+        { "type": "custom", "label": "Accelerator", "url": "/accelerator/" },
+        { "type": "custom", "label": "Services", "url": "/services/" },
+        { "type": "custom", "label": "Projects", "url": "/projects/" },
+        { "type": "custom", "label": "Updates", "url": "/updates/" },
+        { "type": "custom", "label": "About", "url": "/about/" },
+        { "type": "custom", "label": "Contact", "url": "/contact/" }
+      ]
+    },
+    {
+      "name": "footer-elsewhere",
+      "label": "Elsewhere",
+      "items": [
+        { "type": "custom", "label": "Discord", "url": "https://discord.gg/DMezXT7UAt" },
+        { "type": "custom", "label": "X", "url": "https://x.com/SuperBenefitDAO" },
+        { "type": "custom", "label": "GitHub", "url": "https://github.com/superbenefit" }
+      ]
+    }
+  ],
+  "widgetAreas": [
+    {
+      "name": "closing-band",
+      "label": "Closing band",
+      "description": "The call-to-action band at the foot of every page except the error pages. One content widget: its title is the heading, its first paragraph is the text, and the link in its last paragraph is the second button.",
+      "widgets": [
+        {
+          "type": "content",
+          "title": "Tell us what you are working on.",
+          "content": [
+            {
+              "_type": "block",
+              "_key": "text",
+              "style": "normal",
+              "markDefs": [],
+              "children": [
+                { "_type": "span", "_key": "text-span", "text": "We read every message. Write to us, or join the community on Discord.", "marks": [] }
+              ]
+            },
+            {
+              "_type": "block",
+              "_key": "button",
+              "style": "normal",
+              "markDefs": [{ "_type": "link", "_key": "discord", "href": "https://discord.gg/DMezXT7UAt" }],
+              "children": [
+                { "_type": "span", "_key": "button-span", "text": "Join the Discord", "marks": ["discord"] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
