@@ -41,7 +41,7 @@ function iconFor(url: string): string | undefined {
 ---
 
 <footer class="ft on-ink">
-  <div class="wrap">
+  <div class="wrap ft__wrap">
     <div class="ft__grid">
       <div>
         <a class="ft__brand" href="/">
@@ -109,6 +109,11 @@ function iconFor(url: string): string | undefined {
   .ft {
     background: var(--color-black);
     color: var(--color-cream);
+  }
+
+  /* Owner decision, 2026-11-22: the footer content spans the window, not the 1200px column of the mockup. */
+  .ft__wrap {
+    max-width: none;
   }
 
   .ft__grid {
