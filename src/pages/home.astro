@@ -1,0 +1,13 @@
+---
+// The home page is the `pages` entry with slug `home`, and `pages` has the URL
+// pattern `/{slug}`, so EmDash's preview link and the sitemap give it the URL
+// /home (docs/relaunch/architecture.md, Content model). The home page lives at
+// /, so /home answers with a 301 to / and keeps the query string: the preview
+// link's `?_preview=` token must reach /, which reads the entry. An EmDash
+// redirect cannot do this: its middleware answers with the destination only
+// and drops the query (emdash 1.5.0, astro/middleware/redirect.ts).
+// Not cached: a redirect is cheap to answer, and a cached one would outlive a
+// change to how home is handled.
+if (Astro.cache?.enabled) Astro.cache.set(false);
+return Astro.redirect(`/${Astro.url.search}`, 301);
+---

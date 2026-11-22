@@ -13,7 +13,9 @@ import { sanitizeHtml } from '../../utils/sanitize';
 // rest of the update page is C7. Otherwise the entry comes from the legacy
 // `updates` collection until C7 and B7.
 const slug = Astro.params.slug?.replace(/\/+$/, '');
-const { entry: update } = slug ? await getEmDashEntry('updates', slug) : { entry: null };
+const { entry: update, cacheHint } = slug ? await getEmDashEntry('updates', slug) : { entry: null, cacheHint: undefined };
+// Tags the response with this entry so publishing it purges the cached page (B6, #33).
+if (update && cacheHint && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const post = update ? undefined : (await getCollection('updates', ({ data }) => !data.draft)).find((entry) => entry.id === slug);
 if (!update && !post) {
   return Astro.rewrite('/404');

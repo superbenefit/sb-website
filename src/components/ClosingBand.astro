@@ -5,15 +5,17 @@
  *
  * Heading, text and the second button come from the widget area
  * `closing-band` (seed/seed.json; docs/relaunch/architecture.md, Content
- * model), read with getWidgetArea() at request time
- * (https://docs.emdashcms.com/guides/widgets/). Its first content widget is
+ * model), read with getWidgetAreaWithCacheHint() at request time
+ * (https://docs.emdashcms.com/guides/widgets/). Its cache hint tags the page
+ * `emdash:widget-area:closing-band`, which EmDash purges when the area's
+ * widgets change (https://docs.emdashcms.com/deployment/route-caching/). Its first content widget is
  * used: the widget title is the heading, the first paragraph is the text,
  * and a paragraph whose only content is one link is the second button. The
  * first button is the page's own action and defaults to "Get in touch",
  * which most mockup pages show. Nothing is rendered when the area has no
  * content widget.
  */
-import { getWidgetArea } from 'emdash';
+import { getWidgetAreaWithCacheHint } from 'emdash';
 import type { PortableTextBlock } from 'emdash';
 import { PortableText } from 'emdash/ui';
 import Button from './Button.astro';
@@ -24,9 +26,11 @@ interface Props {
   from?: 'black' | 'charcoal' | 'cream' | 'paper' | 'green' | 'orange' | 'gold' | 'red';
   primaryLabel?: string;
   primaryHref?: string;
+  /** Pass the cache hint to Astro.cache; the layout turns it off for pages that are not cached. */
+  cache?: boolean;
 }
 
-const { from = 'cream', primaryLabel = 'Get in touch', primaryHref = '/contact/' } = Astro.props;
+const { from = 'cream', primaryLabel = 'Get in touch', primaryHref = '/contact/', cache = true } = Astro.props;
 
 interface Span {
   _type: string;
@@ -53,7 +57,8 @@ function linkOnly(block: TextBlock): { label: string; href: string } | undefined
   return { label: spans.map((span) => span.text).join('').trim(), href: link.href as string };
 }
 
-const area = await getWidgetArea('closing-band');
+const { data: area, cacheHint } = await getWidgetAreaWithCacheHint('closing-band');
+if (cache && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const widget = area?.widgets.find((w) => w.type === 'content');
 const blocks = (widget?.content ?? []) as TextBlock[];
 const paragraphs = blocks.filter((block) => block._type === 'block' && (block.style ?? 'normal') === 'normal');

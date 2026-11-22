@@ -11,6 +11,9 @@
   // adapter adds the SESSION KV and IMAGES bindings to the config it
   // generates, and `wrangler deploy` provisions SESSION:
   // https://docs.emdashcms.com/deployment/cloudflare/#configure-bindings
+  // With cacheCloudflare() in astro.config.mjs it also writes
+  // "cache": { "enabled": true } (Workers Cache), which `wrangler preview`
+  // sends for Previews too: docs/relaunch/architecture.md, Caching.
   "d1_databases": [
     {
       "binding": "DB",
