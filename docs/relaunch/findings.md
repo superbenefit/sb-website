@@ -19,7 +19,6 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | --- | --- | --- |
 | C1, C2 | Draft gating is duplicated across six pages. | CMS build: EmDash draft status. |
 | C3, C4 | Two near-identical loaders; a production build with no content source silently ships mock data. | CMS build. |
-| C5 | `projects.astro` hardcodes its projects and ignores the collection. | CMS build. |
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
 | C10 | "Schedule an onboarding call" links to `#`. | Content. |
 | C11 | No tests, lint or Dependabot. Workers Builds builds, type-checks and previews every branch (A1). | Dependabot: decided at launch. |
@@ -30,6 +29,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | K1 | Route caching cannot be shown end to end locally. Under `astro preview` workerd runs no Workers Cache (no `Cf-Cache-Status`), `cache.purge` from `cloudflare:workers` is not a function, and admin writes need an Access JWT; under `astro dev` nothing is cached and EmDash skips the purge (B6, 2026-11-22). Cloudflare: local tests do not exercise Workers Caching ([limitations](https://developers.cloudflare.com/workers/cache/limitations/#local-tests)). | Checked on the B6 preview by the owner (`issues.md`, B6 notes). Headers, tags and the preview and error-page opt-outs are verified locally. |
 | K2 | A public route with no route rule is still cached. The layout, `Header`, `Footer` and `ClosingBand` pass tag-only cache hints; Astro 7.4.13 treats any tag as cache intent (`runtime/cache.js`), the Cloudflare provider then sends `Cloudflare-CDN-Cache-Control: public` with no `max-age` (`provider-utils.js`), and `@astrojs/cloudflare` 14.4.9 adds `no-store` only when that header is missing (`utils/response.js`). Cloudflare applies heuristic TTLs to responses without explicit freshness ([configuration](https://developers.cloudflare.com/workers/cache/configuration/#cache-control-semantics)), and the page carries no collection tag, so a publish does not purge it. Reproduced with a temporary `/norule/` page under `astro preview` (B6 review, 2026-11-22). Every route that exists has a rule. | Documented (B6, #33): each new public route adds its rule in the same change (`AGENTS.md`, `architecture.md` Caching, `astro.config.mjs`). Owner option: pass the layout's hints only once a rule has set `maxAge`, which no doc shows. |
 | L1 | With Access sign-in, the admin's Log out button only ends EmDash's session; the Access session remains, so the page reloads signed in (EmDash 1.5.0, `routes/api/auth/logout.ts`; reported by the owner on the B4 preview, 2026-11-22). | No setting in 1.5.0. Sign out at `/cdn-cgi/access/logout`. Recheck when EmDash is upgraded. |
+| G1 | The legacy base rules in `src/styles/global.css` differ from `mockups.css`'s base, so mockup parts render wrong unless each overrides them. `a` is orange and turns red on hover (mockups: `a { color: inherit }`), `p` has `max-width: 70ch` and `h1` to `h4` set `color: var(--color-charcoal)` (mockups: neither). Seen on the C6 pages: card titles, entry titles and the `more` links came out orange (C6, 2026-11-22). | C6 overrides the link colour in its own parts (`ProjectCard`, `EntryList`, the project page). Not changed in `global.css` (other pages are built in parallel); fixing the base rules once would let the overrides go. |
 
 ### SEO
 - No `<h1>` on the homepage; title is "Make Better Faster".
@@ -68,6 +68,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 | N8 (part) | `AGENTS.md` called the fonts API experimental. | Corrected. |
 | SEO (part) | Internal links used the extensionless form, which 307s to the trailing-slash form (Workers assets [`html_handling`](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)). | A4 (#26): every internal link ends in `/`. A4 also set `trailingSlash: 'always'`; since 2026-11-22 it is `'ignore'` (T1). |
 | N6 | Links to `www.allinforsport.org`, which does not resolve, in `about.astro` and `projects.astro`. | A4 (#26): links point at the apex. |
+| C5 | `projects.astro` hardcoded its projects and ignored the collection. | C6 (#40): `/projects/` lists the EmDash `projects` collection and `/projects/{slug}/` reads the entry; no hard-coded projects and no draft gating remain on those pages. |
 
 ## Withdrawn
 - Footer entity wording ("Worker Self-Directed Non-Profit Digital LLC") is correct as written. Do not re-raise.
