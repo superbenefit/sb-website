@@ -3,13 +3,18 @@ import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import emdash from 'emdash/astro';
-import { d1, r2 } from '@emdash-cms/cloudflare';
+import { access, d1, r2 } from '@emdash-cms/cloudflare';
 
 // EmDash on Cloudflare, as https://docs.emdashcms.com/deployment/cloudflare/
 // describes. No `siteUrl` here: production sets EMDASH_SITE_URL in
 // wrangler.jsonc `vars`, because a `siteUrl` is built into every preview.
 // No `sandboxRunner`: the site uses no marketplace, registry or sandboxed
 // plugins.
+// Sign-in is Cloudflare Access with GitHub, as
+// https://docs.emdashcms.com/guides/authentication/#cloudflare-access
+// describes. The AUD tag is the Worker secret CF_ACCESS_AUDIENCE (production
+// and Previews Base), never a value in this repo. `npm run dev` has no Access
+// JWT, so local development falls back to passkeys.
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
@@ -20,6 +25,15 @@ export default defineConfig({
     emdash({
       database: d1({ binding: 'DB' }),
       storage: r2({ binding: 'MEDIA' }),
+      auth: access({
+        teamDomain: 'superbenefit.cloudflareaccess.com',
+        audienceEnvVar: 'CF_ACCESS_AUDIENCE',
+        // Contributor for every member the Access policy lets in; Admin for
+        // the "Web Admins" GitHub team. Keys are compared, exactly and
+        // case-sensitively, with the group names Access returns.
+        defaultRole: 20,
+        roleMapping: { 'Web Admins': 50 },
+      }),
     }),
   ],
   build: {
