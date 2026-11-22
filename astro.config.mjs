@@ -26,8 +26,14 @@ import { access, d1, r2 } from '@emdash-cms/cloudflare';
 // for Previews. One rule per public route, tagged with the collections it
 // renders (architecture.md, Rendering per route), so EmDash's purge on
 // publish matches it. The layout adds the settings, menu and closing-band
-// hints. Routes without a rule (/404, /500, /_emdash/*) get no-store from the
-// adapter. `astro dev` never caches.
+// hints. Those hints carry tags but no lifetime, so a BaseLayout page whose
+// route has no rule here is still served `Cloudflare-CDN-Cache-Control:
+// public` (no max-age): Cloudflare then caches it for its heuristic TTL, and a
+// publish in its collection does not purge it. Every new public route adds
+// its rule in the same change (findings.md, K2). /404 and /500 stay uncached
+// because they pass cache={false} to the layout; responses with no hints at
+// all (/_emdash/*, /robots.txt) get no-store from the adapter. `astro dev`
+// never caches.
 const DAY = 86_400;
 const WEEK = 604_800;
 const rule = (tags) => ({ maxAge: DAY, swr: WEEK, tags });
