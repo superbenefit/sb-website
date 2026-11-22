@@ -39,6 +39,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 - governance.superbenefit.org's canonical points to governance.superbenefit.dev (fleet).
 - `/robots.txt` comes from EmDash since B2. Until the "Disallow AI training" setting is on (D2) it no longer lists the AI training crawlers the old `public/robots.txt` blocked.
 - No analytics.
+- N10: `public/images/superbenefit-logo.webp` (400×272, the old manifest icon) is referenced by no page on `feature/relaunch` since C10, but production links it (`public/manifest.json`, the JSON-LD `logo` in `SEO.astro` and `BaseLayout.astro` on `main`), so crawlers and other sites may still request it. B7 keeps it, as it is not content code. Owner: keep it, or delete it and accept a 404 (or redirect it) at launch.
 - Not checked: the claim that the brand query "SuperBenefit DAO" surfaces Notion, Flowershow and Goverland ahead of superbenefit.org.
 
 ### Content
