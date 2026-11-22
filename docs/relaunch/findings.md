@@ -9,7 +9,7 @@ Recon at commit b643382 (2026-11-20), then validated the same day against curren
 | --- | --- | --- |
 | S1 | No security headers are live; `public/_headers` was deleted in 185e9a0. `_headers` only covers static assets, not Worker responses ([docs](https://developers.cloudflare.com/workers/static-assets/headers/)). | CMS build: EmDash's middleware sets them on every public route. HSTS is an owner dashboard item. |
 | S3 | `src/utils/sanitize.ts` is bypassed by `<img/onerror=…>`, unquoted `href=javascript:`, `<form action>` and nested `<scr<script></script>ipt>` (all reproduced). | CMS build: file deleted; EmDash renders Portable Text. |
-| S4 | Mock update titles and the fake author "Alex Chen" are in the `<head>` of public pages such as `/updates/governance-primitives-web3/`. | CMS build: loaders and mock data deleted. |
+| S4 | Mock update titles and the fake author "Alex Chen" are in the `<head>` of public pages such as `/updates/governance-primitives-web3/`. | CMS build: loaders and mock data deleted. Since C7 (#41) the `/updates/` routes read EmDash only, and no route renders the mock updates (`UpdatesSection` and `KnowledgeSpotlight`, which still read them, are imported nowhere, C6 below); the files go in B7. |
 | S5 | Branch previews on `superbenefit.dev` are public and indexable; knowledge.superbenefit.dev is an unprotected public copy. The workers.dev URL is now off. | Owner: protect this Worker's previews with Access (A5). The knowledge copy belongs to the knowledge-garden repo. |
 
 Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protections.
@@ -17,7 +17,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### Code
 | ID | Finding | Resolved by |
 | --- | --- | --- |
-| C1, C2 | Draft gating is duplicated across six pages. | CMS build: EmDash draft status. |
+| C1, C2 | Draft gating is duplicated across six pages (four since C7 removed it from the updates pages). | CMS build: EmDash draft status. |
 | C3, C4 | Two near-identical loaders; a production build with no content source silently ships mock data. | CMS build. |
 | C5 | `projects.astro` hardcodes its projects and ignores the collection. | CMS build. |
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
