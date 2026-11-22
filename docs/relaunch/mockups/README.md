@@ -39,7 +39,7 @@ Class names are the mockup's own; find the rules in `mockups.css`.
 | --- | --- | --- |
 | Header, nav, menu button | `hd` | every page |
 | Four-colour stripe under the header | `stripe` | every page |
-| Footer with "Site" and "Elsewhere" menus | `ft` | every page |
+| Footer with "Site" and "Elsewhere" menus. Changed after the mockups (owner, 2026-11-22): the footer's coloured stripe runs edge to edge across the window, like the header stripe; the logo, menus and base line stay in the 1200 px column. | `ft` | every page |
 | Closing call-to-action band | `close` | every page except the error pages |
 | Buttons: `btn--accent`, `btn--ink`, `btn--line` | `btn` | every page |
 | Page hero with kicker, title, intro, actions; variants `ph--black`, `--charcoal`, `--gold`, `--green`, `--orange`, `--red`, `--compact` | `ph` | every page except home |

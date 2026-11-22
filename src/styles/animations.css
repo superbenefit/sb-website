@@ -64,29 +64,6 @@
   }
 }
 
-/* ===== HEADER SCROLL FADE ===== */
-
-@keyframes header-solidify {
-  from {
-    background-color: transparent;
-    -webkit-backdrop-filter: blur(0px);
-    backdrop-filter: blur(0px);
-  }
-  to {
-    background-color: rgba(26, 26, 26, 0.92);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
-}
-
-@supports (animation-timeline: scroll()) {
-  .site-header {
-    animation: header-solidify linear both;
-    animation-timeline: scroll();
-    animation-range: 0px 300px;
-  }
-}
-
 /* ===== TIME-BASED DECORATIVE ANIMATIONS ===== */
 
 @keyframes pulse-glow {

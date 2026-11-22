@@ -1,0 +1,34 @@
+---
+/**
+ * Portable Text `iframe` block. The EmDash 1.5.0 editor makes one from its
+ * "Iframe" command (aliases youtube, vimeo, embed); a YouTube or Vimeo link
+ * becomes the player URL (`www.youtube.com/embed/{id}`,
+ * `player.vimeo.com/video/{id}`). Those players are shown as the mockup's
+ * click-to-load video, so nothing is requested from the video host until
+ * Play is pressed. Any other iframe (a map, a form) is rendered by EmDash's
+ * own Iframe component, unchanged.
+ */
+import { Iframe } from 'emdash/ui';
+import ClickToLoadVideo from './ClickToLoadVideo.astro';
+
+interface Props {
+  node: { _type: 'iframe'; _key: string; src?: unknown; [key: string]: unknown };
+}
+
+const VIDEO_HOSTS = new Set(['www.youtube.com', 'youtube.com', 'www.youtube-nocookie.com', 'player.vimeo.com']);
+
+const { node } = Astro.props;
+let isVideo = false;
+try {
+  const url = new URL(typeof node?.src === 'string' ? node.src : '');
+  isVideo = url.protocol === 'https:' && VIDEO_HOSTS.has(url.host);
+} catch {
+  isVideo = false;
+}
+---
+
+{isVideo ? (
+  <ClickToLoadVideo><Iframe node={node as never} /></ClickToLoadVideo>
+) : (
+  <Iframe node={node as never} />
+)}

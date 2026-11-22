@@ -1,6 +1,6 @@
 # SuperBenefit web relaunch: brief
 
-Last updated 2026-11-20. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
+Last updated 2026-11-22. Source: owner's kickoff brief, a recon session, and owner decisions during planning.
 
 Companion docs: `architecture.md` (decided design), `findings.md` (issue register), `mockups/` (the owner's design; start with its README), `issues.md` (the work, broken into issues), `design-handoff.md` (the prompt the design session was given), `execution-prompt.md` (the prompt that runs the build in a new session), `planning-prompt.md` (the five planning stages).
 
@@ -27,7 +27,7 @@ Each gets a feature card and an overview page:
 - **Services page** (external, pairs with Local Capacity Building): deliverable- and SLA-focused work; training, experiment facilitation and similar. Pared down from the current three tiers.
 
 ## Content management
-Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack. Not yet installed. Set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`.
+Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack, set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`. Installed on `feature/relaunch` by B2 (#29); the pages do not read EmDash content yet.
 
 ## Design
 A SuperBenefit design system exists at `superbenefit/design-system`. The owner's mockups for the relaunch are in `mockups/` and are the design instructions: pages are built to match them.
@@ -42,7 +42,7 @@ Overhaul all copy to remove AI slop and make real points directly.
 - Agent-drafted copy gets a human edit before publish.
 
 ## Stack facts (`feature/relaunch`, after PR #18)
-Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScript 6, Node 24. `output: 'server'`, all pages prerendered; the Worker runs only the contact action (Turnstile + Cloudflare Email Service). Live on `main`: `/` and `/contact/`; other routes are noindexed "Coming soon" drafts. Workers Builds deploys `main` and previews every branch. No tests or lint; Workers Builds type-checks every branch through `npm run build`.
+Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScript 6, Node 24. `output: 'server'`, all pages prerendered; the Worker runs the contact action (Turnstile + Cloudflare Email Service) and, since B2, EmDash 1.5.0's admin and API. Live on `main`: `/` and `/contact/`; other routes are noindexed "Coming soon" drafts. Workers Builds deploys `main` and previews every branch. No tests or lint; Workers Builds type-checks every branch through `npm run build`.
 
 ## Fleet
 | Property | Worker | Notes |
@@ -66,7 +66,7 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 ## Answered (2026-11-20)
 - The Cloudflare account is on Workers Paid.
 - Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays.
-- Editors sign in with GitHub through Cloudflare Access: org members as Contributors, the "Web Admins" team as Admins. Editors use the EmDash admin, so no developer is needed to publish.
+- Editors sign in with GitHub through Cloudflare Access: org members as Contributors (drafts only), the "Knowledge Stewardship" team as Editors, the "Web Admins" team as Admins. Until EmDash reads GitHub teams, an Admin sets the Editor and Admin roles in the CMS (2026-11-22). Editors use the EmDash admin, so no developer is needed to publish.
 - Branch previews are Worker Previews at `<branch-name>.superbenefit.dev`, bound to one shared staging database, bucket and session namespace. See `architecture.md`, Environments and CI.
 - Discord invite everywhere: `https://discord.gg/DMezXT7UAt`.
 - AI crawlers: block training, allow all other bots.
@@ -74,6 +74,9 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - Pacto and Social Lean Canvas are shown as applicants.
 - The GitHub OAuth app and Zero Trust identity provider already exist.
 - X handle stays `SuperBenefitDAO`. "Book an onboarding call" has no link yet; the button is hidden until an editor adds one.
+
+## Answered (2026-11-22)
+- `trailingSlash` is `'ignore'`, Astro's [default](https://docs.astro.build/en/reference/configuration-reference/#trailingslash), not A4's `'always'`, which made the EmDash admin URLs 404 (finding T1). Internal links keep the trailing slash; see `architecture.md`, Stack.
 
 ## Open questions
 - The new service offerings (owner is redoing them).

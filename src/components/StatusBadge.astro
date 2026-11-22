@@ -1,0 +1,23 @@
+---
+/**
+ * Project status badge: the `status` rules in src/styles/global.css, taken
+ * from docs/relaunch/mockups/mockups.css. The value is the project's
+ * `project_status` field; "applicant" uses the mockup's `status--pending`
+ * marker with the label "Applicant" (docs/relaunch/architecture.md, Content
+ * model).
+ */
+interface Props {
+  status: 'active' | 'applicant' | 'past';
+  class?: string;
+}
+
+const { status, class: className } = Astro.props;
+const variants = {
+  active: { modifier: 'status--active', label: 'Active' },
+  applicant: { modifier: 'status--pending', label: 'Applicant' },
+  past: { modifier: 'status--past', label: 'Past' },
+} as const;
+const { modifier, label } = variants[status];
+---
+
+<span class:list={['status', modifier, 'caps', className]}><i></i>{label}</span>

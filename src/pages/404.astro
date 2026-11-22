@@ -1,10 +1,8 @@
 ---
-export const prerender = true;
-
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Page Not Found — SuperBenefit" description="The page you were looking for doesn't exist.">
+<BaseLayout title="Page Not Found — SuperBenefit" description="The page you were looking for doesn't exist." canonical={null} closingBand={false} cache={false}>
   <div class="error-page">
     <div class="container error-container">
       <p class="error-code">404</p>
