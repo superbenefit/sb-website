@@ -87,6 +87,7 @@ astro.config.mjs  # Astro configuration
 **CMS sign-in** — Cloudflare Access with GitHub, configured with `access()` in `astro.config.mjs` ([EmDash guide](https://docs.emdashcms.com/guides/authentication/#cloudflare-access)). Org members get the Contributor role on first sign-in; members of the GitHub team "Knowledge Stewardship" get Editor, and members of "Web Admins" get Admin.
 - Production: Access protects `superbenefit.org/_emdash/*` and asks for GitHub; a Bypass application keeps `/_emdash/api/media/file/*` public for share images, file downloads and media the optimiser does not handle. The Worker verifies the Access JWT against `CF_ACCESS_AUDIENCE`.
 - Previews: the whole `<branch-name>.superbenefit.dev` hostname is behind Access, so signing in to the preview signs you in to its admin.
+- Signing out: the admin's Log out button does not end the Access session; open `/cdn-cgi/access/logout` on the same hostname.
 - Locally: there is no Access, and EmDash 1.5.0 offers no passkey while `access()` is configured. After the setup wizard, open `http://localhost:4321/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin` to sign in as a local development Admin.
 
 Details and the owner's dashboard steps: `docs/relaunch/architecture.md` (Auth) and `docs/relaunch/issues.md` (B3).
