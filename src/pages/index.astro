@@ -22,7 +22,7 @@
 import { Image } from 'astro:assets';
 import { getEmDashCollection, getEmDashEntry, getEmDashReferences } from 'emdash';
 import type { CacheHint } from 'emdash';
-import { PortableText } from 'emdash/ui';
+import RichText from '../components/rich-text/RichText.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import WaveDivider from '../components/WaveDivider.astro';
@@ -160,7 +160,7 @@ const edge = 'M0,0 C360,80 1080,0 1440,60';
         {home?.section_heading && <h2 class="display">{home.section_heading}</h2>}
       </div>
       <div class="about__body">
-        {home?.body && <PortableText value={home.body} />}
+        <RichText value={home?.body} inherit />
         <a class="more" href="/about/">More about SuperBenefit <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>
       </div>
     </div>
