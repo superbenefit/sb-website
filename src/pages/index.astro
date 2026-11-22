@@ -117,15 +117,18 @@ const doors = [
 // Head title and description (D6): the entry's SEO panel first (BaseLayout,
 // getSeoMeta()), else "SuperBenefit — Nonprofit DAO Accelerator", the
 // chosen search term (docs/relaunch/brief.md, Messaging), and the intro. The
-// hero title is not used: it need not carry the term.
-const pageTitle = 'Nonprofit DAO Accelerator';
+// term is passed as `term` too, so a panel title without it gives
+// "SuperBenefit — Nonprofit DAO Accelerator — {panel title}". The hero title
+// is not used: it need not carry the term.
+const term = 'Nonprofit DAO Accelerator';
+const pageTitle = term;
 const description = home?.intro || '';
 const arrow = 'M5 12h14M13 6l6 6-6 6';
 const wave = 'M0,0 C360,80 1080,0 1440,60 L1440,400 L0,400 Z';
 const edge = 'M0,0 C360,80 1080,0 1440,60';
 ---
 
-<BaseLayout title={pageTitle} description={description} seo={homeResult.entry ?? undefined} siteFirst bandFrom={updates.length > 0 ? 'cream' : 'charcoal'}>
+<BaseLayout title={pageTitle} description={description} seo={homeResult.entry ?? undefined} siteFirst term={term} bandFrom={updates.length > 0 ? 'cream' : 'charcoal'}>
   <section class="hero on-ink">
     <div class="wrap hero__grid">
       <div>
