@@ -71,7 +71,7 @@ Ask one clear question at a time. Do not ask the owner to make technical choices
 - npm 11.19 blocks dependency install scripts until approved with `npm install-scripts approve`. `esbuild` and `workerd` are approved, pinned by version; a version bump needs re-approval.
 - The Turnstile site key reaches the prerendered contact page from `vars` in `wrangler.jsonc` at build time. Turnstile uses explicit rendering tied to `astro:page-load`; keep that when the contact page is rebuilt.
 - EmDash sets its own security headers and a strict CSP on its admin. The site adds none.
-- Access roles: everyone the Access policy lets in starts as Contributor (`defaultRole: 20`). An Admin sets Editor ("Knowledge Stewardship") and Admin ("Web Admins") under Users in the CMS; EmDash cannot read GitHub teams (`architecture.md`, Auth; decided 2026-11-22).
+- Access roles: GitHub org members are Contributors (`defaultRole: 20`); the "Web Admins" team are Admins (`roleMapping`). The exact group name Access passes for a GitHub team is unverified until the first CMS preview.
 - `main` still runs the old site. Nothing reaches production until issue 52.
 
 ## Start
