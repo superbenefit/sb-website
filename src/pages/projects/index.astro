@@ -13,8 +13,8 @@
  * is `/projects` in astro.config.mjs).
  *
  * Missing content: without the `pages` entry the title is "Projects" and no
- * intro is shown. With no projects, a dashed `empty` box (mockups.css) says
- * so; the mockups show no empty state.
+ * intro is shown. With no projects, a dashed `empty` box (mockups.css, the
+ * shared src/styles/parts/empty.css) says so; the mockups show no empty state.
  */
 import { getEmDashCollection, getEmDashEntry } from 'emdash';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -22,6 +22,7 @@ import PageHero from '../../components/PageHero.astro';
 import WaveDivider from '../../components/WaveDivider.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import '../../styles/parts/sec.css';
+import '../../styles/parts/empty.css';
 
 const { entry: page, cacheHint: pageHint } = await getEmDashEntry('pages', 'projects');
 const { entries, cacheHint: listHint } = await getEmDashCollection('projects');
@@ -59,16 +60,3 @@ const intro = page?.data.intro;
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  /* Empty list: the `empty` rules in docs/relaunch/mockups/mockups.css. */
-  .empty {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    align-items: flex-start;
-    padding: var(--space-lg);
-    border: 2px dashed var(--color-charcoal);
-    border-radius: var(--radius-md);
-  }
-</style>
