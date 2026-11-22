@@ -17,7 +17,7 @@ Not checked: SPF/DKIM/DMARC, zone settings, Worker secrets, GitHub org protectio
 ### Code
 | ID | Finding | Resolved by |
 | --- | --- | --- |
-| C1, C2 | Draft gating is duplicated across six pages. | CMS build: EmDash draft status. |
+| C1, C2 | Draft gating is duplicated across six pages. | CMS build: EmDash draft status. C8 (#42) removed it from `/about/`. |
 | C3, C4 | Two near-identical loaders; a production build with no content source silently ships mock data. | CMS build. |
 | C5 | `projects.astro` hardcodes its projects and ignores the collection. | CMS build. |
 | C6 | `KnowledgeSpotlight`, `UpdatesSection` and `ProjectsGrid` are imported nowhere. | Hygiene issue. |
