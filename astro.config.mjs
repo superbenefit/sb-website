@@ -45,16 +45,17 @@ export default defineConfig({
   trailingSlash: 'ignore',
   cache: { provider: cacheCloudflare() },
   // Patterns match the request path, with or without the trailing slash
-  // (trailingSlash 'ignore'). /support becomes a redirect to /accelerator/ in
-  // C4, which replaces its rule; /projects/[slug] arrives with C6. /home has
-  // no rule: it is a 301 to / that calls Astro.cache.set(false).
+  // (trailingSlash 'ignore'). /projects/[slug] arrives with C6. /home has no
+  // rule: it is a 301 to / that calls Astro.cache.set(false). /support and
+  // /supports have none either: they match no route and EmDash's redirect
+  // middleware answers them with a 301 to /accelerator/ (seed/seed.json).
   routeRules: {
     '/': rule(['pages', 'projects', 'updates']),
     '/about': rule(['pages']),
+    '/accelerator': rule(['pages', 'supports']),
     '/contact': rule(['pages']),
     '/projects': rule(['projects']),
     '/services': rule(['pages', 'services']),
-    '/support': rule(['pages', 'supports']),
     '/updates': rule(['updates']),
     '/updates/[...slug]': rule(['updates']),
     // The collections EmDash lists in the sitemap: routable ones with SEO.
