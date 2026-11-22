@@ -13,10 +13,19 @@
  * escapes it all (https://docs.emdashcms.com/guides/seo/,
  * https://docs.emdashcms.com/guides/site-settings/; emdash 1.5.0
  * src/components/EmDashHead.astro). The <title> stays the layout's.
+ *
+ * Caching (docs/relaunch/architecture.md, Caching;
+ * https://docs.emdashcms.com/deployment/route-caching/): the route rule in
+ * astro.config.mjs sets the lifetime and the collection tags. The layout and
+ * its parts add the cache hints of what they read (site settings, the three
+ * menus, the closing band), so EmDash's purge on a settings, menu or widget
+ * edit reaches every cached page. `cache={false}` (error pages) opts the
+ * response out with Astro.cache.set(false) and keeps the parts from setting
+ * hints after it, because a later set() turns caching back on.
  */
 import { ClientRouter } from 'astro:transitions';
 import { Font } from 'astro:assets';
-import { getSiteSettings } from 'emdash';
+import { getSiteSettingsWithCacheHint } from 'emdash';
 import { createPublicPageContext } from 'emdash/page';
 import { EmDashHead } from 'emdash/ui';
 // Global styles first, so component styles come after them in the cascade.
@@ -54,6 +63,8 @@ interface Props {
   /** The band's first button; defaults to "Get in touch" and /contact/. */
   bandLabel?: string;
   bandHref?: string;
+  /** Cache this response under the route rule; `false` for error pages. */
+  cache?: boolean;
 }
 
 const {
@@ -73,9 +84,11 @@ const {
   bandFrom,
   bandLabel,
   bandHref,
+  cache = true,
 } = Astro.props;
 
-const settings = await getSiteSettings();
+const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
+if (Astro.cache?.enabled) Astro.cache.set(cache ? settingsHint : false);
 const siteName = settings.title || 'SuperBenefit';
 const siteUrl = (settings.url || Astro.url.origin).replace(/\/$/, '');
 const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
@@ -126,13 +139,13 @@ const page = createPublicPageContext({
     <ClientRouter />
   </head>
   <body class={bodyClass}>
-    <Header />
+    <Header cache={cache} />
     <main>
       <slot />
-      {closingBand && <ClosingBand from={bandFrom} primaryLabel={bandLabel} primaryHref={bandHref} />}
+      {closingBand && <ClosingBand from={bandFrom} primaryLabel={bandLabel} primaryHref={bandHref} cache={cache} />}
     </main>
     <FooterFade />
-    <Footer />
+    <Footer cache={cache} />
     <script>
       // Scroll to the #fragment after a view-transition navigation, which
       // ClientRouter does not always do on its own.

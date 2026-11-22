@@ -1,5 +1,6 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
+import { cacheCloudflare } from '@astrojs/cloudflare/cache';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import emdash from 'emdash/astro';
@@ -17,11 +18,41 @@ import { access, d1, r2 } from '@emdash-cms/cloudflare';
 // JWT, and EmDash 1.5.0 offers no passkey while access() is configured: local
 // sign-in uses /_emdash/api/auth/dev-bypass (docs/relaunch/architecture.md,
 // Auth).
+//
+// Route caching, as https://docs.emdashcms.com/deployment/route-caching/
+// describes (architecture.md, Caching): cacheCloudflare() stores responses in
+// the Workers Cache; the adapter then writes "cache": { "enabled": true } into
+// the generated dist/server/wrangler.json, which `wrangler preview` also uses
+// for Previews. One rule per public route, tagged with the collections it
+// renders (architecture.md, Rendering per route), so EmDash's purge on
+// publish matches it. The layout adds the settings, menu and closing-band
+// hints. Routes without a rule (/404, /500, /_emdash/*) get no-store from the
+// adapter. `astro dev` never caches.
+const DAY = 86_400;
+const WEEK = 604_800;
+const rule = (tags) => ({ maxAge: DAY, swr: WEEK, tags });
+
 export default defineConfig({
   site: 'https://superbenefit.org',
   output: 'server',
   // 'ignore' (Astro's default): EmDash admin URLs have no trailing slash. https://docs.astro.build/en/reference/configuration-reference/#trailingslash
   trailingSlash: 'ignore',
+  cache: { provider: cacheCloudflare() },
+  // Patterns match the request path, with or without the trailing slash
+  // (trailingSlash 'ignore'). /support becomes a redirect to /accelerator/ in
+  // C4, which replaces its rule; /projects/[slug] arrives with C6.
+  routeRules: {
+    '/': rule(['pages', 'projects', 'updates']),
+    '/about': rule(['pages']),
+    '/contact': rule(['pages']),
+    '/projects': rule(['projects']),
+    '/services': rule(['pages', 'services']),
+    '/support': rule(['pages', 'supports']),
+    '/updates': rule(['updates']),
+    '/updates/[...slug]': rule(['updates']),
+    '/sitemap.xml': rule(['projects', 'updates']),
+    '/sitemap-[collection].xml': rule(['projects', 'updates']),
+  },
   integrations: [
     react(), // Required: the admin UI is a React app
     emdash({
@@ -40,6 +71,10 @@ export default defineConfig({
         defaultRole: 20,
         roleMapping: { 'Web Admins': 50, 'Knowledge Stewardship': 40 },
       }),
+      // Recommended for cached sites: public HTML is the same for everyone;
+      // editors get an Edit pill that opens a fresh, uncached ?_edit render.
+      // https://docs.emdashcms.com/deployment/route-caching/#editors-and-cached-pages
+      toolbar: 'client',
     }),
   ],
   build: {
