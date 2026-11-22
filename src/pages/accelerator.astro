@@ -24,8 +24,9 @@
  * that remain. With no published supports the Supports section shows a
  * one-line notice in a `block`.
  *
- * /support and /supports answer 301 to /accelerator/ through EmDash
- * redirects from seed/seed.json (https://docs.emdashcms.com/guides/seo/#redirects-and-the-404-log).
+ * /support and /supports answer 301 to /accelerator/ through Astro's
+ * configured `redirects` in astro.config.mjs
+ * (https://docs.astro.build/en/guides/routing/#configured-redirects).
  */
 import { getEmDashCollection, getEmDashEntry } from 'emdash';
 import { PortableText } from 'emdash/ui';
