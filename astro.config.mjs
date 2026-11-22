@@ -46,7 +46,8 @@ export default defineConfig({
   cache: { provider: cacheCloudflare() },
   // Patterns match the request path, with or without the trailing slash
   // (trailingSlash 'ignore'). /support becomes a redirect to /accelerator/ in
-  // C4, which replaces its rule; /projects/[slug] arrives with C6.
+  // C4, which replaces its rule; /projects/[slug] arrives with C6. /home has
+  // no rule: it is a 301 to / that calls Astro.cache.set(false).
   routeRules: {
     '/': rule(['pages', 'projects', 'updates']),
     '/about': rule(['pages']),
@@ -56,8 +57,10 @@ export default defineConfig({
     '/support': rule(['pages', 'supports']),
     '/updates': rule(['updates']),
     '/updates/[...slug]': rule(['updates']),
-    '/sitemap.xml': rule(['projects', 'updates']),
-    '/sitemap-[collection].xml': rule(['projects', 'updates']),
+    // The collections EmDash lists in the sitemap: routable ones with SEO.
+    // services and supports are not routable (seed/seed.json), so not listed.
+    '/sitemap.xml': rule(['pages', 'projects', 'updates']),
+    '/sitemap-[collection].xml': rule(['pages', 'projects', 'updates']),
   },
   integrations: [
     react(), // Required: the admin UI is a React app
