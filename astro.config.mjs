@@ -30,12 +30,12 @@ export default defineConfig({
       auth: access({
         teamDomain: 'superbenefit.cloudflareaccess.com',
         audienceEnvVar: 'CF_ACCESS_AUDIENCE',
-        // Contributor (drafts only) for every member the Access policy lets
-        // in; Editor for the "Knowledge Stewardship" GitHub team; Admin for
-        // "Web Admins". Keys are compared, exactly and case-sensitively, with
-        // the group names Access returns; the first matching group wins.
+        // Everyone the Access policy lets in starts as Contributor (drafts
+        // only). Admins set Editor and Admin under Users in the CMS. No
+        // `roleMapping`: EmDash 1.5.0 reads the identity's `groups`, and
+        // GitHub sign-in returns teams under `teams`, so no key could match
+        // (docs/relaunch/architecture.md, Auth).
         defaultRole: 20,
-        roleMapping: { 'Web Admins': 50, 'Knowledge Stewardship': 40 },
       }),
     }),
   ],
