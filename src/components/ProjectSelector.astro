@@ -1,0 +1,425 @@
+---
+/**
+ * The home page project selector: the `sel` rules in
+ * docs/relaunch/mockups/mockups.css, with the behaviour of
+ * docs/relaunch/mockups/project-selector.reference.js and the owner's
+ * template for it (docs/relaunch/mockups/README.md, "Project selector").
+ *
+ * - Names on the left; one panel open at a time with cover, logo, status,
+ *   place, summary and a link. Under 900 px it is an accordion.
+ * - At 900 px and wider, without reduced motion, the orange bar under the
+ *   active name fills over 7 seconds (CSS animation `sel-fill`); when it
+ *   ends, the next project opens (the template's `onAnimationEnd` hand-off).
+ *   Hovering the selector pauses the fill (CSS).
+ * - Pause stops and resumes auto-advance (`is-paused`); its label is Pause
+ *   while playing and Play while paused, as in the template. Previous, next
+ *   and choosing a name change the project and pause it.
+ * - A counter shows the position. Under reduced motion there is no fill and
+ *   the Pause button is hidden (CSS).
+ * - Every panel sits in the same grid area at 900 px and wider, so the area
+ *   is as tall as the tallest panel and nothing below moves.
+ *
+ * Without JavaScript: the first project is open; each name is a link to its
+ * project page, so every project is reachable; the controls (which need
+ * JavaScript) stay hidden; and the selector starts `is-paused`, so the bar
+ * does not fill towards an advance that would not come. The script turns the
+ * names into the template's buttons, shows the controls and starts playing.
+ *
+ * The mockup's grid has four name rows (`repeat(4, auto) 1fr`, panel
+ * `span 5`, controls in row 5). Here the count comes from the number of
+ * projects (`--sel-n`): the panel spans every row (`1 / -1`) and the
+ * controls take the last row (`-2`), which for four projects are the same
+ * lines as the mockup's.
+ */
+import type { ImageValue } from 'emdash';
+import ImageSlot from './ImageSlot.astro';
+import StatusBadge from './StatusBadge.astro';
+import Button from './Button.astro';
+
+export interface SelectorProject {
+  href: string;
+  title: string;
+  summary: string;
+  status: 'active' | 'applicant' | 'past';
+  location?: string;
+  cover?: ImageValue | null;
+  logo?: ImageValue | null;
+}
+
+interface Props {
+  projects: SelectorProject[];
+}
+
+const { projects } = Astro.props;
+const n = projects.length;
+const arrow = 'M5 12h14M13 6l6 6-6 6';
+---
+
+{n > 0 && (
+  <div class="sel is-paused" data-sel>
+    <ul class="sel__list" style={`--sel-n: ${n}`}>
+      {projects.map((project, i) => (
+        <li class="sel__item">
+          <a class:list={['sel__name', { 'is-on': i === 0 }]} href={project.href} data-sel-name>
+            <span>{project.title}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg>
+            <span class="sel__bar"></span>
+          </a>
+          <article class:list={['sel__panel', { 'is-on': i === 0 }]}>
+            <div class="sel__cover">
+              <ImageSlot image={project.cover} />
+            </div>
+            <div class="sel__body">
+              <div class="sel__head">
+                <ImageSlot kind="logo" image={project.logo} initial={project.title.trim().charAt(0).toUpperCase()} />
+                <p class="sel__meta">
+                  <StatusBadge status={project.status} />
+                  {project.location && <span class="caps">{project.location}</span>}
+                </p>
+              </div>
+              <p class="sel__sum">{project.summary}</p>
+              <Button href={project.href} variant="ink" arrow><span>View {project.title}</span></Button>
+            </div>
+          </article>
+        </li>
+      ))}
+      <li class="sel__ctl" hidden data-sel-ctl>
+        <button class="sel__step" type="button" aria-label="Previous project" data-sel-prev>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+        </button>
+        <span class="caps sel__count" data-sel-count>1 / {n}</span>
+        <button class="sel__step" type="button" aria-label="Next project" data-sel-next>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg>
+        </button>
+        <button class="sel__toggle caps" type="button" aria-pressed="false" data-sel-toggle>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-sel-icon="pause"><path d="M9 6v12M15 6v12" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-sel-icon="play"><path d="M8 5l11 7-11 7z" /></svg>
+          <span data-sel-label>Pause</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+)}
+
+<script>
+  // Behaviour from docs/relaunch/mockups/project-selector.reference.js:
+  // go(i, stop) selects i (wrapping) and, when `stop`, pauses; the bar's
+  // animationend advances without pausing; the toggle flips `paused`.
+  // ClientRouter runs this module once per visit, so each selector is set up
+  // on astro:page-load (docs: https://docs.astro.build/en/guides/view-transitions/#script-behavior-with-view-transitions).
+  function setUp(root: HTMLElement) {
+    if (root.dataset.ready === 'true') return;
+    root.dataset.ready = 'true';
+
+    // The names are links without JavaScript; with it they are the
+    // template's buttons, which open a panel in place.
+    const names = [...root.querySelectorAll<HTMLAnchorElement>('[data-sel-name]')].map((link) => {
+      const button = document.createElement('button');
+      // Keep the class and Astro's scoped-style attribute; drop the link's own.
+      for (const { name, value } of [...link.attributes]) {
+        if (name !== 'href' && name !== 'data-sel-name') button.setAttribute(name, value);
+      }
+      button.type = 'button';
+      while (link.firstChild) button.appendChild(link.firstChild);
+      link.replaceWith(button);
+      return button;
+    });
+    const panels = [...root.querySelectorAll<HTMLElement>('.sel__panel')];
+    const count = root.querySelector<HTMLElement>('[data-sel-count]');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-sel-toggle]');
+    const n = names.length;
+    let sel = 0;
+    let paused = false;
+
+    const render = () => {
+      names.forEach((name, i) => {
+        name.classList.toggle('is-on', i === sel);
+        name.setAttribute('aria-expanded', i === sel ? 'true' : 'false');
+      });
+      panels.forEach((panel, i) => panel.classList.toggle('is-on', i === sel));
+      root.classList.toggle('is-paused', paused);
+      if (count) count.textContent = `${sel + 1} / ${n}`;
+      if (toggle) {
+        toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+        toggle.querySelector<SVGElement>('[data-sel-icon="pause"]')?.toggleAttribute('hidden', paused);
+        toggle.querySelector<SVGElement>('[data-sel-icon="play"]')?.toggleAttribute('hidden', !paused);
+        const label = toggle.querySelector<HTMLElement>('[data-sel-label]');
+        if (label) label.textContent = paused ? 'Play' : 'Pause';
+      }
+    };
+
+    const go = (i: number, stop: boolean) => {
+      sel = (i + n) % n;
+      if (stop) paused = true;
+      render();
+    };
+
+    names.forEach((name, i) => {
+      name.addEventListener('click', () => go(i, true));
+      name.querySelector('.sel__bar')?.addEventListener('animationend', () => {
+        if (i === sel && !paused) go(i + 1, false);
+      });
+    });
+    root.querySelector('[data-sel-prev]')?.addEventListener('click', () => go(sel - 1, true));
+    root.querySelector('[data-sel-next]')?.addEventListener('click', () => go(sel + 1, true));
+    toggle?.addEventListener('click', () => {
+      paused = !paused;
+      render();
+    });
+
+    root.querySelector<HTMLElement>('[data-sel-ctl]')?.removeAttribute('hidden');
+    render();
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-sel]').forEach(setUp);
+  });
+</script>
+
+<style>
+  /* From docs/relaunch/mockups/mockups.css, .sel rules, unchanged except the
+     row count at 900 px (see above) and the base-rule notes below. */
+  .sel__list {
+    display: grid;
+  }
+  .sel__item {
+    display: contents;
+  }
+  .sel__name {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    width: 100%;
+    min-height: 4.5rem;
+    padding-block: 0.9rem;
+    border-width: 2px 0px 0px;
+    border-style: solid none none;
+    border-color: rgba(237, 221, 200, 0.3) currentcolor currentcolor;
+    border-image: none;
+    background: none;
+    color: rgba(237, 221, 200, 0.7);
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.2rem + 1.3vw, 2.125rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-align: left;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+  .sel__name:hover,
+  .sel__name.is-on {
+    color: var(--color-cream);
+  }
+  .sel__name svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+  .sel__name.is-on svg {
+    opacity: 1;
+  }
+  .sel__bar {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: -3px;
+    height: 4px;
+    background: var(--color-orange);
+    transform: scaleX(0);
+    transform-origin: left center;
+    z-index: 1;
+  }
+  .sel__name.is-on .sel__bar {
+    transform: scaleX(1);
+  }
+  .sel__panel {
+    display: none;
+    overflow: hidden;
+    margin: 1rem 0px 1.5rem;
+    background: var(--color-cream-light);
+    color: var(--color-charcoal);
+    border: 2px solid var(--color-black);
+    border-radius: var(--radius-md);
+  }
+  .sel__panel.is-on {
+    display: block;
+  }
+  .sel__cover {
+    aspect-ratio: 16 / 9;
+    border-bottom: 2px solid var(--color-black);
+  }
+  .sel__cover :global(.slot) {
+    background: var(--color-cream);
+  }
+  .sel__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 1.25rem;
+  }
+  .sel__body :global(.btn) {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+  }
+  .sel__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  .sel__head :global(.logo-slot) {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--color-cream);
+    flex: 0 0 auto;
+  }
+  .sel__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-md);
+  }
+  .sel__sum {
+    font-size: var(--text-sm);
+    line-height: 1.55;
+  }
+  .sel__ctl {
+    display: none;
+  }
+  .sel__list > .sel__item:nth-last-child(2) .sel__name {
+    border-bottom: 2px solid rgba(237, 221, 200, 0.3);
+  }
+  .sel__step,
+  .sel__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0px;
+    border: 0px;
+    background: none;
+    color: rgba(237, 221, 200, 0.7);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+  .sel__toggle {
+    margin-left: auto;
+    font-weight: 500;
+  }
+  .sel__step:hover,
+  .sel__toggle:hover {
+    color: var(--color-cream);
+  }
+  .sel__step svg,
+  .sel__toggle svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sel__count {
+    min-width: 3rem;
+    text-align: center;
+    color: rgba(237, 221, 200, 0.7);
+  }
+  @media (min-width: 900px) {
+    .sel__list {
+      grid-template-columns: minmax(0px, 5fr) minmax(0px, 7fr);
+      column-gap: var(--space-xl-half);
+      grid-template-rows: repeat(var(--sel-n, 4), auto) 1fr;
+    }
+    .sel__name {
+      grid-column: 1;
+    }
+    .sel__panel {
+      display: block;
+      grid-column: 2;
+      grid-row: 1 / -1;
+      align-self: start;
+      margin: 0px;
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 300ms, transform 300ms, visibility linear 300ms;
+    }
+    .sel__panel.is-on {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      transition: opacity 300ms, transform 300ms, visibility;
+    }
+    .sel__body {
+      padding: var(--space-lg);
+    }
+    .sel__body :global(.btn) {
+      width: auto;
+      justify-content: center;
+      margin-top: 0px;
+    }
+    .sel__sum {
+      font-size: var(--text-base);
+    }
+    .sel__ctl {
+      grid-column: 1;
+      grid-row: -2;
+      align-self: start;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding-top: var(--space-lg);
+    }
+  }
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .sel__name.is-on .sel__bar {
+      animation: 7s linear 0s 1 normal forwards running sel-fill;
+    }
+    .sel:hover .sel__name.is-on .sel__bar {
+      animation-play-state: paused;
+    }
+    .sel.is-paused .sel__name.is-on .sel__bar {
+      animation: auto ease 0s 1 normal none running none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sel__toggle {
+      display: none;
+    }
+  }
+  @keyframes sel-fill {
+    0% {
+      transform: scaleX(0);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Differences from the mockups' stylesheet, for the owner's review:
+     - The site's base p rule sets max-width: 70ch; the mockups have none.
+     - The initial that stands in for a missing logo: in mockups.css the later
+       .sel__head .logo-slot rule gives it a cream background, on which its
+       cream letter cannot be seen. It keeps the charcoal background of
+       .logo-slot.logo-slot--initial here, as on the projects page. */
+  .sel__sum {
+    max-width: none;
+  }
+  .sel__head :global(.logo-slot.logo-slot--initial) {
+    background: var(--color-charcoal);
+  }
+</style>

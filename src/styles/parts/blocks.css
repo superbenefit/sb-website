@@ -1,0 +1,52 @@
+/*
+ * Support and service items: `.blocks` and `.block`.
+ * Copied from docs/relaunch/mockups/mockups.css; keep the values in step.
+ */
+.blocks {
+  border-bottom: var(--rule);
+}
+
+.block {
+  display: grid;
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  border-top: var(--rule);
+}
+
+.block h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.block__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0px;
+}
+
+.block__sum {
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+.block__main > p {
+  max-width: 62ch;
+}
+
+.block .ledger {
+  margin: 0px;
+}
+
+@media (min-width: 900px) {
+  .block {
+    grid-template-columns: minmax(0px, 4fr) minmax(0px, 8fr);
+    gap: var(--space-xl);
+    padding-block: var(--space-xl-half);
+  }
+}

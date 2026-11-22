@@ -1,0 +1,123 @@
+/* Project card and its grid: the `pgrid` and `cc` rules in
+   docs/relaunch/mockups/mockups.css, copied unchanged. */
+
+.pgrid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 760px) {
+  .pgrid {
+    grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+}
+
+.pgrid > li {
+  display: flex;
+}
+
+.cc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-cream-light);
+  border: var(--rule);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.cc:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 0 var(--color-charcoal);
+}
+
+.cc:focus-within {
+  outline: 3px solid var(--color-charcoal);
+  outline-offset: 3px;
+}
+
+.cc a:focus-visible {
+  outline: none;
+}
+
+.cc__cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-bottom: var(--rule);
+}
+
+.cc__cover .slot {
+  background: var(--color-cream);
+}
+
+.cc__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1 1 0%;
+  padding: 1.25rem;
+}
+
+.cc__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.cc__head .logo-slot {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--color-cream);
+  flex: 0 0 auto;
+}
+
+.cc__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-md);
+}
+
+.cc h2,
+.cc h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1.25rem + 1.1vw, 2rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.cc h2 a::after,
+.cc h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0px;
+}
+
+.cc p.sum {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.cc__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 2px solid rgba(45, 45, 45, 0.15);
+}
+
+.cc__foot svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
