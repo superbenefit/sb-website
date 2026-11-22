@@ -1,0 +1,46 @@
+---
+/**
+ * Rich text: a Portable Text field rendered by EmDash's <PortableText> inside
+ * the mockup's `prose` box (docs/relaunch/mockups/mockups.css; the rules are
+ * the PROSE section of src/styles/global.css). Used by every page that shows
+ * a body field (about, project, update).
+ *
+ * EmDash renders text blocks (headings, paragraphs, lists, quotes) and the
+ * table itself. Three block types are replaced, the documented way
+ * (components passed to <PortableText> override EmDash's built-ins for the
+ * same type: https://docs.emdashcms.com/plugins/creating-native-plugins/portable-text-components/):
+ * - `image`: the mockup's figure, a bordered 16:9 frame and a caption.
+ * - `code`: a plain <pre><code>, the mockup's code block.
+ * - `iframe`: YouTube and Vimeo players load only when Play is pressed;
+ *   other iframes render as EmDash renders them.
+ * `table` is wrapped in the mockup's `scroll` box.
+ */
+import type { PortableTextBlock } from 'emdash';
+import { PortableText } from 'emdash/ui';
+import RichTextCode from './RichTextCode.astro';
+import RichTextIframe from './RichTextIframe.astro';
+import RichTextImage from './RichTextImage.astro';
+import RichTextTable from './RichTextTable.astro';
+
+interface Props {
+  value: PortableTextBlock[] | null | undefined;
+  class?: string;
+}
+
+const { value, class: className } = Astro.props;
+
+const components = {
+  type: {
+    image: RichTextImage,
+    code: RichTextCode,
+    iframe: RichTextIframe,
+    table: RichTextTable,
+  },
+};
+---
+
+{value && value.length > 0 && (
+  <div class:list={['prose', className]}>
+    <PortableText value={value} components={components} />
+  </div>
+)}

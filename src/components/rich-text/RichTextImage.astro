@@ -1,0 +1,56 @@
+---
+/**
+ * Portable Text `image` block as the mockup's body figure: the image in a
+ * bordered 16:9 `frame`, then the caption (`.prose figure` in
+ * src/styles/global.css; docs/relaunch/mockups/pages/update.html).
+ *
+ * The image itself is EmDash's documented <Image> from `emdash/ui`
+ * (https://docs.emdashcms.com/guides/querying-content/), which serves it
+ * through `/_image` when it can be optimised. The block's asset reference is
+ * passed to it as a media value: the media id, the stored file URL (the
+ * editor saves `/_emdash/api/media/file/{key}`) and the provider for external
+ * media. The EmDash 1.5.0 editor also stores a link, an alignment and display
+ * sizes on an image; the mockup shows none of them, so they are not rendered.
+ */
+import { Image } from 'emdash/ui';
+
+interface Props {
+  node: {
+    _type: 'image';
+    _key: string;
+    asset?: { _ref?: string; id?: string; url?: string; src?: string; provider?: string };
+    alt?: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+    blurhash?: string;
+    dominantColor?: string;
+  };
+}
+
+const { node } = Astro.props;
+const asset = node?.asset;
+const id = asset?._ref || asset?.id || '';
+const url = asset?.url || asset?.src || undefined;
+const provider = asset?.provider && asset.provider !== 'local' ? asset.provider : undefined;
+const size = (value: unknown) => (typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : undefined);
+const image = asset && (id || url)
+  ? {
+      id,
+      ...(provider ? { provider } : { src: url }),
+      alt: node.alt ?? '',
+      width: size(node.width),
+      height: size(node.height),
+      blurhash: node.blurhash,
+      dominantColor: node.dominantColor,
+    }
+  : undefined;
+const caption = typeof node?.caption === 'string' ? node.caption.trim() : '';
+---
+
+{image && (
+  <figure>
+    <div class="frame"><Image image={image} /></div>
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+)}

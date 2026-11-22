@@ -1,18 +1,25 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { getEmDashEntry } from 'emdash';
+import PageHero from '../../components/PageHero.astro';
+import WaveDivider from '../../components/WaveDivider.astro';
+import RichText from '../../components/rich-text/RichText.astro';
 import { sanitizeHtml } from '../../utils/sanitize';
 
 // Rendered on demand (docs/relaunch/architecture.md, Rendering per route): the
-// entry is looked up by the slug in the URL. It still comes from the legacy
+// entry is looked up by the slug in the URL. An EmDash `updates` entry is
+// shown with its title and body only (C2, #36: the rich-text renderer); the
+// rest of the update page is C7. Otherwise the entry comes from the legacy
 // `updates` collection until C7 and B7.
 const slug = Astro.params.slug?.replace(/\/+$/, '');
-const post = (await getCollection('updates', ({ data }) => !data.draft)).find((entry) => entry.id === slug);
-if (!post) {
+const { entry: update } = slug ? await getEmDashEntry('updates', slug) : { entry: null };
+const post = update ? undefined : (await getCollection('updates', ({ data }) => !data.draft)).find((entry) => entry.id === slug);
+if (!update && !post) {
   return Astro.rewrite('/404');
 }
 
-const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
+const formattedDate = post?.data.publishedAt.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -23,6 +30,33 @@ const formattedDate = post.data.publishedAt.toLocaleDateString('en-US', {
 const pageIsDraft = true;
 const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
 ---
+
+{update ? (
+  <BaseLayout title={`${update.data.title} — SuperBenefit Updates`} description={update.data.excerpt ?? ''} type="article" noindex={showDraftPlaceholder}>
+    {showDraftPlaceholder ? (
+      <section class="draft-placeholder">
+        <div class="container">
+          <span class="section-label">Draft</span>
+          <h1>Coming soon</h1>
+          <p>We're working on this page. Check back soon.</p>
+          <a href="/" class="draft-cta">Back to home</a>
+        </div>
+      </section>
+    ) : (
+      <>
+        <PageHero title={update.data.title} variant="gold" compact />
+        <WaveDivider bg="gold" fill="cream" />
+        <section class="sec">
+          <div class="wrap">
+            <article class="article">
+              <RichText value={update.data.body} />
+            </article>
+          </div>
+        </section>
+      </>
+    )}
+  </BaseLayout>
+) : post && (
 
 <BaseLayout
   title={`${post.data.title} — SuperBenefit Updates`}
@@ -84,8 +118,28 @@ const showDraftPlaceholder = pageIsDraft && import.meta.env.PROD;
     </>
   )}
 </BaseLayout>
+)}
 
 <style>
+  /* The update page's section and article column (`sec`, `article` in
+     docs/relaunch/mockups/mockups.css), so the rich text sits at the mockup's
+     width. C7 builds the rest of the page. */
+  .sec {
+    background: var(--color-cream);
+    padding-block: var(--space-xl);
+  }
+
+  @media (min-width: 900px) {
+    .sec {
+      padding-block: 6.5rem;
+    }
+  }
+
+  .article {
+    max-width: 47.5rem;
+    margin-inline: auto;
+  }
+
   /* ===== Draft placeholder (production only, when pageIsDraft === true) ===== */
   .draft-placeholder {
     background: var(--color-cream);

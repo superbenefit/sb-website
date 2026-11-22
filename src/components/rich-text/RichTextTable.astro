@@ -1,0 +1,25 @@
+---
+/**
+ * Portable Text `table` block: EmDash's own Table component, which reads the
+ * editor's table format, inside the mockup's `scroll` box, so a wide table
+ * scrolls inside the column. The mockup's look (rules between rows, caps
+ * header) is applied to EmDash's markup in the PROSE section of
+ * src/styles/global.css. The EmDash 1.5.0 table has no caption field.
+ *
+ * `emdash/ui` 1.5.0 does not export the Table component by name (neither its
+ * type declarations nor its runtime entry), so it is taken from
+ * `emdashComponents`, the exported map of EmDash's built-in Portable Text
+ * renderers.
+ */
+import { emdashComponents } from 'emdash/ui';
+
+const Table = emdashComponents.type.table;
+
+interface Props {
+  node: unknown;
+}
+
+const { node } = Astro.props;
+---
+
+<div class="scroll"><Table node={node} /></div>
