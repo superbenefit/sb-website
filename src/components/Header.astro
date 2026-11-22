@@ -109,27 +109,34 @@ const relFor = (target?: string) => (target === '_blank' ? 'noopener noreferrer'
 <script>
   // The header is re-rendered on every page (it is not persisted across view
   // transitions), so the button is wired up again after each navigation.
+  const menuParts = () => ({
+    button: document.querySelector<HTMLButtonElement>('.hd__menu'),
+    sheet: document.getElementById('site-menu'),
+  });
+
+  const setOpen = (open: boolean) => {
+    const { button, sheet } = menuParts();
+    if (!button || !sheet) return;
+    button.setAttribute('aria-expanded', String(open));
+    sheet.hidden = !open;
+  };
+
   document.addEventListener('astro:page-load', () => {
-    const button = document.querySelector<HTMLButtonElement>('.hd__menu');
-    const sheet = document.getElementById('site-menu');
-    if (!button || !sheet || button.dataset.ready === 'true') return;
+    const { button } = menuParts();
+    if (!button || button.dataset.ready === 'true') return;
     button.dataset.ready = 'true';
-
-    const setOpen = (open: boolean) => {
-      button.setAttribute('aria-expanded', String(open));
-      sheet.hidden = !open;
-    };
-
     button.addEventListener('click', () => {
       setOpen(button.getAttribute('aria-expanded') !== 'true');
     });
+  });
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
-        setOpen(false);
-        button.focus();
-      }
-    });
+  // Registered once: the module runs a single time, whatever the number of navigations.
+  document.addEventListener('keydown', (event) => {
+    const { button } = menuParts();
+    if (event.key === 'Escape' && button?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      button.focus();
+    }
   });
 </script>
 
