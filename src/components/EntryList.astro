@@ -59,6 +59,14 @@ const formatDate = (date: Date) =>
     color: inherit;
   }
 
+  /* `contain: size` keeps a real cover's own height out of the frame's size,
+     so the frame's aspect-ratio alone sets its height, as with the
+     placeholder (https://developer.mozilla.org/en-US/docs/Web/CSS/contain);
+     the same rule as the project card's cover in ProjectCard.astro. */
+  .entry__cover :global(.has-image) {
+    contain: size;
+  }
+
   /* The site's base h1 to h4 rule adds text-wrap: balance; the mockups'
      entry title has none. */
   h3 {

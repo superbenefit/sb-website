@@ -25,7 +25,7 @@ import WaveDivider from '../../components/WaveDivider.astro';
 import ImageSlot from '../../components/ImageSlot.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import RichText from '../../components/rich-text/RichText.astro';
-import { bylineNames, formatUpdateDate, projectHref } from '../../utils/updates';
+import { bylineNames, formatUpdateDate } from '../../utils/updates';
 import '../../styles/parts/sec.css';
 import '../../styles/parts/more.css';
 
@@ -82,15 +82,7 @@ const project = update.references?.project.entries[0] ?? null;
           {project && (
             <>
               <p class="caps">About the project</p>
-              <ProjectCard
-                href={projectHref(project)}
-                title={project.data.title}
-                summary={project.data.summary}
-                status={project.data.project_status}
-                cover={project.data.cover}
-                logo={project.data.logo}
-                coverRatio="3 / 1"
-              />
+              <ProjectCard project={project} coverRatio="3 / 1" />
             </>
           )}
           <a class="more" href="/updates/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg> All updates</a>
@@ -124,6 +116,14 @@ const project = update.references?.project.entries[0] ?? null;
 
   .article__cover :global(.slot) {
     background: var(--color-cream-light);
+  }
+
+  /* `contain: size` keeps a real cover's own height out of the frame's size,
+     so the frame's aspect-ratio alone sets its height, as with the
+     placeholder (https://developer.mozilla.org/en-US/docs/Web/CSS/contain);
+     the same rule as the project card's cover in ProjectCard.astro. */
+  .article__cover :global(.has-image) {
+    contain: size;
   }
 
   .article__end {

@@ -27,7 +27,7 @@ Each gets a feature card and an overview page:
 - **Services page** (external, pairs with Local Capacity Building): deliverable- and SLA-focused work; training, experiment facilitation and similar. Pared down from the current three tiers.
 
 ## Content management
-Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack, set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`. Installed on `feature/relaunch` by B2 (#29); the pages do not read EmDash content yet.
+Use EmDash (Astro-native CMS on D1 + R2), properly integrated with the Cloudflare stack, set up exactly as the official Cloudflare deployment docs describe; see `architecture.md`. Installed on `feature/relaunch` by B2 (#29); page bodies read EmDash content as their page issues land (`/` since C3, #37; `/accelerator/` since C4, #38; `/services/` since C5, #39; `/projects/` and `/projects/{slug}/` since C6, #40).
 
 ## Design
 A SuperBenefit design system exists at `superbenefit/design-system`. The owner's mockups for the relaunch are in `mockups/` and are the design instructions: pages are built to match them.

@@ -9,6 +9,10 @@
  * Without one it is the mockup's labelled placeholder; a logo with an
  * `initial` is the mockup's `logo-slot--initial` instead, which the mockups
  * show for a project with no logo.
+ *
+ * `sizes` and `priority` are passed to <Image> when given (its props in
+ * node_modules/emdash/src/components/EmDashImage.astro): `sizes` for the
+ * responsive image, `priority` to load an image above the fold at once.
  */
 import type { ImageValue } from 'emdash';
 import { Image } from 'emdash/ui';
@@ -22,24 +26,34 @@ interface Props {
   /** For a logo with no image: the letter the mockup shows instead. */
   initial?: string;
   class?: string;
+  /** `sizes` for the responsive image. */
+  sizes?: string;
+  /** Load at once (an image above the fold). */
+  priority?: boolean;
 }
 
-const { image, kind = 'slot', label, initial, class: className } = Astro.props;
+const { image, kind = 'slot', label, initial, class: className, sizes, priority } = Astro.props;
 const hasImage = Boolean(image);
 const placeholder = label ?? (kind === 'logo' ? 'Logo' : 'Cover image, 16:9');
 const name = kind === 'logo' ? 'Project logo' : 'Cover image';
+// Only the props a caller gave: <Image> spreads its other props onto the
+// <img>, so an undefined `sizes` would replace the one it works out itself.
+const imageProps = {
+  ...(sizes ? { sizes } : {}),
+  ...(priority ? { priority } : {}),
+};
 ---
 
 {kind === 'logo' ? (
   hasImage ? (
-    <span class:list={['logo-slot', 'has-image', className]}><Image image={image} /></span>
+    <span class:list={['logo-slot', 'has-image', className]}><Image image={image} {...imageProps} /></span>
   ) : initial ? (
     <span class:list={['logo-slot', 'logo-slot--initial', className]} aria-hidden="true">{initial}</span>
   ) : (
     <span class:list={['logo-slot', className]} role="img" aria-label={name}>{placeholder}</span>
   )
 ) : hasImage ? (
-  <div class:list={['slot', 'has-image', className]}><Image image={image} /></div>
+  <div class:list={['slot', 'has-image', className]}><Image image={image} {...imageProps} /></div>
 ) : (
   <div class:list={['slot', 'caps', className]} role="img" aria-label={name}>{placeholder}</div>
 )}
@@ -50,20 +64,6 @@ const name = kind === 'logo' ? 'Project logo' : 'Cover image';
   .has-image {
     padding: 0;
     overflow: hidden;
-  }
-
-  /* The image is laid out out of flow, so it never sizes its frame: an
-     image taller than the frame (a 3:1 project card cover, a portrait image
-     in a 16:9 frame) would otherwise stretch the frame past its aspect
-     ratio, since the mockup's frames only size placeholders, which have no
-     height of their own. object-fit then crops it to the frame. */
-  .slot.has-image {
-    position: relative;
-  }
-
-  .slot.has-image :global(img) {
-    position: absolute;
-    inset: 0;
   }
 
   .has-image :global(img) {
