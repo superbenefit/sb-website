@@ -1,0 +1,47 @@
+---
+/**
+ * Update list: the `entries` grid of `entry` articles in
+ * docs/relaunch/mockups/mockups.css (rules in src/styles/parts/entries.css).
+ * Each entry shows its date, its title linking to the update, the excerpt
+ * when there is one, and the cover above the rule when there is one (an
+ * entry with no cover "simply runs shorter than its neighbours").
+ */
+import type { InferCollectionData } from 'emdash';
+import ImageSlot from './ImageSlot.astro';
+import '../styles/parts/entries.css';
+
+interface Props {
+  entries: { id: string; data: InferCollectionData<'updates'> }[];
+}
+
+const { entries } = Astro.props;
+
+const dateFormat = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<div class="entries">
+  {entries.map(({ id, data }) => {
+    const date = data.publishedAt ?? data.createdAt;
+    return (
+      <article class="entry">
+        <p class="caps"><time datetime={date.toISOString()}>{dateFormat.format(date)}</time></p>
+        <h3><a href={`/updates/${data.slug ?? id}/`}>{data.title}</a></h3>
+        {data.excerpt && <p>{data.excerpt}</p>}
+        {data.cover && (
+          <div class="entry__cover">
+            <ImageSlot image={data.cover} label="Cover image, 16:9" sizes="(min-width: 1024px) 376px, (min-width: 700px) 50vw, 100vw" />
+          </div>
+        )}
+      </article>
+    );
+  })}
+</div>
+
+<style>
+  /* The mockups' links take the text colour (mockups.css `a`); the legacy
+     base rule in global.css makes every link orange (findings.md, G1). */
+  .entry a,
+  .entry a:hover {
+    color: inherit;
+  }
+</style>

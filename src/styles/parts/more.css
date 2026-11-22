@@ -1,0 +1,30 @@
+/* Text link with an arrow ("All updates", "Visit the website"): the `more`
+   rules in docs/relaunch/mockups/mockups.css, copied unchanged. */
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 2.75rem;
+  font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-style: initial;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--color-orange);
+}
+
+.more svg {
+  width: 1.1em;
+  height: 1.1em;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--transition-fast);
+}
+
+.more:hover svg {
+  transform: translateX(3px);
+}

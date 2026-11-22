@@ -1,0 +1,72 @@
+---
+/**
+ * An image where the mockups show a placeholder: `slot` (a cover, filling its
+ * frame) or `logo-slot` (a logo in the bordered square). Rules in
+ * src/styles/parts/slot.css, from docs/relaunch/mockups/mockups.css; the
+ * frame around a cover (`cc__cover`, `pd__cover`, `entry__cover`) belongs to
+ * the part that uses it.
+ *
+ * With an image, it is EmDash's <Image> from `emdash/ui`
+ * (https://docs.emdashcms.com/guides/querying-content/), which serves it
+ * through `/_image` when it can be optimised. Without one, the mockup's
+ * labelled placeholder is shown. A caller that should show nothing when the
+ * field is empty (an optional logo or cover) leaves the slot out.
+ */
+import type { MediaValue } from 'emdash';
+import { Image } from 'emdash/ui';
+import '../styles/parts/slot.css';
+
+interface Props {
+  image?: MediaValue | null;
+  /** `logo` is the bordered square; otherwise the image fills its frame. */
+  logo?: boolean;
+  /** Alt text when the image has none; also the placeholder's label. */
+  alt?: string;
+  /** The placeholder's visible text. */
+  label?: string;
+  /** `sizes` for the responsive image. */
+  sizes?: string;
+  /** Load at once (an image above the fold). */
+  priority?: boolean;
+}
+
+const { image, logo = false, alt, label, sizes, priority = false } = Astro.props;
+const altText = image?.alt || alt || '';
+---
+
+{logo ? (
+  image ? (
+    <span class="logo-slot slot-media"><Image image={image} alt={altText} sizes={sizes ?? '72px'} priority={priority} /></span>
+  ) : (
+    <span class="logo-slot" role="img" aria-label={alt ?? 'Logo'}>{label ?? 'Logo'}</span>
+  )
+) : image ? (
+  <div class="slot-media slot-media--cover"><Image image={image} alt={altText} sizes={sizes} priority={priority} /></div>
+) : (
+  <div class="slot caps" role="img" aria-label={alt ?? 'Image'}>{label ?? 'Image'}</div>
+)}
+
+<style>
+  /* The image takes the place of the placeholder and fills the same box. */
+  .slot-media {
+    overflow: hidden;
+  }
+
+  .slot-media--cover {
+    width: 100%;
+    height: 100%;
+  }
+
+  .slot-media :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .slot-media--cover :global(img) {
+    object-fit: cover;
+  }
+
+  .logo-slot.slot-media :global(img) {
+    object-fit: contain;
+  }
+</style>

@@ -1,0 +1,17 @@
+---
+/**
+ * Term and value list: the `ledger` in docs/relaunch/mockups/mockups.css
+ * (rules in src/styles/parts/ledger.css). Each row is passed as a child,
+ * exactly as the mockups write it:
+ * `<div><dt class="caps">Partner</dt><dd>…</dd></div>`.
+ */
+import '../styles/parts/ledger.css';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<dl class:list={['ledger', className]}><slot /></dl>
