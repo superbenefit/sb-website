@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "npm@11.19.1",
+  "emdash": {
+    "seed": "seed/seed.json"
+  },
   "scripts": {
     "dev": "astro dev",
     "check": "wrangler types && astro check",
