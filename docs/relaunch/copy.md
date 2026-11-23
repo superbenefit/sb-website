@@ -51,7 +51,7 @@ Shown by `src/pages/accelerator.astro`: hero (`eyebrow`, `title`, `intro`, butto
 | `section_label` | How it works | 12 | 12 |
 | `section_heading` | Join as a cell, keep your decisions. | 36 | 38 |
 | `body 1` | The accelerator is for aligned teams that want to join SuperBenefit as cells. Each cell stays in charge of its own funds and decisions and uses the four supports below. | 168 | 187 |
-| `body 2` | Bring your own organization, anchor in our DAO, or pass through. Leave anytime. | 79 | 79 |
+| `body 2` | A team can bring its own organization or use our DAO, and leave at any time. | 76 | 79 |
 | `body 3` | To join, use [Talk to us about joining](/contact/) and tell us about your team. | 66 | none |
 | `cost_summary` | Peer support between cells. No prices. | 38 | 38 |
 | `SEO title` | Nonprofit DAO Accelerator | 25 | 60 |
@@ -186,7 +186,7 @@ Read 2026-11-23. Repository paths are on branch `feature/relaunch` unless marked
 | Services are for external organizations, deliverable- and SLA-focused: training, experiment facilitation and similar | `docs/relaunch/brief.md`, Accelerator/supports vs services | 2026-11-23 |
 | Four supports: people to work with, shared infrastructure, funding support, admin and paperwork (finding people, filings) | `docs/relaunch/mockups/pages/accelerator.html`; `origin/main:src/components/InternalServices.astro`; `docs/relaunch/issues.md`, D4 ("the four supports") | 2026-11-23 |
 | "Peer support between cells. No prices." | `docs/relaunch/mockups/pages/accelerator.html` and `home.html`; `docs/relaunch/brief.md` | 2026-11-23 |
-| "Bring your own organization, anchor in our DAO, or pass through. Leave anytime." | `docs/relaunch/mockups/pages/accelerator.html`; `origin/main:src/components/InternalServices.astro` | 2026-11-23 |
+| A team can bring its own organization or use SuperBenefit's DAO, and can leave at any time ("Bring your own organization, anchor in our DAO, or pass through. Leave anytime."; "Use our DAO and existing entity arrangements when you need them.") | `origin/main:src/components/InternalServices.astro`; `docs/relaunch/mockups/pages/accelerator.html` | 2026-11-23 |
 | Cells are small, self-directed teams working on shared problems, each in charge of its own funds and decisions | `docs/relaunch/mockups/pages/home.html`, `about.html`; `origin/main:src/pages/support/index.astro` | 2026-11-23 |
 | SuperBenefit is a worker self-directed nonprofit ("a Worker Self-Directed Non-Profit Digital LLC") | https://superbenefit.org/ (footer); `docs/relaunch/mockups/pages/about.html` | 2026-11-23 |
 | "Let's make better faster, together." | `origin/main:src/components/Hero.astro`; https://superbenefit.org/ | 2026-11-23 |
