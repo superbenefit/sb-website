@@ -94,9 +94,9 @@ export function updatesQueryString(query: UpdatesQuery): string {
  * updates whose title or excerpt holds every word (the body is not
  * searched: EmDash's full-text search needs the collection's `search`
  * support, which the content model does not turn on); `project` keeps the
- * updates that link to that project. A reference is read per update
- * (getUpdateProject), so with a project chosen every update's reference is
- * read; otherwise only the page's entries are.
+ * updates that link to that project, and the filter offers only projects
+ * that have updates. A reference is read per update (getUpdateProject), one
+ * query each, on every render of the index (finding Q1).
  */
 export async function getUpdatesPage(
   page: number,
@@ -107,17 +107,16 @@ export async function getUpdatesPage(
   totalPages: number;
   /** Updates that match the search and filter. */
   total: number;
-  /** Projects to offer in the filter: every published project. */
+  /** Projects to offer in the filter: those that at least one update links to. */
   projects: { slug: string; title: string }[];
   cacheHints: CacheHint[];
   error?: Error;
 }> {
-  const [{ entries: all, cacheHint, error }, projectList] = await Promise.all([
-    getEmDashCollection('updates', { orderBy: { published_at: query.sort === 'oldest' ? 'asc' : 'desc' } }),
-    getEmDashCollection('projects', { orderBy: { title: 'asc' } }),
-  ]);
+  const { entries: all, cacheHint, error } = await getEmDashCollection('updates', {
+    orderBy: { published_at: query.sort === 'oldest' ? 'asc' : 'desc' },
+  });
   if (error) console.error('[updates] index query failed:', error);
-  const hints: CacheHint[] = [cacheHint, projectList.cacheHint];
+  const hints: CacheHint[] = [cacheHint];
 
   const words = query.q.toLowerCase().split(/\s+/).filter(Boolean);
   let entries = words.length
@@ -134,14 +133,20 @@ export async function getUpdatesPage(
     missing.forEach((entry, i) => linked.set(entry.id, found[i]));
   };
 
+  // Every update's project is read, so the filter can offer just the projects
+  // that have updates.
+  await lookUp(all);
+  const withUpdates = new Map<string, string>();
+  for (const { project } of linked.values()) {
+    if (project?.data.slug) withUpdates.set(project.data.slug, project.data.title);
+  }
+
   if (query.project) {
-    await lookUp(entries);
     entries = entries.filter((entry) => linked.get(entry.id)?.project?.data.slug === query.project);
   }
 
   const totalPages = Math.max(1, Math.ceil(entries.length / UPDATES_PER_PAGE));
   const pageEntries = entries.slice((page - 1) * UPDATES_PER_PAGE, page * UPDATES_PER_PAGE);
-  await lookUp(pageEntries);
   for (const result of linked.values()) hints.push(result.cacheHint);
 
   const items = pageEntries.map((entry): EntryItem => {
@@ -161,9 +166,9 @@ export async function getUpdatesPage(
     page,
     totalPages,
     total: entries.length,
-    projects: projectList.entries
-      .filter((project) => project.data.slug)
-      .map((project) => ({ slug: project.data.slug as string, title: project.data.title })),
+    projects: [...withUpdates]
+      .map(([slug, title]) => ({ slug, title }))
+      .sort((a, b) => a.title.localeCompare(b.title)),
     cacheHints: hints,
     error,
   };

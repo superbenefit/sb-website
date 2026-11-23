@@ -228,6 +228,7 @@ Created at the owner's request. All previews share them. They are bound in the `
 
 ### Updates index as a blog feed (branch `c14-updates-blog`, #41; owner, 2026-11-23)
 - The index now reads as a blog page, in place of the mockup's three-column card grid: a compact hero; the tools as one slim row just under the wave (a search field with a magnifier icon on the left, Project and Sort on the right, no boxes or buttons, a hairline under the row); then the posts, each with its date and project above the title, the excerpt and a "Read" link. On the first page of the plain list the newest post is large, with its cover beside it; every other post is a row with a 300 px cover thumbnail. Under 760 px the cover sits above the text.
+- The Project filter lists only projects that at least one update links to (owner, 2026-11-23; branch `c15-updates-filter`). To know that, the index reads every update's project reference on each render, one query per update (finding Q1); with no such project the filter is left out.
 - Post titles are `h2`, so the page no longer skips from `h1` to `h3` (finding Y1). The home page and project pages keep the card grid (`EntryList`).
 - Checked locally with the 17 imported posts at 1440 and 390 px: screenshots looked at; no horizontal overflow; axe (WCAG 2.1 A and AA) reports no violation on the plain list, a filtered list, the empty result and page 2; choosing a sort in a browser reloads with it.
 
