@@ -50,7 +50,7 @@ const caption = typeof node?.caption === 'string' ? node.caption.trim() : '';
 
 {image && (
   <figure>
-    <div class="frame"><Image image={image} /></div>
+    <div class="frame"><Image image={image} sizes="(min-width: 800px) 760px, 100vw" /></div>
     {caption && <figcaption>{caption}</figcaption>}
   </figure>
 )}

@@ -1,6 +1,6 @@
 ---
 import UpdatesIndex from '../../../components/UpdatesIndex.astro';
-import { getUpdatesPage } from '../../../utils/updates';
+import { getUpdatesPage, readUpdatesQuery } from '../../../utils/updates';
 
 // Pages 2 and on of the updates index: /updates/page/{n}/. A path segment,
 // not a query string, so each page has its own canonical URL (BaseLayout
@@ -18,10 +18,19 @@ if (page === 1) {
 if (!Number.isSafeInteger(page)) {
   return Astro.rewrite('/404');
 }
-const data = await getUpdatesPage(page);
+const query = readUpdatesQuery(Astro.url);
+const data = await getUpdatesPage(page, query);
 if (page > data.totalPages) {
   return Astro.rewrite('/404');
 }
 ---
 
-<UpdatesIndex items={data.items} page={page} totalPages={data.totalPages} cacheHints={data.cacheHints} />
+<UpdatesIndex
+  items={data.items}
+  page={page}
+  totalPages={data.totalPages}
+  total={data.total}
+  projects={data.projects}
+  query={query}
+  cacheHints={data.cacheHints}
+/>

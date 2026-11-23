@@ -44,7 +44,7 @@ const formatDate = (date: Date) =>
       )}
       {entry.cover && (
         <div class="entry__cover">
-          <ImageSlot image={entry.cover} />
+          <ImageSlot image={entry.cover} sizes="(min-width: 1024px) 368px, (min-width: 700px) 50vw, 100vw" />
         </div>
       )}
     </article>

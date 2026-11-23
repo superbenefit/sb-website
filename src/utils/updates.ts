@@ -52,34 +52,100 @@ export function updateHref(update: UpdateData): string {
   return `/updates/${update.data.slug ?? update.id}/`;
 }
 
+/** What the updates index can be narrowed and ordered by (the query string of /updates/). */
+export interface UpdatesQuery {
+  /** Words to find in a title or excerpt. */
+  q: string;
+  /** Slug of the project to show updates for; empty for all. */
+  project: string;
+  sort: 'newest' | 'oldest';
+}
+
+/** Reads `q`, `project` and `sort` from a URL's query string; anything else is ignored. */
+export function readUpdatesQuery(url: URL): UpdatesQuery {
+  return {
+    q: (url.searchParams.get('q') ?? '').trim().slice(0, 100),
+    project: (url.searchParams.get('project') ?? '').trim().slice(0, 100),
+    sort: url.searchParams.get('sort') === 'oldest' ? 'oldest' : 'newest',
+  };
+}
+
+/** The query string for a set of choices, without the defaults: "" or "?q=…&project=…&sort=oldest". */
+export function updatesQueryString(query: UpdatesQuery): string {
+  const params = new URLSearchParams();
+  if (query.q) params.set('q', query.q);
+  if (query.project) params.set('project', query.project);
+  if (query.sort === 'oldest') params.set('sort', 'oldest');
+  const text = params.toString();
+  return text ? `?${text}` : '';
+}
+
 /**
- * One page of the updates index, newest first.
+ * One page of the updates index.
  *
  * EmDash 1.5.0 offers cursor and offset pagination with `hasMore`, and no
  * total count ("Cursor pagination does not calculate a total page count",
  * querying-content guide). The mockup's pager reads "Page 1 of 3", so the
  * index reads every published update in one query, ordered by
- * `published_at`, and slices the page from it. Only the page's entries get
- * their project looked up.
+ * `published_at` (`orderBy`, querying-content guide), and slices the page
+ * from it.
+ *
+ * Search and the project filter work on that same list: `q` keeps the
+ * updates whose title or excerpt holds every word (the body is not
+ * searched: EmDash's full-text search needs the collection's `search`
+ * support, which the content model does not turn on); `project` keeps the
+ * updates that link to that project. A reference is read per update
+ * (getUpdateProject), so with a project chosen every update's reference is
+ * read; otherwise only the page's entries are.
  */
-export async function getUpdatesPage(page: number): Promise<{
+export async function getUpdatesPage(
+  page: number,
+  query: UpdatesQuery = { q: '', project: '', sort: 'newest' },
+): Promise<{
   items: EntryItem[];
   page: number;
   totalPages: number;
+  /** Updates that match the search and filter. */
+  total: number;
+  /** Projects to offer in the filter: every published project. */
+  projects: { slug: string; title: string }[];
   cacheHints: CacheHint[];
   error?: Error;
 }> {
-  const { entries, cacheHint, error } = await getEmDashCollection('updates', {
-    orderBy: { published_at: 'desc' },
-  });
+  const [{ entries: all, cacheHint, error }, projectList] = await Promise.all([
+    getEmDashCollection('updates', { orderBy: { published_at: query.sort === 'oldest' ? 'asc' : 'desc' } }),
+    getEmDashCollection('projects', { orderBy: { title: 'asc' } }),
+  ]);
   if (error) console.error('[updates] index query failed:', error);
+  const hints: CacheHint[] = [cacheHint, projectList.cacheHint];
+
+  const words = query.q.toLowerCase().split(/\s+/).filter(Boolean);
+  let entries = words.length
+    ? all.filter((entry) => {
+        const text = `${entry.data.title ?? ''} ${entry.data.excerpt ?? ''}`.toLowerCase();
+        return words.every((word) => text.includes(word));
+      })
+    : all;
+
+  const linked = new Map<string, Awaited<ReturnType<typeof getUpdateProject>>>();
+  const lookUp = async (list: typeof entries) => {
+    const missing = list.filter((entry) => !linked.has(entry.id));
+    const found = await Promise.all(missing.map((entry) => getUpdateProject(entry.id)));
+    missing.forEach((entry, i) => linked.set(entry.id, found[i]));
+  };
+
+  if (query.project) {
+    await lookUp(entries);
+    entries = entries.filter((entry) => linked.get(entry.id)?.project?.data.slug === query.project);
+  }
 
   const totalPages = Math.max(1, Math.ceil(entries.length / UPDATES_PER_PAGE));
   const pageEntries = entries.slice((page - 1) * UPDATES_PER_PAGE, page * UPDATES_PER_PAGE);
-  const projects = await Promise.all(pageEntries.map((entry) => getUpdateProject(entry.id)));
+  await lookUp(pageEntries);
+  for (const result of linked.values()) hints.push(result.cacheHint);
 
-  const items = pageEntries.map((entry, i): EntryItem => {
-    const project = projects[i].project;
+  const items = pageEntries.map((entry): EntryItem => {
+    const project = linked.get(entry.id)?.project ?? null;
     return {
       href: updateHref(entry),
       title: entry.data.title,
@@ -94,7 +160,11 @@ export async function getUpdatesPage(page: number): Promise<{
     items,
     page,
     totalPages,
-    cacheHints: [cacheHint, ...projects.map((p) => p.cacheHint)],
+    total: entries.length,
+    projects: projectList.entries
+      .filter((project) => project.data.slug)
+      .map((project) => ({ slug: project.data.slug as string, title: project.data.title })),
+    cacheHints: hints,
     error,
   };
 }

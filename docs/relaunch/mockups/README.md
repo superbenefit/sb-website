@@ -42,8 +42,8 @@ Class names are the mockup's own; find the rules in `mockups.css`.
 | Footer with "Site" and "Elsewhere" menus. Changed after the mockups (owner, 2026-11-22): the footer's coloured stripe runs edge to edge across the window, like the header stripe; the logo, menus and base line stay in the 1200 px column. | `ft` | every page |
 | Closing call-to-action band | `close` | every page except the error pages |
 | Buttons: `btn--accent`, `btn--ink`, `btn--line` | `btn` | every page |
-| Page hero with kicker, title, intro, actions; variants `ph--black`, `--charcoal`, `--gold`, `--green`, `--orange`, `--red`, `--compact` | `ph` | every page except home |
-| Home hero | `hero` | home |
+| Page hero with kicker, title, intro, actions. Changed after the mockups (owner, 2026-11-23): the About hero shows the SuperBenefit wordmark logo, not the icon; variants `ph--black`, `--charcoal`, `--gold`, `--green`, `--orange`, `--red`, `--compact` | `ph` | every page except home |
+| Home hero. Changed after the mockups (owner, 2026-11-23): the hero has no icon image (`hero__art`), and the Updates section always shows, with the `empty` box when there are no updates. | `hero` | home |
 | Wave divider between sections | `dv` | most pages |
 | Section, dark section, two-column split | `sec`, `sec--ink`, `split` | most pages |
 | The two audience panels on home | `doors`, `door` | home |
@@ -56,6 +56,7 @@ Class names are the mockup's own; find the rules in `mockups.css`.
 | Support and service items | `blocks`, `block` | accelerator, services |
 | Update list and entry | `entries`, `entry` | home, project, updates |
 | Pagination | `pager` | updates |
+| Search, project filter and sort above the updates list. Added after the mockups (owner, 2026-11-23); built from the `caps` labels, the form field look and `btn`. | `tools` | updates |
 | Update article layout | `article` | update |
 | Rich text: headings, lists, quote, figure, code, table | `prose`, `quote`, `scroll` | about, project, update |
 | Click-to-load video | `video`, `frame` | update |
@@ -71,6 +72,7 @@ The mockups use the tokens already in `src/styles/global.css` (colours, type sca
 | Token | Value |
 | --- | --- |
 | `--radius-sm`, `--radius-md`, `--radius-pill` | 8px, 12px, 50px |
+| `--color-red-deep` | Changed after the mockups (owner, 2026-11-23): `#8f3b24`, a calmer brick red, in place of `#a83215`, which was jarring as the hero background on the projects pages. Used by the red page hero and its wave, and the contact form's error colour. Cream text on it is 5.6:1. |
 | `--space-xl-half` | 3rem |
 | `--rule`, `--rule-dark` | 2px solid charcoal; 2px solid cream |
 | `--stripe` | four equal bands: red, orange, gold, green |

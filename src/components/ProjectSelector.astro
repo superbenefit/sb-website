@@ -67,11 +67,11 @@ const arrow = 'M5 12h14M13 6l6 6-6 6';
           </a>
           <article class:list={['sel__panel', { 'is-on': i === 0 }]}>
             <div class="sel__cover">
-              <ImageSlot image={project.cover} />
+              <ImageSlot image={project.cover} sizes="(min-width: 900px) 600px, 100vw" />
             </div>
             <div class="sel__body">
               <div class="sel__head">
-                <ImageSlot kind="logo" image={project.logo} initial={project.title.trim().charAt(0).toUpperCase()} />
+                <ImageSlot kind="logo" image={project.logo} sizes="56px" initial={project.title.trim().charAt(0).toUpperCase()} />
                 <p class="sel__meta">
                   <StatusBadge status={project.status} />
                   {project.location && <span class="caps">{project.location}</span>}

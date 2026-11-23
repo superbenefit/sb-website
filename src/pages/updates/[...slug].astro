@@ -75,7 +75,7 @@ const project = update.references?.project.entries[0] ?? null;
         {data.excerpt && <p class="article__lead">{data.excerpt}</p>}
         {data.cover && (
           <div class="article__cover">
-            <ImageSlot image={data.cover} />
+            <ImageSlot image={data.cover} sizes="(min-width: 800px) 760px, 100vw" priority />
           </div>
         )}
         <RichText value={data.body} />

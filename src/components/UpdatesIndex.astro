@@ -23,6 +23,8 @@ import PageHero from './PageHero.astro';
 import WaveDivider from './WaveDivider.astro';
 import EntryList from './EntryList.astro';
 import type { EntryItem } from './EntryList.astro';
+import { updatesQueryString } from '../utils/updates';
+import type { UpdatesQuery } from '../utils/updates';
 import '../styles/parts/sec.css';
 import '../styles/parts/empty.css';
 
@@ -30,31 +32,92 @@ interface Props {
   items: EntryItem[];
   page: number;
   totalPages: number;
+  /** Updates that match the search and filter. */
+  total: number;
+  /** Projects offered in the filter. */
+  projects: { slug: string; title: string }[];
+  query: UpdatesQuery;
   cacheHints: CacheHint[];
 }
 
-const { items, page, totalPages, cacheHints } = Astro.props;
+const { items, page, totalPages, total, projects, query, cacheHints } = Astro.props;
 
 const { entry: pageEntry, cacheHint: pageHint } = await getEmDashEntry('pages', 'updates');
+// A search can be any text, so its results are not stored in the cache; the
+// filter and sort have a fixed set of values and are cached like the plain list.
 if (Astro.cache?.enabled) {
-  for (const hint of [pageHint, ...cacheHints]) Astro.cache.set(hint);
+  if (query.q) Astro.cache.set(false);
+  else for (const hint of [pageHint, ...cacheHints]) Astro.cache.set(hint);
 }
 
 const title = pageEntry?.data.title || 'Updates';
 const intro = pageEntry?.data.intro || undefined;
 
-const pageHref = (n: number) => (n <= 1 ? '/updates/' : `/updates/page/${n}/`);
+const search = updatesQueryString(query);
+const narrowed = Boolean(query.q || query.project);
+const pageHref = (n: number) => `${n <= 1 ? '/updates/' : `/updates/page/${n}/`}${search}`;
+const chosenProject = projects.find((project) => project.slug === query.project);
 const newer = page > 1 ? pageHref(page - 1) : null;
 const older = page < totalPages ? pageHref(page + 1) : null;
 ---
 
-<BaseLayout title={title} description={intro ?? ''} seo={pageEntry ?? undefined} pageNumber={page} bandFrom="cream">
+<BaseLayout
+  title={title}
+  description={intro ?? ''}
+  seo={pageEntry ?? undefined}
+  pageNumber={page}
+  noindex={narrowed || query.sort === 'oldest'}
+  bandFrom="cream"
+>
   <PageHero title={title} intro={intro} variant="gold" />
   <WaveDivider bg="gold" fill="cream" />
   <section class="sec">
     <div class="wrap">
+      <form class="tools" method="get" action="/updates/" role="search" aria-label="Updates">
+        <div class="tools__search">
+          <label class="caps" for="updates-q">Search</label>
+          <div class="tools__row">
+            <input id="updates-q" type="search" name="q" value={query.q} placeholder="Search titles and summaries" maxlength="100" />
+            <button class="btn btn--ink" type="submit">Search</button>
+          </div>
+        </div>
+        <div class="tools__filters">
+          {projects.length > 0 && (
+            <div class="tools__field">
+              <label class="caps" for="updates-project">Project</label>
+              <select id="updates-project" name="project" data-submit-on-change>
+                <option value="">All projects</option>
+                {projects.map((project) => (
+                  <option value={project.slug} selected={project.slug === query.project}>{project.title}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div class="tools__field">
+            <label class="caps" for="updates-sort">Sort</label>
+            <select id="updates-sort" name="sort" data-submit-on-change>
+              <option value="newest" selected={query.sort === 'newest'}>Newest</option>
+              <option value="oldest" selected={query.sort === 'oldest'}>Oldest</option>
+            </select>
+          </div>
+          <noscript><button class="btn btn--line" type="submit">Apply</button></noscript>
+        </div>
+      </form>
+      {narrowed && (
+        <p class="tools__status" role="status">
+          {total === 1 ? '1 update' : `${total} updates`}
+          {query.q && <> matching “{query.q}”</>}
+          {chosenProject && <> in {chosenProject.title}</>}.
+          {' '}<a href={`/updates/${query.sort === 'oldest' ? '?sort=oldest' : ''}`}>Clear</a>
+        </p>
+      )}
       {items.length > 0 ? (
         <EntryList entries={items} />
+      ) : narrowed ? (
+        <div class="empty">
+          <h3>No updates match</h3>
+          <p>Try other words, or another project.</p>
+        </div>
       ) : (
         <div class="empty">
           <h3>No updates yet</h3>
@@ -80,7 +143,99 @@ const older = page < totalPages ? pageHref(page + 1) : null;
   </section>
 </BaseLayout>
 
+<script>
+  // Choosing a project or a sort order applies it at once; without JavaScript
+  // the form has an Apply button.
+  document.addEventListener('change', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLSelectElement && target.hasAttribute('data-submit-on-change')) target.form?.requestSubmit();
+  });
+</script>
+
 <style>
+  /* Search, filter and sort: not in the mockups (owner, 2026-11-23). Built
+     from the mockups' parts: `caps` labels, the contact form's field look
+     (cream-light, `--rule` border, `--radius-sm`) and `btn`. Search on the
+     left, the filter and sort on the right; stacked under 760 px. */
+  .tools {
+    display: grid;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  .tools > * {
+    min-width: 0;
+  }
+  .tools__search,
+  .tools__field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+  .tools__row {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .tools__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-md);
+  }
+  .tools input,
+  .tools select {
+    height: 3rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--color-cream-light);
+    color: var(--color-charcoal);
+    border: var(--rule);
+    border-radius: var(--radius-sm);
+    font: inherit;
+  }
+  .tools input {
+    flex: 1;
+    min-width: 0;
+  }
+  .tools select {
+    flex: 1;
+    min-width: 9rem;
+  }
+  .tools__field {
+    flex: 1;
+  }
+  .tools .btn {
+    flex: none;
+    height: 3rem;
+    min-height: 0;
+    padding: 0.5em 1.2em;
+    font-size: var(--text-sm);
+  }
+  .tools__status {
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-sm);
+  }
+  .tools__status a {
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-orange);
+    text-underline-offset: 0.25em;
+  }
+  @media (min-width: 760px) {
+    .tools {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: var(--space-xl-half);
+    }
+    .tools__search {
+      max-width: 30rem;
+    }
+    .tools__field {
+      flex: none;
+    }
+    .tools select {
+      min-width: 11rem;
+    }
+  }
+
   /* Pagination: the `pager` rules in docs/relaunch/mockups/mockups.css
      (only the updates index uses them). */
   .pager {

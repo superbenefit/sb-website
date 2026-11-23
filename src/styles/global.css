@@ -13,7 +13,7 @@
   --color-orange: #f5872c;
   --color-orange-dark: #e06b10;
   --color-red: #c4401a;
-  --color-red-deep: #a83215;
+  --color-red-deep: #8f3b24; /* the mockups' #a83215, toned down (owner, 2026-11-23) */
   --color-green: #7a9a4e;
   --color-green-sage: #8dad5c;
   --color-gold: #d4a843;
@@ -26,7 +26,7 @@
   --color-orange-rgb: 245 135 44;
   --color-orange-dark-rgb: 224 107 16;
   --color-red-rgb: 196 64 26;
-  --color-red-deep-rgb: 168 50 21;
+  --color-red-deep-rgb: 143 59 36;
   --color-green-rgb: 122 154 78;
   --color-green-sage-rgb: 141 173 92;
   --color-gold-rgb: 212 168 67;

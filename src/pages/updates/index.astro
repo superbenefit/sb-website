@@ -1,12 +1,22 @@
 ---
 import UpdatesIndex from '../../components/UpdatesIndex.astro';
-import { getUpdatesPage } from '../../utils/updates';
+import { getUpdatesPage, readUpdatesQuery } from '../../utils/updates';
 
 // The updates index, page 1 (docs/relaunch/mockups/pages/updates.html).
 // Rendered on demand and cached under the `/updates` route rule
 // (docs/relaunch/architecture.md, Rendering per route, Caching). Later pages
-// are /updates/page/{n}/ (src/pages/updates/page/[page].astro).
-const data = await getUpdatesPage(1);
+// are /updates/page/{n}/ (src/pages/updates/page/[page].astro). The query
+// string carries the search, project filter and sort (src/utils/updates.ts).
+const query = readUpdatesQuery(Astro.url);
+const data = await getUpdatesPage(1, query);
 ---
 
-<UpdatesIndex items={data.items} page={1} totalPages={data.totalPages} cacheHints={data.cacheHints} />
+<UpdatesIndex
+  items={data.items}
+  page={1}
+  totalPages={data.totalPages}
+  total={data.total}
+  projects={data.projects}
+  query={query}
+  cacheHints={data.cacheHints}
+/>

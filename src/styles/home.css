@@ -16,11 +16,6 @@
     gap: var(--space-xl-half);
     align-items: center;
 }
-.hero__art  {
-    justify-self: center;
-    width: min(100%, 280px);
-    border-radius: 50%;
-}
 .hero__kicker  {
     font-family: var(--font-serif);
     font-style: italic;
@@ -51,11 +46,6 @@
   .hero__grid  {
       grid-template-columns: minmax(0px, 7fr) minmax(0px, 4fr);
       gap: var(--space-xl);
-  }
-  .hero__art  {
-      justify-self: end;
-      width: 100%;
-      max-width: 380px;
   }
 }
 .doors  {

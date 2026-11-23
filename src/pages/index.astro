@@ -10,7 +10,8 @@
  *   the titles of the `supports` and `services` entries.
  * - Projects: the featured `projects`, in their `order`.
  * - Updates: the three newest `updates`, each with its linked project. The
- *   section is left out when there are none (D5).
+ *   section always shows (owner, 2026-11-23); with none it holds the `empty`
+ *   box that `/updates/` uses.
  * Every query's cache hint goes to Astro.cache.set(), so a publish in any of
  * these collections purges the page
  * (https://docs.emdashcms.com/deployment/route-caching/). The route rule for
@@ -19,7 +20,6 @@
  * Missing content: an empty field is not rendered; with no `home` entry the
  * hero title is "Home", so the page always has its one <h1>.
  */
-import { Image } from 'astro:assets';
 import { getEmDashCollection, getEmDashEntry, getEmDashReferences } from 'emdash';
 import type { CacheHint } from 'emdash';
 import RichText from '../components/rich-text/RichText.astro';
@@ -31,9 +31,9 @@ import EntryList from '../components/EntryList.astro';
 import type { EntryItem } from '../components/EntryList.astro';
 import ProjectSelector from '../components/ProjectSelector.astro';
 import type { SelectorProject } from '../components/ProjectSelector.astro';
-import icon from '../assets/sb-icon.jpg';
 import '../styles/parts/sec.css';
 import '../styles/parts/more.css';
+import '../styles/parts/empty.css';
 import '../styles/home.css';
 
 const [homeResult, acceleratorResult, servicesPageResult, supportsResult, servicesResult, projectsResult, updatesResult] =
@@ -101,6 +101,9 @@ const doors = [
   {
     variant: 'teams',
     page: accelerator,
+    // The home page calls it this (owner, 2026-11-23); the accelerator page
+    // keeps its own title.
+    heading: 'Peer to Peer Accelerator',
     items: supportsResult.entries.map(({ data }) => data.title),
     label: 'See the accelerator',
     href: '/accelerator/',
@@ -108,6 +111,7 @@ const doors = [
   {
     variant: 'orgs',
     page: servicesPage,
+    heading: servicesPage?.title,
     items: servicesResult.entries.map(({ data }) => data.title),
     label: 'See services and terms',
     href: '/services/',
@@ -128,7 +132,7 @@ const wave = 'M0,0 C360,80 1080,0 1440,60 L1440,400 L0,400 Z';
 const edge = 'M0,0 C360,80 1080,0 1440,60';
 ---
 
-<BaseLayout title={pageTitle} description={description} seo={homeResult.entry ?? undefined} siteFirst term={term} bandFrom={updates.length > 0 ? 'cream' : 'charcoal'}>
+<BaseLayout title={pageTitle} description={description} seo={homeResult.entry ?? undefined} siteFirst term={term} bandFrom="cream">
   <section class="hero on-ink">
     <div class="wrap hero__grid">
       <div>
@@ -142,14 +146,6 @@ const edge = 'M0,0 C360,80 1080,0 1440,60';
           <Button href="/projects/" variant="line">See the projects</Button>
         </div>
       </div>
-      <Image
-        class="hero__art"
-        src={icon}
-        alt="SuperBenefit icon: a head made of the words Make Better Faster, inside rainbow rings"
-        width={400}
-        height={400}
-        loading="eager"
-      />
     </div>
   </section>
 
@@ -181,7 +177,7 @@ const edge = 'M0,0 C360,80 1080,0 1440,60';
         <div class={`door door--${door.variant}`}>
           <div class="door__in">
             {door.page?.eyebrow && <p class="caps">{door.page.eyebrow}</p>}
-            {door.page?.title && <h2 class="display">{door.page.title}</h2>}
+            {door.heading && <h2 class="display">{door.heading}</h2>}
             {door.page?.intro && <p class="door__lede">{door.page.intro}</p>}
             <Ledger
               rows={[
@@ -212,18 +208,21 @@ const edge = 'M0,0 C360,80 1080,0 1440,60';
     </div>
   </section>
 
-  {updates.length > 0 && (
-    <>
-      <WaveDivider bg="charcoal" fill="cream" />
-      <section class="sec">
-        <div class="wrap">
-          <div class="sec__head">
-            <h2 class="display">Updates</h2>
-            <a class="more" href="/updates/">All updates <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>
-          </div>
-          <EntryList entries={updates} />
+  <WaveDivider bg="charcoal" fill="cream" />
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec__head">
+        <h2 class="display">Updates</h2>
+        <a class="more" href="/updates/">All updates <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>
+      </div>
+      {updates.length > 0 ? (
+        <EntryList entries={updates} />
+      ) : (
+        <div class="empty">
+          <h3>No updates yet</h3>
+          <p>News from the projects and the network will be listed here.</p>
         </div>
-      </section>
-    </>
-  )}
+      )}
+    </div>
+  </section>
 </BaseLayout>

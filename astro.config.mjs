@@ -44,6 +44,25 @@ export default defineConfig({
   // 'ignore' (Astro's default): EmDash admin URLs have no trailing slash. https://docs.astro.build/en/reference/configuration-reference/#trailingslash
   trailingSlash: 'ignore',
   cache: { provider: cacheCloudflare() },
+  // Resized CMS images. EmDash serves a media file through Astro's image
+  // service only when its origin is in `image.remotePatterns`, and it adds the
+  // site's own origin there only when the site URL is known while `astro
+  // build` runs (https://docs.emdashcms.com/reference/configuration/: "If
+  // EMDASH_SITE_URL or SITE_URL is set only in the runtime environment ...
+  // locally stored media is served unoptimized"). Here the URL is a runtime
+  // var (wrangler.jsonc), and each preview has its own host, so the two
+  // origins are listed here, scoped to EmDash's media route as EmDash scopes
+  // its own pattern (emdash 1.5.0 src/astro/integration/index.ts,
+  // buildImageRemotePatterns). Astro merges these with EmDash's
+  // (https://docs.astro.build/en/reference/configuration-reference/#imageremotepatterns).
+  // The bytes are read from R2 by EmDash's image endpoint, not fetched over
+  // HTTP, so this works behind Access.
+  image: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'superbenefit.org', pathname: '/_emdash/api/media/file/**' },
+      { protocol: 'https', hostname: '**.superbenefit.dev', pathname: '/_emdash/api/media/file/**' },
+    ],
+  },
   // The old accelerator URLs, as Astro's configured redirects
   // (https://docs.astro.build/en/guides/routing/#configured-redirects). They
   // are in the build, not the database, so they work on any database with no
