@@ -254,6 +254,14 @@ const arrow = 'M5 12h14M13 6l6 6-6 6';
   .sel__panel.is-on {
     display: block;
   }
+  /* The panel is a light card inside the dark `on-ink` section, so the
+     section's cream focus outline (`.on-ink :focus-visible`, mockups.css)
+     would be cream on cream-light (1.15:1) on the panel's link. Inside the
+     panel the outline takes the charcoal of the mockups' base
+     `:focus-visible` rule, as on every other light surface (C11). */
+  .sel__panel :global(:focus-visible) {
+    outline-color: var(--color-charcoal);
+  }
   .sel__cover {
     aspect-ratio: 16 / 9;
     border-bottom: 2px solid var(--color-black);

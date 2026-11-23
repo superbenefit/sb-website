@@ -2,7 +2,17 @@
   "version": "1",
   "meta": {
     "name": "SuperBenefit",
-    "description": "Content model for superbenefit.org: five collections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
+    "description": "Content model for superbenefit.org: site settings, five collections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
+  },
+  "settings": {
+    "title": "SuperBenefit",
+    "social": {
+      "twitter": "@SuperBenefitDAO",
+      "github": "superbenefit"
+    },
+    "seo": {
+      "disallowAiTraining": true
+    }
   },
   "collections": [
     {

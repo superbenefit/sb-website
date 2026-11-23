@@ -10,6 +10,12 @@
  * type declarations nor its runtime entry), so it is taken from
  * `emdashComponents`, the exported map of EmDash's built-in Portable Text
  * renderers.
+ *
+ * `tabindex="0"` on the `scroll` box: a table wider than the column scrolls
+ * sideways, and a scrolling region must be reachable by keyboard (WCAG
+ * 2.1.1; axe rule `scrollable-region-focusable`, fixed with a tabindex of 0
+ * on the region:
+ * https://dequeuniversity.com/rules/axe/4.14/scrollable-region-focusable).
  */
 import { emdashComponents } from 'emdash/ui';
 
@@ -22,4 +28,4 @@ interface Props {
 const { node } = Astro.props;
 ---
 
-<div class="scroll"><Table node={node} /></div>
+<div class="scroll" tabindex="0"><Table node={node} /></div>

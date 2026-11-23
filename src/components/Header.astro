@@ -147,6 +147,19 @@ const relFor = (target?: string) => (target === '_blank' ? 'noopener noreferrer'
       button.focus();
     }
   });
+
+  // The open sheet covers the page, so Tab past its last link would put focus
+  // on a link hidden behind it. Moving focus out of the menu closes it, as in
+  // the WAI-ARIA disclosure navigation example ("Moving focus out of the
+  // navigation region also closes an open dropdown":
+  // https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/).
+  // Back to the menu button keeps it open; so does focus leaving the window.
+  document.addEventListener('focusout', (event) => {
+    const { button, sheet } = menuParts();
+    const next = event.relatedTarget;
+    if (!button || !sheet || sheet.hidden || !(event.target instanceof Node) || !sheet.contains(event.target)) return;
+    if (next instanceof Node && !sheet.contains(next) && next !== button) setOpen(false);
+  });
 </script>
 
 <style>

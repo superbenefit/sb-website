@@ -22,14 +22,13 @@
     "@emdash-cms/cloudflare": "^1.5.0",
     "@tailwindcss/vite": "^4.3.5",
     "astro": "^7.4.13",
-    "clsx": "^2.1.1",
     "emdash": "^1.5.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "tailwind-merge": "^3.7.1",
     "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "typescript": "^6.0.3",
     "wrangler": "^4.166.0"
   },
