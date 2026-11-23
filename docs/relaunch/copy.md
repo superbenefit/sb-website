@@ -18,22 +18,22 @@ Shown by `src/pages/index.astro`: hero (`eyebrow`, `title`, `intro`, `cta_label`
 | --- | --- | --- | --- |
 | `eyebrow` | Make Better Faster | 18 | 35 |
 | `title` | Technology that communities own and run. | 40 | 40 |
-| `intro` | We back aligned teams through the Nonprofit DAO Accelerator, and help communities and organizations run their own data and local infrastructure. | 144 | 159 |
+| `intro` | We back aligned teams through the Peer to Peer Accelerator, and help communities and organizations run their own data and local infrastructure. | 143 | 159 |
 | `cta_label` | Get in touch | 12 | 12 |
 | `cta_url` | /contact/ | 9 | none |
 | `section_label` | About SuperBenefit | 18 | 18 |
 | `section_heading` | A worker self-directed nonprofit, run as a network of small teams. | 66 | 66 |
-| `body 1` | SuperBenefit is made up of small, self-directed teams, called cells, working on shared problems. Each cell stays in charge of its own funds and decisions, and draws on people, shared infrastructure, funding support and admin help from the rest. | 244 | 249 |
+| `body 1` | SuperBenefit is made up of small, self-directed teams, called cells, working on shared problems. Each cell stays in charge of its own funds and decisions, and gets support from the others. | 188 | 249 |
 | `body 2` | Current work includes All In For Sport, DAO Primitives and the Institute for Community Sustainability. | 102 | 102 |
-| `SEO title` | Nonprofit DAO Accelerator and Local Capacity Building | 53 | 60 |
-| `SEO description` | SuperBenefit runs the Nonprofit DAO Accelerator for teams joining as cells, and helps communities and organizations steward their own data and infrastructure. | 158 | 160 |
+| `SEO title` | (empty) | 0 | 60 |
+| `SEO description` | SuperBenefit runs a peer to peer accelerator for teams joining as cells, and works with communities and organizations on their own data and infrastructure. | 155 | 160 |
 
 Wording chosen where the 1440 and 390 px mockups differ (`mockups/README.md`, last paragraph):
 - `section_heading`: the 390 px wording, "A worker self-directed nonprofit, run as a network of small teams." The 1440 px wording uses a phrase the content standard rules out.
-- The accelerator panel heading is the `accelerator` entry's `title`: the 390 px wording, "Nonprofit DAO Accelerator" (the chosen search term), over the 1440 px "Peer Supports".
+- The accelerator panel heading on the home page is "Peer to Peer Accelerator", fixed in `src/pages/index.astro` (owner, 2026-11-23: the home page uses that term, not "Nonprofit DAO Accelerator"). The accelerator page keeps its own `title`.
 - The services panel heading is the `services` entry's `title`: the 390 px wording, "Services", over the 1440 px "Service Offerings", so the panel and the page it links to carry the same name.
 
-SEO title: it contains "Nonprofit DAO Accelerator", so the layout uses it as written and the head title reads SuperBenefit, the separator, then this title. It differs from the `accelerator` SEO title. Left empty, the head title would be SuperBenefit and "Nonprofit DAO Accelerator" (D6 notes).
+SEO title: left empty, so the head title is SuperBenefit, the separator, then "Nonprofit DAO Accelerator", the search term the layout keeps in the home title (D6 notes). The page's visible text uses "Peer to Peer Accelerator".
 
 Standard check: who (aligned teams; communities and organizations, `intro`), what they get (`body 1`; the two panels), what it costs (the panels' `cost_summary`), what happens next (`cta_label`, "See the accelerator", "See services and terms"). The services cost is a gap (issue 46).
 
@@ -45,17 +45,17 @@ Shown by `src/pages/accelerator.astro`: hero (`eyebrow`, `title`, `intro`, butto
 | --- | --- | --- | --- |
 | `eyebrow` | For aligned teams joining as cells | 34 | 34 |
 | `title` | Nonprofit DAO Accelerator | 25 | 25 |
-| `intro` | Four peer supports for teams in the SuperBenefit network, from finding people to handling filings. | 98 | 98 |
+| `intro` | Peer support for teams in the SuperBenefit network. | 51 | 98 |
 | `cta_label` | (empty) | 0 | none |
 | `cta_url` | (empty) | 0 | none |
 | `section_label` | How it works | 12 | 12 |
 | `section_heading` | Join as a cell, keep your decisions. | 36 | 38 |
-| `body 1` | The accelerator is for aligned teams that want to join SuperBenefit as cells. Each cell stays in charge of its own funds and decisions and uses the four supports below. | 168 | 187 |
+| `body 1` | The accelerator is for aligned teams that want to join SuperBenefit as cells. Each cell stays in charge of its own funds and decisions and can use the supports below. | 166 | 187 |
 | `body 2` | A team can bring its own organization or use our DAO, and leave at any time. | 76 | 79 |
 | `body 3` | To join, use [Talk to us about joining](/contact/) and tell us about your team. | 66 | none |
 | `cost_summary` | Peer support between cells. No prices. | 38 | 38 |
 | `SEO title` | Nonprofit DAO Accelerator | 25 | 60 |
-| `SEO description` | Join SuperBenefit as a cell and share four peer supports: people, shared infrastructure, funding support and admin. No prices. Talk to us about joining. | 152 | 160 |
+| `SEO description` | Join SuperBenefit as a cell and get peer support from other cells. No prices. Talk to us about joining. | 103 | 160 |
 
 `intro`: Max is the home panel's placeholder (98); the accelerator page's is 84. `cta_label` and `cta_url` are the "Book an onboarding call" button, which has no link yet (`brief.md`, Answered 2026-11-20): leave both empty and the button is not shown. The band's "Talk to us about joining" button (to `/contact/`) is fixed in code. `body 3` has no mockup counterpart; it says what happens next. The supports themselves are the `supports` collection (D4), not drafted here.
 
@@ -69,16 +69,16 @@ Shown by `src/pages/services/index.astro`: hero (`eyebrow`, `title`, `intro`, bu
 | --- | --- | --- | --- |
 | `eyebrow` | For communities and organizations | 33 | 33 |
 | `title` | Services | 8 | 8 |
-| `intro` | Local capacity building: help stewarding your data and infrastructure, with set deliverables and terms. | 103 | 109 |
+| `intro` | Work with communities and organizations outside the SuperBenefit network. | 73 | 109 |
 | `cta_label` | Ask about a service | 19 | 19 |
 | `cta_url` | /contact/ | 9 | none |
 | `section_label` | How it works | 12 | 12 |
 | `section_heading` | Training, experiment facilitation and similar work. | 51 | 53 |
-| `body 1` | Services are for communities and organizations outside the SuperBenefit network that need help stewarding their data and infrastructure. Each service has set deliverables and terms. | 181 | 199 |
+| `body 1` | Services are for communities and organizations outside the SuperBenefit network. Each one has set deliverables and terms. | 121 | 199 |
 | `body 2` | To start, [ask about a service](/contact/) and tell us what your community or organization needs. | 84 | none |
 | `cost_summary` | (empty) | 0 | none |
 | `SEO title` | Services for communities and organizations | 42 | 60 |
-| `SEO description` | SuperBenefit's local capacity building: training, experiment facilitation and similar work for communities and organizations, with set deliverables and terms. | 158 | 160 |
+| `SEO description` | Services from SuperBenefit for communities and organizations outside the network, each with set deliverables and terms. | 119 | 160 |
 
 `intro`: Max is the home panel's placeholder (109); the services page's is 76. The `section_heading` gives no number of services because the offerings are being redone (`issues.md`, D1). No field here refers to a list of offerings: until issue 46's entries are published the page shows "No services are published yet." under this section (`src/pages/services/index.astro`), so the section must read correctly with no list after it. `cost_summary`: waiting on issue 46 (the new offerings and their terms); the old "From $5,000" prices belong to the offerings being replaced, so they are not used.
 
@@ -92,7 +92,7 @@ Shown by `src/pages/projects/index.astro`: hero (`title`, `intro`, and `eyebrow`
 | --- | --- | --- | --- |
 | `eyebrow` | (empty) | 0 | none |
 | `title` | Projects | 8 | 8 |
-| `intro` | Three active projects and two applicants. | 41 | 91 |
+| `intro` | Active projects and applicants. | 31 | 91 |
 | `SEO title` | Projects and applicants | 23 | 60 |
 | `SEO description` | All In For Sport, DAO Primitives and the Institute for Community Sustainability, with Pacto and Social Lean Canvas as applicants. | 129 | 160 |
 
@@ -107,9 +107,9 @@ Shown by `src/components/UpdatesIndex.astro`: hero (`title`, `intro`). No other 
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Updates | 7 | 7 |
-| `intro` | News from SuperBenefit's projects, newest first. | 48 | 53 |
-| `SEO title` | Updates from the projects | 25 | 60 |
-| `SEO description` | News from SuperBenefit's projects, newest first. Join the conversation on Discord. | 82 | 160 |
+| `intro` | Articles and news from SuperBenefit and its projects. | 53 | 53 |
+| `SEO title` | Updates | 7 | 60 |
+| `SEO description` | Articles and news from SuperBenefit and its projects, with search and a filter by project. | 90 | 160 |
 
 On `/updates/page/2/` and later the layout adds ", page n" to the title and "Page n." before the description (D6 notes), so later pages stay unique.
 
@@ -126,12 +126,12 @@ Shown by `src/pages/about.astro`: hero (`title`, `intro`, and `eyebrow` as the k
 | `intro` | A worker self-directed nonprofit run by small teams called cells. | 65 | 66 |
 | `section_label` | What we are | 11 | 11 |
 | `section_heading` | Small teams, each in charge of its own funds and decisions. | 59 | 59 |
-| `body 1` | SuperBenefit is made up of small, self-directed teams, called cells, working on shared problems. They share people, infrastructure, funding support and admin help, so no one has to build everything from scratch. | 211 | none |
-| `body 2` | h3: Two ways to work with us | 24 | none |
+| `body 1` | SuperBenefit is made up of small, self-directed teams, called cells, working on shared problems. They support each other, so no one has to build everything from scratch. | 169 | none |
+| `body 2` | h3: Working with us | 15 | none |
 | `body 3` | Aligned teams can join as cells through the [Nonprofit DAO Accelerator](/accelerator/). Communities and organizations outside the network can work with us through our [services](/services/). | 159 | none |
 | `body 4` | h3: Projects | 8 | none |
-| `body 5` | The three active projects are [All In For Sport](https://allinforsport.org/), DAO Primitives and the Institute for Community Sustainability. All In For Sport is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport. The Institute for Community Sustainability is based in London, Ontario. | 323 | none |
-| `body 6` | Two projects are applicants. [Pacto](https://covenant-gov.github.io/pacto-app/) is private messaging with on-chain proposals, voting and a shared treasury. [Social Lean Canvas](https://socialleancanvas.com/) is a free, open-source tool for designing a social enterprise's business and impact model. | 220 | none |
+| `body 5` | Active projects include [All In For Sport](https://allinforsport.org/), DAO Primitives and the Institute for Community Sustainability. All In For Sport is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport. The Institute for Community Sustainability is based in London, Ontario. | 317 | none |
+| `body 6` | [Pacto](https://covenant-gov.github.io/pacto-app/), an applicant, is private messaging with on-chain proposals, voting and a shared treasury. [Social Lean Canvas](https://socialleancanvas.com/), also an applicant, is a free, open-source tool for designing a social enterprise's business and impact model. | 226 | none |
 | `body 7` | h3: What we publish | 15 | none |
 | `body 8` | The [Knowledge Garden](https://knowledge.superbenefit.org/) holds our shared documentation, including the Reimagining Power Project's pages on All In For Sport, the Equality Fund and the Institute for Community Sustainability. | 187 | none |
 | `body 9` | To talk about any of this, [get in touch](/contact/). | 40 | none |
@@ -327,8 +327,8 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | People to work with | 19 | 21 |
-| `summary` | Find the people your project needs to keep moving. | 50 | 64 |
-| `body` | Facilitators and stewards from across the SuperBenefit network can step in to help with coordination and decisions, and contributors with ongoing work. | 151 | 171 |
+| `summary` | Find people for your project. | 29 | 64 |
+| `body` | Other cells can help with facilitation, stewardship and hands-on work. | 70 | 171 |
 | `order` | 1 | n/a | none |
 
 ### Shared infrastructure
@@ -336,8 +336,8 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Shared infrastructure | 21 | 21 |
-| `summary` | Use the infrastructure other projects already depend on. | 56 | 64 |
-| `body` | SuperBenefit's DAO, shared tooling, documentation templates and patterns you can adapt. A cell keeps what it makes and contributes back what it builds. | 151 | 171 |
+| `summary` | Use what other cells already run. | 33 | 64 |
+| `body` | SuperBenefit's DAO, shared tools and templates are open to cells. | 65 | 171 |
 | `order` | 2 | n/a | none |
 
 ### Funding support
@@ -345,8 +345,8 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Funding support | 15 | 21 |
-| `summary` | Apply for grants with input from people who have done it before. | 64 | 64 |
-| `body` | Work on grant applications with other SuperBenefit cells and connect with the network's fiscal hosts, who can move funds where needed. Cells share reporting approaches. | 168 | 171 |
+| `summary` | Work on funding with other cells. | 33 | 64 |
+| `body` | Cells help each other with grant applications and reporting. | 60 | 171 |
 | `order` | 3 | n/a | none |
 
 ### Admin and paperwork
@@ -354,15 +354,39 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Admin and paperwork | 19 | 21 |
-| `summary` | Use our DAO and existing entity arrangements when you need them. | 64 | 64 |
-| `body` | SuperBenefit helps with the admin and filings that keep a project running, so a cell does not have to set up its own back office. | 129 | 171 |
+| `summary` | Get help with admin. | 20 | 64 |
+| `body` | Cells can use SuperBenefit's DAO and entity arrangements when they need them. | 77 | 171 |
 | `order` | 4 | n/a | none |
 
-Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (`summary` and `body`), what it costs (the section note: no prices), what happens next (the band's button). The mockup's "Take what you need, contribute what you build, and keep what you make." is cut to two clauses in Shared infrastructure, and People to work with lists two roles per clause, to keep rhythm triplets out; the Social Lean Canvas `body 2` drops its "its customers, its impact and its economics" for the same reason.
+Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (`summary` and `body`), what it costs (the section note: no prices), what happens next (the band's button). The summaries and bodies were shortened at the owner's request (2026-11-23) to say less about how each support works.
 
 ## services entries (D4)
 
-Not drafted: the `services` entries wait on issue 46 (the owner's new offerings and their terms, `issues.md`, D1).
+Two placeholder entries, so the services page and the home panel can be previewed (owner, 2026-11-23). They are examples, not the final offerings, which still wait on issue 46. Fields are the seed's (collection `services`: `title`, `audience`, `deliverables`, `service_terms`, `body`, `order`). No price is given.
+
+### Local tech training (placeholder)
+
+| Field | Draft |
+| --- | --- |
+| `title` | Local tech training |
+| `audience` | For communities and organizations that want to run their own tools. |
+| `deliverables` | Workshops on AI you run locally; Workshops on keeping and using local data; Workshops on sovereign tech and community infrastructure |
+| `service_terms` | Scoped with you before we start |
+| `body` | Training for community groups on AI, local data and sovereign tech. Placeholder text. |
+| `order` | 1 |
+
+### Nonprofit DAO Incubator (placeholder)
+
+| Field | Draft |
+| --- | --- |
+| `title` | Nonprofit DAO Incubator |
+| `audience` | For groups outside the network that are starting a shared project. |
+| `deliverables` | Group facilitation; Project co-stewardship: we host the project and work on it with you; Regular check-ins |
+| `service_terms` | Scoped with you before we start |
+| `body` | Facilitation for outside groups, run as project co-stewardship. Placeholder text. |
+| `order` | 2 |
+
+"Project co-stewardship" is the name of this offering on the current superbenefit.org (`origin/main:src/components/ExternalServices.astro`).
 
 ## Sources
 
