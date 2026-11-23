@@ -56,7 +56,7 @@ Class names are the mockup's own; find the rules in `mockups.css`.
 | Support and service items | `blocks`, `block` | accelerator, services |
 | Update list and entry | `entries`, `entry` | home, project, updates |
 | Pagination | `pager` | updates |
-| Search, project filter and sort above the updates list. Added after the mockups (owner, 2026-11-23); built from the `caps` labels, the form field look and `btn`. | `tools` | updates |
+| Updates index as a blog feed. Changed after the mockups (owner, 2026-11-23): a slim row of search, project filter and sort, then the posts as a large lead post and rows with a thumbnail, in place of the `entries` card grid. | `tools`, `feed`, `post` | updates |
 | Update article layout | `article` | update |
 | Rich text: headings, lists, quote, figure, code, table | `prose`, `quote`, `scroll` | about, project, update |
 | Click-to-load video | `video`, `frame` | update |
