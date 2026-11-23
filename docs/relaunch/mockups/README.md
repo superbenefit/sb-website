@@ -71,6 +71,7 @@ The mockups use the tokens already in `src/styles/global.css` (colours, type sca
 | Token | Value |
 | --- | --- |
 | `--radius-sm`, `--radius-md`, `--radius-pill` | 8px, 12px, 50px |
+| `--color-red-deep` | Changed after the mockups (owner, 2026-11-23): `#8f3b24`, a calmer brick red, in place of `#a83215`, which was jarring as the hero background on the projects pages. Used by the red page hero and its wave, and the contact form's error colour. Cream text on it is 5.6:1. |
 | `--space-xl-half` | 3rem |
 | `--rule`, `--rule-dark` | 2px solid charcoal; 2px solid cream |
 | `--stripe` | four equal bands: red, orange, gold, green |
