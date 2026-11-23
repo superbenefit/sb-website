@@ -98,17 +98,20 @@ export function sitemapName(collection: string, page: number): string {
  * Worker's env (https://developers.cloudflare.com/workers/runtime-apis/bindings/#importing-env-as-a-global),
  * reduced to its origin as EmDash does (api/public-url.ts, getEnvSiteUrl).
  */
-export async function sitemapSiteUrl(requestUrl: URL): Promise<{ siteUrl: string; cacheHint: CacheHint }> {
-  const { data: settings, cacheHint } = await getSiteSettingsWithCacheHint();
-  let envUrl: string | undefined;
+/** `EMDASH_SITE_URL` from the Worker's env, reduced to its origin; undefined when unset or not http(s). */
+export function envSiteUrl(): string | undefined {
   try {
     const raw = (env as { EMDASH_SITE_URL?: string }).EMDASH_SITE_URL;
     const parsed = raw ? new URL(raw) : undefined;
-    if (parsed && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) envUrl = parsed.origin;
+    return parsed && (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.origin : undefined;
   } catch {
-    envUrl = undefined;
+    return undefined;
   }
-  const siteUrl = (settings.url || envUrl || requestUrl.origin).replace(/\/$/, '');
+}
+
+export async function sitemapSiteUrl(requestUrl: URL): Promise<{ siteUrl: string; cacheHint: CacheHint }> {
+  const { data: settings, cacheHint } = await getSiteSettingsWithCacheHint();
+  const siteUrl = (settings.url || envSiteUrl() || requestUrl.origin).replace(/\/$/, '');
   return { siteUrl, cacheHint };
 }
 

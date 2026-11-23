@@ -27,6 +27,11 @@
  * a resolved title without it (an SEO panel title, say) becomes
  * "{term} — {title}", so the panel title is used and the term stays. With
  * no description at all, the full title stands in.
+ * The panel's image is the share image (else `coverImage`, else the site
+ * default) and its "Hide from search engines" writes `noindex, nofollow`
+ * (getSeoMeta's `ogImage` and `robots`). The separator is Settings > SEO
+ * "Title separator", else " — ". Absolute URLs use the Settings site URL,
+ * then EMDASH_SITE_URL, then the request origin.
  *
  * Caching (docs/relaunch/architecture.md, Caching;
  * https://docs.emdashcms.com/deployment/route-caching/): the route rule in
@@ -49,6 +54,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FooterFade from '../components/FooterFade.astro';
 import ClosingBand from '../components/ClosingBand.astro';
+import { envSiteUrl } from '../utils/sitemap';
 
 type BandFrom = 'black' | 'charcoal' | 'cream' | 'paper' | 'green' | 'orange' | 'gold' | 'red';
 
@@ -121,7 +127,10 @@ const {
 const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(cache ? settingsHint : false);
 const siteName = settings.title || 'SuperBenefit';
-const siteUrl = (settings.url || Astro.url.origin).replace(/\/$/, '');
+// Site URL in the SEO guide's order: Settings, then EMDASH_SITE_URL, then the request origin.
+const siteUrl = (settings.url || envSiteUrl() || Astro.url.origin).replace(/\/$/, '');
+// Settings > SEO "Title separator", else the site's " — ".
+const separator = settings.seo?.titleSeparator || ' — ';
 
 // Internal links end in "/" (architecture.md, Stack), so the canonical does too.
 const path = Astro.url.pathname === '/' ? '/' : `${Astro.url.pathname.replace(/\/+$/, '')}/`;
@@ -138,14 +147,21 @@ const meta = seo
 const later = pageNumber > 1;
 const resolvedTitle = meta?.title || fallbackTitle;
 const termedTitle =
-  term && !resolvedTitle.toLowerCase().includes(term.toLowerCase()) ? `${term} — ${resolvedTitle}` : resolvedTitle;
+  term && !resolvedTitle.toLowerCase().includes(term.toLowerCase()) ? `${term}${separator}${resolvedTitle}` : resolvedTitle;
 const title = `${termedTitle}${later ? `, page ${pageNumber}` : ''}`;
-const fullTitle = title.includes(siteName) ? title : siteFirst ? `${siteName} — ${title}` : `${title} — ${siteName}`;
+const fullTitle = title.includes(siteName)
+  ? title
+  : siteFirst
+    ? `${siteName}${separator}${title}`
+    : `${title}${separator}${siteName}`;
 const ownDescription = meta?.description || fallbackDescription;
 const description = later ? `Page ${pageNumber}. ${ownDescription || fullTitle}` : ownDescription || fullTitle;
 const canonicalUrl =
   canonical === null ? null : (canonical ?? ((!later && meta?.canonical) || `${siteUrl}${path}`));
-const image = new URL(coverImage ?? ogImage, `${siteUrl}/`).href;
+// Share image: the SEO panel's image, then the page's own, then the site default.
+const image = new URL(meta?.ogImage || coverImage || ogImage, `${siteUrl}/`).href;
+// "Hide from search engines" in the SEO panel (getSeoMeta's `robots`), or the page's own `noindex`.
+const robots = noindex ? 'noindex, nofollow' : (meta?.robots ?? undefined);
 
 const page = createPublicPageContext({
   Astro,
@@ -156,7 +172,7 @@ const page = createPublicPageContext({
   description,
   canonical: canonicalUrl,
   image,
-  seo: noindex ? { robots: 'noindex, nofollow' } : undefined,
+  seo: robots ? { robots } : undefined,
   articleMeta:
     type === 'article'
       ? {
