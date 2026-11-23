@@ -202,10 +202,10 @@ How to read these tables, beyond the notes at the top:
 | `body 1` | h2: What All In For Sport does | 26 | 40 |
 | `body 2` | All In For Sport (AIFS) is a decentralized autonomous organization (DAO) whose mission is to support projects that advance inclusion and empowerment through sport. Its first pilot projects refurbished basketball courts alongside community organizations. The Institute for Community Sustainability in London, Ontario, is its fiscal sponsor. | 339 | 340 |
 | `body 3` | h3: With SuperBenefit, 2024 to 2025 | 31 | 40 |
-| `body 4` | From August 2024 to March 2025 AIFS took part in SuperBenefit's Reimagining Power Project. Its Gatherings series brought 111 participants together across six sessions, and its governance proposal AIFSIP-04 set it up as a network of autonomous cells. The [case study](https://knowledge.superbenefit.org/docs/rpp/aifs-experiment-case-study) is in the Knowledge Garden. | 292 | 340 |
+| `body 4` | From August 2024 to March 2025 AIFS took part in SuperBenefit's Reimagining Power Project. From November 2024 to February 2025 its Gatherings series brought 111 participants together, and its governance proposal AIFSIP-04 set it up as a network of autonomous cells. The [case study](https://knowledge.superbenefit.org/docs/rpp/aifs-experiment-case-study) is in the Knowledge Garden. | 308 | 340 |
 | `body 5` | h3: Moving grant money to Somaliland | 32 | 40 |
 | `body 6` | Through the International Olympic Committee's Tech365 Explore program, AIFS works with Sarreya, a women-led group that connects about 300 women and girls in Hargeisa, Somaliland, through football. A routine grant payment to Sarreya took six months to arrive. | 258 | 340 |
-| `body 7` | As of its [update of January 6, 2026](https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/), AIFS was testing stablecoins and multi-signature wallets to move funds in minutes. A stakeholder group that meets monthly and an operational team govern the work, drawing on SuperBenefit's DAO Primitives framework. | 251 | 340 |
+| `body 7` | As of its [update of January 6, 2026](https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/), AIFS was preparing to test stablecoin transfers, meant to move funds in minutes rather than months, and was building treasury management on multi-signature wallets. A stakeholder group that meets monthly and an operational team govern the work, drawing on SuperBenefit's DAO Primitives framework. | 333 | 340 |
 | `body 8` | To take part, join the [All In For Sport Discord](https://discord.gg/E3FhRAqsmM) or write through the form at [allinforsport.org](https://allinforsport.org/#contactUs). | 95 | 230 |
 | `order` | 1 | n/a | none |
 | `featured` | true | n/a | none |
@@ -302,7 +302,7 @@ Images needed: logo, cover.
 | `partner` | (empty) | 0 | 40 |
 | `website` | https://socialleancanvas.com/ | n/a | none |
 | `body 1` | h2: What the Social Lean Canvas is | 30 | 40 |
-| `body 2` | The Social Lean Canvas splits a purpose-driven venture into parts that can be worked on separately and fitted together into one business model, covering its customers, its impact and its economics. It builds on Alexander Osterwalder's Business Model Canvas and Ash Maurya's Lean Canvas. | 286 | 340 |
+| `body 2` | The Social Lean Canvas splits a purpose-driven venture into parts that can be worked on separately and fitted together into one business model. It builds on Alexander Osterwalder's Business Model Canvas and Ash Maurya's Lean Canvas. | 232 | 340 |
 | `body 3` | Its site says thousands of social entrepreneurs, universities, investors, accelerators and incubators have used it since 2013. | 126 | 340 |
 | `body 4` | h3: What it costs | 13 | 40 |
 | `body 5` | The canvas is shared under the Creative Commons Attribution-ShareAlike 3.0 Unported licence, and the online SLC Mini Accelerator is free. Rowan Yeoman, its co-creator and founder, also works with ventures and with organizations that run support programs. | 254 | 260 |
@@ -318,7 +318,7 @@ Images needed: logo, cover.
 
 ## supports entries (D4, issue #49)
 
-Drafted 2026-11-23. Four `supports` entries, shown as the blocks under "Supports" on `/accelerator/` (`title` as the heading, `summary` as the lead line, `body` below it) and, by `title` only, in the home page's accelerator panel. Fields are the seed's (collection `supports`: `title`, `summary`, `body`, `order`); the seed sets no lengths. Max is the longest text in the same place across the four blocks of `mockups/pages/accelerator.html` (heading 21, lead 64, body 171). The four names are the same in the accelerator mockup, `origin/main:src/components/InternalServices.astro`, `origin/main:src/pages/support/index.astro` and on https://superbenefit.org/ (read 2026-11-23); every claim below is from those four.
+Drafted 2026-11-23. Four `supports` entries, shown as the blocks under "Supports" on `/accelerator/` (`title` as the heading, `summary` as the lead line, `body` below it) and, by `title` only, in the home page's accelerator panel. Fields are the seed's (collection `supports`: `title`, `summary`, `body`, `order`); the seed sets no lengths. Max is the longest text in the same place across the four blocks of `mockups/pages/accelerator.html` (heading 21, lead 64, body 171). The four names are the same in the accelerator mockup, `origin/main:src/components/InternalServices.astro`, `origin/main:src/pages/support/index.astro` and on https://superbenefit.org/ (read 2026-11-23); every claim below is from those four, and "the SuperBenefit network" is from the `support/index.astro` subtitle. `brief.md` lists the supports differently (Gaps).
 
 The section note beside the heading ("Peer support between cells. No prices.") is the `accelerator` entry's `cost_summary` (D3) and answers what each support costs; the band's "Talk to us about joining" button says what happens next.
 
@@ -328,7 +328,7 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | --- | --- | --- | --- |
 | `title` | People to work with | 19 | 21 |
 | `summary` | Find the people your project needs to keep moving. | 50 | 64 |
-| `body` | Facilitators and stewards from across the network can step in to help with coordination and decisions, and contributors with ongoing work. | 138 | 171 |
+| `body` | Facilitators and stewards from across the SuperBenefit network can step in to help with coordination and decisions, and contributors with ongoing work. | 151 | 171 |
 | `order` | 1 | n/a | none |
 
 ### Shared infrastructure
@@ -346,7 +346,7 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | --- | --- | --- | --- |
 | `title` | Funding support | 15 | 21 |
 | `summary` | Apply for grants with input from people who have done it before. | 64 | 64 |
-| `body` | Work with other cells on grant applications, and connect with fiscal hosts in the network who can move funds where they need to go. Cells share their reporting approaches. | 171 | 171 |
+| `body` | Work on grant applications with other SuperBenefit cells and connect with the network's fiscal hosts, who can move funds where needed. Cells share reporting approaches. | 168 | 171 |
 | `order` | 3 | n/a | none |
 
 ### Admin and paperwork
@@ -355,10 +355,10 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | --- | --- | --- | --- |
 | `title` | Admin and paperwork | 19 | 21 |
 | `summary` | Use our DAO and existing entity arrangements when you need them. | 64 | 64 |
-| `body` | We help with the admin and filings that keep a project running, so a cell does not have to set up its own back office. | 118 | 171 |
+| `body` | SuperBenefit helps with the admin and filings that keep a project running, so a cell does not have to set up its own back office. | 129 | 171 |
 | `order` | 4 | n/a | none |
 
-Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (`summary` and `body`), what it costs (the section note: no prices), what happens next (the band's button). The mockup's "Take what you need, contribute what you build, and keep what you make." is cut to two clauses in Shared infrastructure, and People to work with lists two roles per clause, to keep rhythm triplets out.
+Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (`summary` and `body`), what it costs (the section note: no prices), what happens next (the band's button). The mockup's "Take what you need, contribute what you build, and keep what you make." is cut to two clauses in Shared infrastructure, and People to work with lists two roles per clause, to keep rhythm triplets out; the Social Lean Canvas `body 2` drops its "its customers, its impact and its economics" for the same reason.
 
 ## services entries (D4)
 
@@ -396,9 +396,9 @@ Read 2026-11-23. Repository paths are on branch `feature/relaunch` unless marked
 | D4, All In For Sport: first pilot projects refurbished basketball courts alongside community organizations | https://allinforsport.org/about/ | 2026-11-23 |
 | D4, All In For Sport: the Institute for Community Sustainability is its fiscal sponsor | https://communitysustainability.ca/ | 2026-11-23 |
 | D4, All In For Sport: partners Sarreya, Love Futból, Bonito Foundation (and the Institute for Community Sustainability) | https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/ | 2026-11-23 |
-| D4, All In For Sport: in the Reimagining Power Project August 2024 to March 2025; Gatherings with 111 participants across six sessions; AIFSIP-04 set up autonomous cells | https://knowledge.superbenefit.org/docs/rpp/aifs-experiment-case-study | 2026-11-23 |
+| D4, All In For Sport: in the Reimagining Power Project August 2024 to March 2025; Gatherings, November 2024 to February 2025, with 111 participants; AIFSIP-04 set up autonomous cells | https://knowledge.superbenefit.org/docs/rpp/aifs-experiment-case-study | 2026-11-23 |
 | D4, All In For Sport: Tech365 Explore program of the International Olympic Committee; Sarreya, women-led, about 300 women and girls in Hargeisa, Somaliland, football; a grant payment took six months | https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/ | 2026-11-23 |
-| D4, All In For Sport: testing stablecoins and multi-signature wallets; a stakeholder group meeting monthly and an operational team, drawing on SuperBenefit's DAO Primitives framework | https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/ | 2026-11-23 |
+| D4, All In For Sport: preparing to test stablecoin transfers, meant to move funds in minutes rather than months; building treasury management on multi-signature wallets; a stakeholder group meeting monthly and an operational team, drawing on SuperBenefit's DAO Primitives framework | https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/ | 2026-11-23 |
 | D4, All In For Sport: Discord https://discord.gg/E3FhRAqsmM and the contact form at /#contactUs | https://allinforsport.org/ | 2026-11-23 |
 | D4, DAO Primitives: SuperBenefit's framework; a pattern language for decentralized organization; small, purpose-led teams with clear mandates inside larger coordination structures; starts with the minimum viable structure and lets governance emerge from needs | https://allinforsport.org/updates/articles/the-six-month-wire-transfer-and-what/ | 2026-11-23 |
 | D4, DAO Primitives: listed as the framework informing or applied in the AIFS and ICS case studies | https://knowledge.superbenefit.org/docs/rpp/aifs-experiment-case-study; https://knowledge.superbenefit.org/docs/rpp/ics-experiment-case-study | 2026-11-23 |
@@ -413,7 +413,7 @@ Read 2026-11-23. Repository paths are on branch `feature/relaunch` unless marked
 | D4, Pacto: Hats Protocol; captain picks the crew; both propose; crew votes by quorum on proposals and treasury; captain approves or vetoes; crew can mutiny the captain | https://covenant-gov.github.io/pacto-app/how-it-works/ | 2026-11-23 |
 | D4, Pacto and Social Lean Canvas are applicants | `docs/relaunch/brief.md`, Active projects and Answered (2026-11-20) | 2026-11-23 |
 | D4, Social Lean Canvas: free and open source; idea to testable business model on one page; pieces worked on independently and fitted into one model; builds on the Business Model Canvas and the Lean Canvas; created 2013 by Rowan Yeoman, Dave Moskovitz and the Ākina Foundation; CC BY-SA 3.0 Unported; SLC Mini Accelerator online and free; Rowan Yeoman works with ventures and support programs; hello@socialleancanvas.com | https://socialleancanvas.com/ | 2026-11-23 |
-| D4, Social Lean Canvas: customer, impact and economic models; used since 2013 by thousands of social entrepreneurs, universities, investors, accelerators and incubators | https://socialleancanvas.com/about/ | 2026-11-23 |
+| D4, Social Lean Canvas: used since 2013 by thousands of social entrepreneurs, universities, investors, accelerators and incubators | https://socialleancanvas.com/about/ | 2026-11-23 |
 | D4, supports: the four names, their lead lines and bodies (people, shared infrastructure, funding support, admin and paperwork) | `docs/relaunch/mockups/pages/accelerator.html`; `origin/main:src/components/InternalServices.astro`; `origin/main:src/pages/support/index.astro`; https://superbenefit.org/ | 2026-11-23 |
 | D4, the project and support field names, required fields and the summary's 60 to 240 characters | `seed/seed.json` | 2026-11-23 |
 
@@ -443,4 +443,7 @@ D4 gaps (projects and supports):
 - What taking part in each project costs: no source gives a cost for joining All In For Sport, using DAO Primitives or using Pacto; the Thing Library's membership terms; the price of Rowan Yeoman's support for Social Lean Canvas users.
 - Logos, covers and their alt text for all five projects: the owner's (`issues.md`, Needs the owner, D4). Every project needs a logo and a cover.
 - The `services` entries: wait on issue 46.
-- The four supports: the sources name four, the same four in each, so no gap in their number or names. No source gives a number, name or date for any support (how many facilitators, which fiscal hosts, which tools); the drafts keep to what the sources say.
+- The supports' number and names: `brief.md` (Accelerator/supports vs services) lists three, "peer support: organizing, admin support, shared infrastructure": "organizing" where the mockup and `origin/main` say "People to work with", and no Funding support. The mockup, `origin/main` (`InternalServices.astro`, `support/index.astro`) and superbenefit.org name four. The drafts keep the four, each sourced; the owner should say whether Funding support stays and which name the first one takes.
+- Specifics for the supports' bodies: the only name in People to work with, Funding support and Admin and paperwork is SuperBenefit. No source gives how many facilitators or stewards there are, which fiscal hosts, which filings or which entity arrangements, so these three bodies still fall short of the content standard's name, number, date, place or link. The human edit should add them, or leave `body` empty (the seed does not require it).
+- How many gatherings All In For Sport held: its case study says six in its Executive Summary and Implementation sections and "Five completed gatherings" in its outcomes. `body 4` gives the dates and the 111 participants only.
+- Whether All In For Sport has moved funds by stablecoin: its update of January 6, 2026 says it was "preparing to test actual fund transfers in the coming weeks"; no later source read gives a result.
