@@ -73,16 +73,16 @@ Shown by `src/pages/services/index.astro`: hero (`eyebrow`, `title`, `intro`, bu
 | `cta_label` | Ask about a service | 19 | 19 |
 | `cta_url` | /contact/ | 9 | none |
 | `section_label` | How it works | 12 | 12 |
-| `section_heading` | Each service has set deliverables and terms. | 44 | 53 |
-| `body 1` | Services are for communities and organizations outside the SuperBenefit network that need help stewarding their data and infrastructure. The work includes training and experiment facilitation. | 192 | 199 |
-| `body 2` | Each service below lists who it is for, what you get and its terms. [Ask about a service](/contact/) to start. | 97 | none |
+| `section_heading` | Training, experiment facilitation and similar work. | 51 | 53 |
+| `body 1` | Services are for communities and organizations outside the SuperBenefit network that need help stewarding their data and infrastructure. Each service has set deliverables and terms. | 181 | 199 |
+| `body 2` | To start, [ask about a service](/contact/) and tell us what your community or organization needs. | 84 | none |
 | `cost_summary` | (empty) | 0 | none |
 | `SEO title` | Services for communities and organizations | 42 | 60 |
 | `SEO description` | SuperBenefit's local capacity building: training, experiment facilitation and similar work for communities and organizations, with set deliverables and terms. | 158 | 160 |
 
-`intro`: Max is the home panel's placeholder (109); the services page's is 76. The `section_heading` gives no number of services because the offerings are being redone. `cost_summary`: waiting on issue 46 (the new offerings and their terms); the old "From $5,000" prices belong to the offerings being replaced, so they are not used.
+`intro`: Max is the home panel's placeholder (109); the services page's is 76. The `section_heading` gives no number of services because the offerings are being redone (`issues.md`, D1). No field here refers to a list of offerings: until issue 46's entries are published the page shows "No services are published yet." under this section (`src/pages/services/index.astro`), so the section must read correctly with no list after it. `cost_summary`: waiting on issue 46 (the new offerings and their terms); the old "From $5,000" prices belong to the offerings being replaced, so they are not used.
 
-Standard check: who (`eyebrow`, `body 1`), what they get (`intro`, `body 1`, the offerings from issue 46), what it costs (gap, issue 46), what happens next (`cta_label`, `body 2`).
+Standard check: who (`eyebrow`, `body 1`), what they get (`intro`, `section_heading`; each offering's deliverables wait on issue 46), what it costs (gap, issue 46: nothing on this page says a price until then), what happens next (`cta_label`, `body 2`).
 
 ## projects (`/projects/`)
 
