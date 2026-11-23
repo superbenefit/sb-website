@@ -113,6 +113,8 @@ Shown by `src/components/UpdatesIndex.astro`: hero (`title`, `intro`). No other 
 
 On `/updates/page/2/` and later the layout adds ", page n" to the title and "Page n." before the description (D6 notes), so later pages stay unique.
 
+Standard check: who and what (`intro`: news from the five projects), what happens next (each entry's linked title and "Project:" link, `src/components/EntryList.astro`; the closing band's contact and Discord buttons; the SEO description names Discord). Cost does not apply to a list of news; the intro does not say what happens next, because its placeholder (53) leaves no room once it says what the page holds.
+
 ## about (`/about/`)
 
 Shown by `src/pages/about.astro`: hero (`title`, `intro`, and `eyebrow` as the kicker when set), the split (`section_label`, `section_heading`, `body`), and the closing band's first button from `cta_label` + `cta_url` (both needed).
@@ -161,6 +163,8 @@ Shown by `src/pages/contact.astro`: hero (`eyebrow`, `title`, `intro`), the asid
 | `SEO description` | Write to SuperBenefit about a project, a service or joining the Nonprofit DAO Accelerator. We reply within a few days. | 118 | 160 |
 
 `body 1` drops the mockup's opening "SuperBenefit is a small network.", which gives no number (Gaps: how many cells or people). `body 2` keeps the form topics from the mockup and adds the reply time, which says what happens next, within the placeholder's 103. `body 3` is a paragraph holding only the link, so it renders as the aside's arrow link. `cta_label` + `cta_url` are the band's "Book an onboarding call" button, which has no link yet (`brief.md`, Answered 2026-11-20): leave both empty and the button is not shown.
+
+Standard check: who (`intro`: anyone writing about a project, a service or joining as a cell), what they get (`body 1`: a personal reply), what happens next (`body 2`: the form and a reply within a few days; `body 3`: the email address). Cost does not apply to writing to us; what a service costs is on the services page and waits on issue 46, and the accelerator's "No prices" is on its page.
 
 ## Closing band (widget area `closing-band`)
 
