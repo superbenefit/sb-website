@@ -152,15 +152,15 @@ Shown by `src/pages/contact.astro`: hero (`eyebrow`, `title`, `intro`), the asid
 | `title` | Get in touch | 12 | 12 |
 | `intro` | Write about a project, a service or joining as a cell. | 54 | 55 |
 | `section_heading` | How we work | 11 | 11 |
-| `body 1` | SuperBenefit is a small network. We respond personally and try to be useful even when a formal engagement is not the right fit. | 127 | 127 |
-| `body 2` | For project proposals, partnership ideas, speaking, or just to say hello, the form is the fastest path. We reply within a few days. | 131 | 131 |
+| `body 1` | We respond personally and try to be useful even when a formal engagement is not the right fit. | 94 | 127 |
+| `body 2` | For proposals, partnerships, speaking or a hello, use the form. We reply within a few days. | 91 | 103 |
 | `body 3` | [contact@superbenefit.org](mailto:contact@superbenefit.org) | 24 | 24 |
 | `cta_label` | (empty) | 0 | none |
 | `cta_url` | (empty) | 0 | none |
 | `SEO title` | Contact | 7 | 60 |
-| `SEO description` | Write to SuperBenefit about a project, a service or joining the Nonprofit DAO Accelerator. We read every message and reply within a few days. | 141 | 160 |
+| `SEO description` | Write to SuperBenefit about a project, a service or joining the Nonprofit DAO Accelerator. We reply within a few days. | 118 | 160 |
 
-`body 2`: Max is the mockup's 103 plus the reply-time sentence with its space (28), which says what happens next. `body 3` is a paragraph holding only the link, so it renders as the aside's arrow link. `cta_label` + `cta_url` are the band's "Book an onboarding call" button, which has no link yet (`brief.md`, Answered 2026-11-20): leave both empty and the button is not shown.
+`body 1` drops the mockup's opening "SuperBenefit is a small network.", which gives no number (Gaps: how many cells or people). `body 2` keeps the form topics from the mockup and adds the reply time, which says what happens next, within the placeholder's 103. `body 3` is a paragraph holding only the link, so it renders as the aside's arrow link. `cta_label` + `cta_url` are the band's "Book an onboarding call" button, which has no link yet (`brief.md`, Answered 2026-11-20): leave both empty and the button is not shown.
 
 ## Closing band (widget area `closing-band`)
 
