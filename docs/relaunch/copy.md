@@ -128,7 +128,7 @@ Shown by `src/pages/about.astro`: hero (`title`, `intro`, and `eyebrow` as the k
 | `body 2` | h3: Two ways to work with us | 28 | none |
 | `body 3` | Aligned teams can join as cells through the [Nonprofit DAO Accelerator](/accelerator/). Communities and organizations outside the network can work with us through our [services](/services/). | 159 | none |
 | `body 4` | h3: Projects | 12 | none |
-| `body 5` | [All In For Sport](https://allinforsport.org/) is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport. DAO Primitives is a framework for designing purpose-aligned networks of autonomous teams, covering group phase, scale and state. The Institute for Community Sustainability is based in London, Ontario. | 341 | none |
+| `body 5` | The three active projects are [All In For Sport](https://allinforsport.org/), DAO Primitives and the Institute for Community Sustainability. All In For Sport is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport. The Institute for Community Sustainability is based in London, Ontario. | 323 | none |
 | `body 6` | Two projects are applicants. [Pacto](https://covenant-gov.github.io/pacto-app/) is private messaging with on-chain proposals, voting and a shared treasury. [Social Lean Canvas](https://socialleancanvas.com/) is a free, open-source tool for designing a social enterprise's business and impact model. | 220 | none |
 | `body 7` | h3: What we publish | 19 | none |
 | `body 8` | The [Knowledge Garden](https://knowledge.superbenefit.org/) holds our shared documentation, including the Reimagining Power Project's pages on All In For Sport, the Equality Fund and the Institute for Community Sustainability. | 187 | none |
@@ -193,7 +193,6 @@ Read 2026-11-23. Repository paths are on branch `feature/relaunch` unless marked
 | Five projects: All In For Sport, DAO Primitives and the Institute for Community Sustainability active; Pacto and Social Lean Canvas applicants | `docs/relaunch/brief.md`, Active projects; `docs/relaunch/issues.md`, Answered by the owner (2026-11-21) | 2026-11-23 |
 | The Institute for Community Sustainability is in London, Ontario | `docs/relaunch/brief.md`, Active projects | 2026-11-23 |
 | All In For Sport is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport | https://allinforsport.org/ | 2026-11-23 |
-| DAO Primitives is a framework for designing purpose-aligned networks of autonomous teams, covering group phase, scale and state | `docs/relaunch/mockups/pages/home.html`; `origin/main:src/data/mock-projects.json` | 2026-11-23 |
 | Pacto is private messaging with on-chain proposals, voting and a shared treasury | https://covenant-gov.github.io/pacto-app/ | 2026-11-23 |
 | Social Lean Canvas is free and open source, for designing a social enterprise's business and impact model | https://socialleancanvas.com/ | 2026-11-23 |
 | The Knowledge Garden holds Reimagining Power Project pages on All In For Sport, the Equality Fund and the Institute for Community Sustainability | https://knowledge.superbenefit.org/docs | 2026-11-23 |
@@ -212,7 +211,7 @@ Facts the copy needs that no source gives. Each is left out of the drafts.
 - The new service offerings and their terms (issue 46): the `services` entries, the home panel's "What you get" list and the `services` entry's `cost_summary`. Until then the services page and panel say nothing about price.
 - A link for "Book an onboarding call": the `accelerator` hero button and the contact band's outline button stay empty.
 - What the Institute for Community Sustainability does: the brief gives only its name and London, Ontario, and no public site for it is named. The about body says only where it is.
-- A public site or page for DAO Primitives: the about body describes it from the mockup and the old mock data, with no link.
+- What DAO Primitives is, and a public page for it: the only descriptions are the mockups' placeholder summary and `origin/main:src/data/mock-projects.json` (mock data), so the about body gives only its name. The Knowledge Garden's `/docs` index lists a "dao primitives" folder (`/docs/dao-primitives/articles`, `/implementation`, `/primitives-framework`), but each of those links answered 404 on 2026-11-23.
 - Who runs each of the five projects, and how each relates to SuperBenefit or its cells beyond its status (active or applicant): the projects `intro` gives only the status.
 - What Pacto and Social Lean Canvas are applying for or to (the sources say only "applicant"), and when they applied.
 - How many cells or people SuperBenefit has, when it was founded, where its LLC is registered and who runs it: the about page would be more specific with them.
