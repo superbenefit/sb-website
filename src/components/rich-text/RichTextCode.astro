@@ -4,6 +4,13 @@
  * scrolls sideways and never wraps (`.prose pre` in src/styles/global.css).
  * The EmDash 1.5.0 editor stores `code` and `language`; the language is kept
  * as a `language-*` class, as EmDash's own Code component does.
+ *
+ * `tabindex="0"`: a long line scrolls the block sideways, and a scrolling
+ * region must be reachable by keyboard so it can be scrolled with the arrow
+ * keys (WCAG 2.1.1; axe rule `scrollable-region-focusable`, whose fix is a
+ * tabindex of 0 on the region:
+ * https://dequeuniversity.com/rules/axe/4.14/scrollable-region-focusable).
+ * Focus shows the site's `:focus-visible` outline.
  */
 interface Props {
   node: {
@@ -18,4 +25,4 @@ const { node } = Astro.props;
 const language = typeof node?.language === 'string' && /^[\w+#.-]+$/.test(node.language) ? `language-${node.language}` : undefined;
 ---
 
-{node?.code && <pre class={language}><code class={language}>{node.code}</code></pre>}
+{node?.code && <pre class={language} tabindex="0"><code class={language}>{node.code}</code></pre>}
