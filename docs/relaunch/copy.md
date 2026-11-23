@@ -127,12 +127,12 @@ Shown by `src/pages/about.astro`: hero (`title`, `intro`, and `eyebrow` as the k
 | `section_label` | What we are | 11 | 11 |
 | `section_heading` | Small teams, each in charge of its own funds and decisions. | 59 | 59 |
 | `body 1` | SuperBenefit is made up of small, self-directed teams, called cells, working on shared problems. They share people, infrastructure, funding support and admin help, so no one has to build everything from scratch. | 211 | none |
-| `body 2` | h3: Two ways to work with us | 28 | none |
+| `body 2` | h3: Two ways to work with us | 24 | none |
 | `body 3` | Aligned teams can join as cells through the [Nonprofit DAO Accelerator](/accelerator/). Communities and organizations outside the network can work with us through our [services](/services/). | 159 | none |
-| `body 4` | h3: Projects | 12 | none |
+| `body 4` | h3: Projects | 8 | none |
 | `body 5` | The three active projects are [All In For Sport](https://allinforsport.org/), DAO Primitives and the Institute for Community Sustainability. All In For Sport is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport. The Institute for Community Sustainability is based in London, Ontario. | 323 | none |
 | `body 6` | Two projects are applicants. [Pacto](https://covenant-gov.github.io/pacto-app/) is private messaging with on-chain proposals, voting and a shared treasury. [Social Lean Canvas](https://socialleancanvas.com/) is a free, open-source tool for designing a social enterprise's business and impact model. | 220 | none |
-| `body 7` | h3: What we publish | 19 | none |
+| `body 7` | h3: What we publish | 15 | none |
 | `body 8` | The [Knowledge Garden](https://knowledge.superbenefit.org/) holds our shared documentation, including the Reimagining Power Project's pages on All In For Sport, the Equality Fund and the Institute for Community Sustainability. | 187 | none |
 | `body 9` | To talk about any of this, [get in touch](/contact/). | 40 | none |
 | `cta_label` | Get in touch | 12 | 20 |
