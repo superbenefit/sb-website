@@ -146,7 +146,7 @@ Standard check: who and what (`intro`, `body 1`, `body 3`), cost (on the acceler
 
 ## contact (`/contact/`)
 
-Shown by `src/pages/contact.astro`: hero (`eyebrow`, `title`, `intro`), the aside (`section_heading`, `body`; a last paragraph that is only a link renders as the aside's arrow link), and the closing band's outline button from `cta_label` + `cta_url` (both needed).
+Shown by `src/pages/contact.astro`: hero (`eyebrow`, `title`, `intro`), the aside (`section_heading`, `body`; a last paragraph that is only a link renders as the aside's arrow link; the draft has none, since the owner removed the bare email address on 2026-11-23), and the closing band's outline button from `cta_label` + `cta_url` (both needed).
 
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
@@ -156,15 +156,14 @@ Shown by `src/pages/contact.astro`: hero (`eyebrow`, `title`, `intro`), the asid
 | `section_heading` | How we work | 11 | 11 |
 | `body 1` | We respond personally and try to be useful even when a formal engagement is not the right fit. | 94 | 127 |
 | `body 2` | For proposals, partnerships, speaking or a hello, use the form. We reply within a few days. | 91 | 103 |
-| `body 3` | [contact@superbenefit.org](mailto:contact@superbenefit.org) | 24 | 24 |
 | `cta_label` | (empty) | 0 | none |
 | `cta_url` | (empty) | 0 | none |
 | `SEO title` | Contact | 7 | 60 |
 | `SEO description` | Write to SuperBenefit about a project, a service or joining the Nonprofit DAO Accelerator. We reply within a few days. | 118 | 160 |
 
-`body 1` drops the mockup's opening "SuperBenefit is a small network.", which gives no number (Gaps: how many cells or people). `body 2` keeps the form topics from the mockup and adds the reply time, which says what happens next, within the placeholder's 103. `body 3` is a paragraph holding only the link, so it renders as the aside's arrow link. `cta_label` + `cta_url` are the band's "Book an onboarding call" button, which has no link yet (`brief.md`, Answered 2026-11-20): leave both empty and the button is not shown.
+`body 1` drops the mockup's opening "SuperBenefit is a small network.", which gives no number (Gaps: how many cells or people). `body 2` keeps the form topics from the mockup and adds the reply time, which says what happens next, within the placeholder's 103. `cta_label` + `cta_url` are the band's "Book an onboarding call" button, which has no link yet (`brief.md`, Answered 2026-11-20): leave both empty and the button is not shown.
 
-Standard check: who (`intro`: anyone writing about a project, a service or joining as a cell), what they get (`body 1`: a personal reply), what happens next (`body 2`: the form and a reply within a few days; `body 3`: the email address). Cost does not apply to writing to us; what a service costs is on the services page and waits on issue 46, and the accelerator's "No prices" is on its page.
+Standard check: who (`intro`: anyone writing about a project, a service or joining as a cell), what they get (`body 1`: a personal reply), what happens next (`body 2`: the form and a reply within a few days). Cost does not apply to writing to us; what a service costs is on the services page and waits on issue 46, and the accelerator's "No prices" is on its page.
 
 ## Closing band (widget area `closing-band`)
 
@@ -412,7 +411,6 @@ Read 2026-11-23. Repository paths are on branch `feature/relaunch` unless marked
 | The Knowledge Garden holds Reimagining Power Project pages on All In For Sport, the Equality Fund and the Institute for Community Sustainability | https://knowledge.superbenefit.org/docs | 2026-11-23 |
 | "We respond personally and try to be useful even when a formal engagement is not the right fit"; the form for proposals, partnerships, speaking or hello | `origin/main:src/pages/contact.astro`; `docs/relaunch/mockups/pages/contact.html` | 2026-11-23 |
 | We reply within a few days | `origin/main:src/pages/contact.astro` (success message: "We'll be in touch within a few days.") | 2026-11-23 |
-| contact@superbenefit.org | `origin/main:src/pages/contact.astro`; `docs/relaunch/mockups/pages/contact.html` | 2026-11-23 |
 | Discord invite https://discord.gg/DMezXT7UAt | `docs/relaunch/brief.md`, Answered (2026-11-20); `seed/seed.json` | 2026-11-23 |
 | "Book an onboarding call" has no link; the button is hidden until an editor adds one | `docs/relaunch/brief.md`, Answered (2026-11-20) | 2026-11-23 |
 | D4, All In For Sport: a DAO whose mission is to support projects that advance inclusion and empowerment through sport | https://allinforsport.org/about/; https://allinforsport.org/ | 2026-11-23 |

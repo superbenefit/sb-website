@@ -1,8 +1,11 @@
 ---
 /**
  * The updates index, one page of it: docs/relaunch/mockups/pages/updates.html.
- * Gold hero with the `pages` entry `updates` (title, intro), the wave, then
- * the `entries` list and the `pager` in a cream `sec`. Used by
+ * Compact gold hero with the `pages` entry `updates` (title, intro), the
+ * wave, then a blog feed in a cream `sec`: a slim row of tools (search,
+ * project filter, sort), the posts (the newest one large on the first page,
+ * the rest as rows with a thumbnail) and the `pager`. The feed layout
+ * replaced the mockup's card grid at the owner's instruction (2026-11-23). Used by
  * src/pages/updates/index.astro (page 1) and
  * src/pages/updates/page/[page].astro (pages 2 and on).
  *
@@ -21,12 +24,13 @@ import type { CacheHint } from 'emdash';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from './PageHero.astro';
 import WaveDivider from './WaveDivider.astro';
-import EntryList from './EntryList.astro';
+import ImageSlot from './ImageSlot.astro';
 import type { EntryItem } from './EntryList.astro';
 import { updatesQueryString } from '../utils/updates';
 import type { UpdatesQuery } from '../utils/updates';
 import '../styles/parts/sec.css';
 import '../styles/parts/empty.css';
+import '../styles/parts/more.css';
 
 interface Props {
   items: EntryItem[];
@@ -57,6 +61,10 @@ const search = updatesQueryString(query);
 const narrowed = Boolean(query.q || query.project);
 const pageHref = (n: number) => `${n <= 1 ? '/updates/' : `/updates/page/${n}/`}${search}`;
 const chosenProject = projects.find((project) => project.slug === query.project);
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+// The newest post leads the first page of the plain list, as on a blog's front page.
+const hasLead = page === 1 && !narrowed && query.sort === 'newest';
 const newer = page > 1 ? pageHref(page - 1) : null;
 const older = page < totalPages ? pageHref(page + 1) : null;
 ---
@@ -69,38 +77,36 @@ const older = page < totalPages ? pageHref(page + 1) : null;
   noindex={narrowed || query.sort === 'oldest'}
   bandFrom="cream"
 >
-  <PageHero title={title} intro={intro} variant="gold" />
+  <PageHero title={title} intro={intro} variant="gold" compact />
   <WaveDivider bg="gold" fill="cream" />
-  <section class="sec">
+  <section class="sec feed-sec">
     <div class="wrap">
       <form class="tools" method="get" action="/updates/" role="search" aria-label="Updates">
         <div class="tools__search">
-          <label class="caps" for="updates-q">Search</label>
-          <div class="tools__row">
-            <input id="updates-q" type="search" name="q" value={query.q} placeholder="Search titles and summaries" maxlength="100" />
-            <button class="btn btn--ink" type="submit">Search</button>
-          </div>
+          <label class="sr-only" for="updates-q">Search updates</label>
+          <svg class="tools__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+          <input id="updates-q" type="search" name="q" value={query.q} placeholder="Search" maxlength="100" />
         </div>
         <div class="tools__filters">
           {projects.length > 0 && (
-            <div class="tools__field">
-              <label class="caps" for="updates-project">Project</label>
+            <label class="tools__pick">
+              <span class="caps">Project</span>
               <select id="updates-project" name="project" data-submit-on-change>
-                <option value="">All projects</option>
+                <option value="">All</option>
                 {projects.map((project) => (
                   <option value={project.slug} selected={project.slug === query.project}>{project.title}</option>
                 ))}
               </select>
-            </div>
+            </label>
           )}
-          <div class="tools__field">
-            <label class="caps" for="updates-sort">Sort</label>
+          <label class="tools__pick">
+            <span class="caps">Sort</span>
             <select id="updates-sort" name="sort" data-submit-on-change>
               <option value="newest" selected={query.sort === 'newest'}>Newest</option>
               <option value="oldest" selected={query.sort === 'oldest'}>Oldest</option>
             </select>
-          </div>
-          <noscript><button class="btn btn--line" type="submit">Apply</button></noscript>
+          </label>
+          <noscript><button class="tools__apply" type="submit">Apply</button></noscript>
         </div>
       </form>
       {narrowed && (
@@ -112,15 +118,38 @@ const older = page < totalPages ? pageHref(page + 1) : null;
         </p>
       )}
       {items.length > 0 ? (
-        <EntryList entries={items} />
+        <div class="feed">
+          {items.map((item, i) => (
+            <article class:list={['post', { 'post--lead': hasLead && i === 0, 'post--bare': !item.cover }]}>
+              {item.cover && (
+                <a class="post__cover" href={item.href} tabindex="-1" aria-hidden="true">
+                  <ImageSlot
+                    image={item.cover}
+                    sizes={hasLead && i === 0 ? '(min-width: 900px) 680px, 100vw' : '(min-width: 760px) 300px, 100vw'}
+                    priority={i === 0}
+                  />
+                </a>
+              )}
+              <div class="post__text">
+                <p class="post__meta caps">
+                  {item.date && <time datetime={item.date.toISOString()}>{formatDate(item.date)}</time>}
+                  {item.project && <a href={item.project.href}>{item.project.title}</a>}
+                </p>
+                <h2 class="post__title"><a href={item.href}>{item.title}</a></h2>
+                {item.excerpt && <p class="post__excerpt">{item.excerpt}</p>}
+                <a class="more" href={item.href} aria-label={`Read: ${item.title}`}>Read <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+              </div>
+            </article>
+          ))}
+        </div>
       ) : narrowed ? (
         <div class="empty">
-          <h3>No updates match</h3>
+          <h2>No updates match</h2>
           <p>Try other words, or another project.</p>
         </div>
       ) : (
         <div class="empty">
-          <h3>No updates yet</h3>
+          <h2>No updates yet</h2>
           <p>News from the projects and the network will be listed here.</p>
         </div>
       )}
@@ -153,64 +182,87 @@ const older = page < totalPages ? pageHref(page + 1) : null;
 </script>
 
 <style>
-  /* Search, filter and sort: not in the mockups (owner, 2026-11-23). Built
-     from the mockups' parts: `caps` labels, the contact form's field look
-     (cream-light, `--rule` border, `--radius-sm`) and `btn`. Search on the
-     left, the filter and sort on the right; stacked under 760 px. */
+  /* The blog feed (owner, 2026-11-23; not in the mockups, which show a card
+     grid here). A slim row of tools sits just under the hero's wave: search
+     on the left, project and sort on the right, in the page's own type and
+     hairlines so they stay in the background. Then the posts, newest first:
+     the first one large, the rest as rows with a thumbnail. */
+  .feed-sec {
+    padding-top: var(--space-md);
+  }
   .tools {
-    display: grid;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg);
-  }
-  .tools > * {
-    min-width: 0;
-  }
-  .tools__search,
-  .tools__field {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.4rem;
-  }
-  .tools__row {
     display: flex;
-    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgb(var(--color-charcoal-rgb) / 0.3);
+    font-size: var(--text-sm);
+  }
+  .tools__search {
+    position: relative;
+    flex: 1 1 14rem;
+    max-width: 20rem;
+  }
+  .tools__icon {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1rem;
+    height: 1rem;
+    translate: 0 -50%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  .tools input,
+  .tools select {
+    height: 2.5rem;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    border-radius: 0;
+    font: inherit;
+  }
+  .tools input {
+    width: 100%;
+    padding: 0 0 0 1.6rem;
+  }
+  .tools input::placeholder {
+    color: inherit;
+    opacity: 1;
   }
   .tools__filters {
     display: flex;
     flex-wrap: wrap;
-    align-items: end;
-    gap: var(--space-md);
+    align-items: center;
+    gap: 0 var(--space-md);
   }
-  .tools input,
+  .tools__pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
   .tools select {
-    height: 3rem;
-    padding: 0.7rem 0.9rem;
-    background: var(--color-cream-light);
-    color: var(--color-charcoal);
-    border: var(--rule);
-    border-radius: var(--radius-sm);
+    max-width: 8.5rem;
+    padding: 0 0.25rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tools__apply {
+    height: 2.5rem;
+    padding: 0 0.9rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    background: transparent;
     font: inherit;
-  }
-  .tools input {
-    flex: 1;
-    min-width: 0;
-  }
-  .tools select {
-    flex: 1;
-    min-width: 9rem;
-  }
-  .tools__field {
-    flex: 1;
-  }
-  .tools .btn {
-    flex: none;
-    height: 3rem;
-    min-height: 0;
-    padding: 0.5em 1.2em;
-    font-size: var(--text-sm);
+    font-weight: 600;
   }
   .tools__status {
-    margin-bottom: var(--space-lg);
+    margin-top: var(--space-md);
     font-size: var(--text-sm);
   }
   .tools__status a {
@@ -219,45 +271,96 @@ const older = page < totalPages ? pageHref(page + 1) : null;
     text-decoration-color: var(--color-orange);
     text-underline-offset: 0.25em;
   }
+
+  .post {
+    display: grid;
+    gap: var(--space-md);
+    padding-block: var(--space-lg);
+    border-bottom: 1px solid rgb(var(--color-charcoal-rgb) / 0.3);
+  }
+  .post__cover {
+    display: block;
+  }
+  .post__cover :global(.slot) {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .post__cover :global(.has-image) {
+    contain: size;
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.6rem;
+  }
+  .post__meta a {
+    text-decoration: underline;
+    text-decoration-color: var(--color-orange);
+    text-underline-offset: 0.25em;
+  }
+  .post__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .post__title a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-orange);
+    text-underline-offset: 0.2em;
+  }
+  .post__excerpt {
+    margin-top: 0.6rem;
+    max-width: 62ch;
+  }
+  .post :global(.more) {
+    margin-top: var(--space-md);
+  }
+  .post--lead .post__title {
+    font-size: var(--text-2xl);
+  }
+  .post--lead .post__excerpt {
+    font-size: var(--text-lg);
+  }
   @media (min-width: 760px) {
-    .tools {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: var(--space-xl-half);
-    }
-    .tools__search {
-      max-width: 30rem;
-    }
-    .tools__field {
-      flex: none;
-    }
     .tools select {
-      min-width: 11rem;
+      max-width: 12rem;
+    }
+    .post {
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .post--bare {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (min-width: 900px) {
+    .post--lead {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--space-xl-half);
+      align-items: center;
+      padding-block: var(--space-xl-half);
     }
   }
 
-  /* Pagination: the `pager` rules in docs/relaunch/mockups/mockups.css
-     (only the updates index uses them). */
   .pager {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
-    margin-top: var(--space-xl);
-    padding-top: var(--space-lg);
-    border-top: var(--rule);
+    margin-top: var(--space-xl-half);
   }
-
   .pager .btn {
     min-height: 2.75rem;
     padding: 0.5em 1.2em;
     font-size: var(--text-sm);
   }
-
   .pager .btn svg {
     transition: none;
   }
-
   .pager [aria-disabled='true'] {
     opacity: 0.45;
     border-style: dashed;
