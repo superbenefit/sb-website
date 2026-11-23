@@ -86,7 +86,7 @@ Built to `docs/relaunch/mockups/pages/home.html` (C3): hero (`hero`) → banded 
 - **Relaunch tokens** (from `docs/relaunch/mockups/mockups.css`): `--radius-sm|md|pill`, `--space-xl-half`, `--rule`, `--rule-dark`, `--stripe`. Shared parts use the mockups' class names and values; keep them in step with `mockups.css`.
 
 ### Animations (src/styles/animations.css)
-Imported by `BaseLayout`. Its `::view-transition-*(root)` rules set the cross-fade between pages (`<ClientRouter />`). Its other rules (the `data-animate` reveal, `data-parallax`, the decorative keyframes, the `update-post` transition) match no element since B7 removed the legacy components that used them (finding U1).
+Imported by `BaseLayout`. It holds only the cross-fade between pages (`::view-transition-*(root)`, `<ClientRouter />`).
 
 ### TypeScript
 - Strict mode with `strictNullChecks`
