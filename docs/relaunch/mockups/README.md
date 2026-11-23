@@ -42,7 +42,7 @@ Class names are the mockup's own; find the rules in `mockups.css`.
 | Footer with "Site" and "Elsewhere" menus. Changed after the mockups (owner, 2026-11-22): the footer's coloured stripe runs edge to edge across the window, like the header stripe; the logo, menus and base line stay in the 1200 px column. | `ft` | every page |
 | Closing call-to-action band | `close` | every page except the error pages |
 | Buttons: `btn--accent`, `btn--ink`, `btn--line` | `btn` | every page |
-| Page hero with kicker, title, intro, actions; variants `ph--black`, `--charcoal`, `--gold`, `--green`, `--orange`, `--red`, `--compact` | `ph` | every page except home |
+| Page hero with kicker, title, intro, actions. Changed after the mockups (owner, 2026-11-23): the About hero shows the SuperBenefit wordmark logo, not the icon; variants `ph--black`, `--charcoal`, `--gold`, `--green`, `--orange`, `--red`, `--compact` | `ph` | every page except home |
 | Home hero. Changed after the mockups (owner, 2026-11-23): the hero has no icon image (`hero__art`), and the Updates section always shows, with the `empty` box when there are no updates. | `hero` | home |
 | Wave divider between sections | `dv` | most pages |
 | Section, dark section, two-column split | `sec`, `sec--ink`, `split` | most pages |
