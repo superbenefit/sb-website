@@ -327,8 +327,8 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | People to work with | 19 | 21 |
-| `summary` | Find the people your project needs to keep moving. | 50 | 64 |
-| `body` | Facilitators and stewards from across the SuperBenefit network can step in to help with coordination and decisions, and contributors with ongoing work. | 151 | 171 |
+| `summary` | Find people for your project. | 29 | 64 |
+| `body` | Other cells can help with facilitation, stewardship and hands-on work. | 70 | 171 |
 | `order` | 1 | n/a | none |
 
 ### Shared infrastructure
@@ -336,8 +336,8 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Shared infrastructure | 21 | 21 |
-| `summary` | Use the infrastructure other projects already depend on. | 56 | 64 |
-| `body` | SuperBenefit's DAO, shared tooling, documentation templates and patterns you can adapt. A cell keeps what it makes and contributes back what it builds. | 151 | 171 |
+| `summary` | Use what other cells already run. | 33 | 64 |
+| `body` | SuperBenefit's DAO, shared tools and templates are open to cells. | 65 | 171 |
 | `order` | 2 | n/a | none |
 
 ### Funding support
@@ -345,8 +345,8 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Funding support | 15 | 21 |
-| `summary` | Apply for grants with input from people who have done it before. | 64 | 64 |
-| `body` | Work on grant applications with other SuperBenefit cells and connect with the network's fiscal hosts, who can move funds where needed. Cells share reporting approaches. | 168 | 171 |
+| `summary` | Work on funding with other cells. | 33 | 64 |
+| `body` | Cells help each other with grant applications and reporting. | 60 | 171 |
 | `order` | 3 | n/a | none |
 
 ### Admin and paperwork
@@ -354,15 +354,39 @@ The section note beside the heading ("Peer support between cells. No prices.") i
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
 | `title` | Admin and paperwork | 19 | 21 |
-| `summary` | Use our DAO and existing entity arrangements when you need them. | 64 | 64 |
-| `body` | SuperBenefit helps with the admin and filings that keep a project running, so a cell does not have to set up its own back office. | 129 | 171 |
+| `summary` | Get help with admin. | 20 | 64 |
+| `body` | Cells can use SuperBenefit's DAO and entity arrangements when they need them. | 77 | 171 |
 | `order` | 4 | n/a | none |
 
-Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (`summary` and `body`), what it costs (the section note: no prices), what happens next (the band's button). The mockup's "Take what you need, contribute what you build, and keep what you make." is cut to two clauses in Shared infrastructure, and People to work with lists two roles per clause, to keep rhythm triplets out; the Social Lean Canvas `body 2` drops its "its customers, its impact and its economics" for the same reason.
+Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (`summary` and `body`), what it costs (the section note: no prices), what happens next (the band's button). The summaries and bodies were shortened at the owner's request (2026-11-23) to say less about how each support works.
 
 ## services entries (D4)
 
-Not drafted: the `services` entries wait on issue 46 (the owner's new offerings and their terms, `issues.md`, D1).
+Two placeholder entries, so the services page and the home panel can be previewed (owner, 2026-11-23). They are examples, not the final offerings, which still wait on issue 46. Fields are the seed's (collection `services`: `title`, `audience`, `deliverables`, `service_terms`, `body`, `order`). No price is given.
+
+### Local tech training (placeholder)
+
+| Field | Draft |
+| --- | --- |
+| `title` | Local tech training |
+| `audience` | For communities and organizations that want to run their own tools. |
+| `deliverables` | Workshops on AI you run locally; Workshops on keeping and using local data; Workshops on sovereign tech and community infrastructure |
+| `service_terms` | Scoped with you before we start |
+| `body` | Training for community groups on AI, local data and sovereign tech. Placeholder text. |
+| `order` | 1 |
+
+### Nonprofit DAO Incubator (placeholder)
+
+| Field | Draft |
+| --- | --- |
+| `title` | Nonprofit DAO Incubator |
+| `audience` | For groups outside the network that are starting a shared project. |
+| `deliverables` | Group facilitation; Project co-stewardship: we host the project and work on it with you; Regular check-ins |
+| `service_terms` | Scoped with you before we start |
+| `body` | Facilitation for outside groups, run as project co-stewardship. Placeholder text. |
+| `order` | 2 |
+
+"Project co-stewardship" is the name of this offering on the current superbenefit.org (`origin/main:src/components/ExternalServices.astro`).
 
 ## Sources
 
