@@ -92,11 +92,11 @@ Shown by `src/pages/projects/index.astro`: hero (`title`, `intro`, and `eyebrow`
 | --- | --- | --- | --- |
 | `eyebrow` | (empty) | 0 | none |
 | `title` | Projects | 8 | 8 |
-| `intro` | Work run by SuperBenefit's cells: three active projects and two applicants. | 75 | 91 |
-| `SEO title` | Projects in the SuperBenefit network | 36 | 60 |
+| `intro` | Three active projects and two applicants. | 41 | 91 |
+| `SEO title` | Projects and applicants | 23 | 60 |
 | `SEO description` | All In For Sport, DAO Primitives and the Institute for Community Sustainability, with Pacto and Social Lean Canvas as applicants. | 129 | 160 |
 
-`eyebrow`: the mockup shows no kicker on this page, so leave it empty. The counts in `intro` and the names in the description must change when a project is added or changes status.
+`eyebrow`: the mockup shows no kicker on this page, so leave it empty. `intro` and the SEO title give only the five projects' status, which is all the sources give; no source says who runs each project (Gaps). The counts in `intro` and the names in the description must change when a project is added or changes status.
 
 Standard check: who and what (`intro`, the cards), what happens next (each card's "View project"). Cost does not apply to a list of projects.
 
@@ -109,7 +109,7 @@ Shown by `src/components/UpdatesIndex.astro`: hero (`title`, `intro`). No other 
 | `title` | Updates | 7 | 7 |
 | `intro` | News from SuperBenefit's projects, newest first. | 48 | 53 |
 | `SEO title` | Updates from the projects | 25 | 60 |
-| `SEO description` | News from SuperBenefit's projects and cells, newest first. Join the conversation on Discord. | 92 | 160 |
+| `SEO description` | News from SuperBenefit's projects, newest first. Join the conversation on Discord. | 82 | 160 |
 
 On `/updates/page/2/` and later the layout adds ", page n" to the title and "Page n." before the description (D6 notes), so later pages stay unique.
 
@@ -213,6 +213,7 @@ Facts the copy needs that no source gives. Each is left out of the drafts.
 - A link for "Book an onboarding call": the `accelerator` hero button and the contact band's outline button stay empty.
 - What the Institute for Community Sustainability does: the brief gives only its name and London, Ontario, and no public site for it is named. The about body says only where it is.
 - A public site or page for DAO Primitives: the about body describes it from the mockup and the old mock data, with no link.
+- Who runs each of the five projects, and how each relates to SuperBenefit or its cells beyond its status (active or applicant): the projects `intro` gives only the status.
 - What Pacto and Social Lean Canvas are applying for or to (the sources say only "applicant"), and when they applied.
 - How many cells or people SuperBenefit has, when it was founded, where its LLC is registered and who runs it: the about page would be more specific with them.
 - A quote with a named source for the about page's quote section (not built, C8 notes).
