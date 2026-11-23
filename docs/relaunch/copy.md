@@ -16,7 +16,7 @@ Shown by `src/pages/index.astro`: hero (`eyebrow`, `title`, `intro`, `cta_label`
 
 | Field | Draft | Chars | Max |
 | --- | --- | --- | --- |
-| `eyebrow` | Let's make better faster, together. | 35 | 35 |
+| `eyebrow` | Make Better Faster | 18 | 35 |
 | `title` | Technology that communities own and run. | 40 | 40 |
 | `intro` | We back aligned teams through the Nonprofit DAO Accelerator, and help communities and organizations run their own data and local infrastructure. | 144 | 159 |
 | `cta_label` | Get in touch | 12 | 12 |
@@ -379,7 +379,7 @@ Read 2026-11-23. Repository paths are on branch `feature/relaunch` unless marked
 | A team can bring its own organization or use SuperBenefit's DAO, and can leave at any time ("Bring your own organization, anchor in our DAO, or pass through. Leave anytime."; "Use our DAO and existing entity arrangements when you need them.") | `origin/main:src/components/InternalServices.astro`; `docs/relaunch/mockups/pages/accelerator.html` | 2026-11-23 |
 | Cells are small, self-directed teams working on shared problems, each in charge of its own funds and decisions | `docs/relaunch/mockups/pages/home.html`, `about.html`; `origin/main:src/pages/support/index.astro` | 2026-11-23 |
 | SuperBenefit is a worker self-directed nonprofit ("a Worker Self-Directed Non-Profit Digital LLC") | https://superbenefit.org/ (footer); `docs/relaunch/mockups/pages/about.html` | 2026-11-23 |
-| "Let's make better faster, together." | `origin/main:src/components/Hero.astro`; https://superbenefit.org/ | 2026-11-23 |
+| "Make Better Faster" is the byline, used as written | the owner, 2026-11-23 | 2026-11-23 |
 | Five projects: All In For Sport, DAO Primitives and the Institute for Community Sustainability active; Pacto and Social Lean Canvas applicants | `docs/relaunch/brief.md`, Active projects; `docs/relaunch/issues.md`, Answered by the owner (2026-11-21) | 2026-11-23 |
 | The Institute for Community Sustainability is in London, Ontario | `docs/relaunch/brief.md`, Active projects | 2026-11-23 |
 | All In For Sport is building a network of projects that support community-led initiatives advancing inclusion and empowerment through sport | https://allinforsport.org/ | 2026-11-23 |
