@@ -221,7 +221,7 @@ All Worker domain and Access settings are configured by a human in the Cloudflar
 Copy and the new service offerings are content work; see `issues.md`. Fleet fixes (governance canonical, unidentified Workers) are last in the order.
 
 ## First-deploy checks
-The first branch preview with EmDash (`b2-install-emdash`, 2026-11-22) passed the owner's checks: public pages render, the setup wizard completes, and an uploaded image displays. Still to run on production at launch (D7): the docs' own checklist, including admin sign-in through Access and the cron in `wrangler tail`, which cannot run on a preview; then an Admin chooses Go live under Settings ("Site Status"), because the setup wizard leaves a new site in Staging with `noindex, nofollow` on every page (finding L2).
+The first branch preview with EmDash (`b2-install-emdash`, 2026-11-22) passed the owner's checks: public pages render, the setup wizard completes, and an uploaded image displays. Still to run on production at launch (D7): the docs' own checklist, including admin sign-in through Access and the cron in `wrangler tail`, which cannot run on a preview; then an Admin chooses Go live under Settings ("Site Status"), because the setup wizard leaves a new site in Staging with `noindex, nofollow` on every page (finding L2). Last, in the dashboards (no decision involved): Cloudflare Web Analytics on for superbenefit.org, and `https://superbenefit.org/sitemap.xml` submitted to Google Search Console (D6).
 
 ## Owner decisions (2026-11-20)
 1. Editors sign in through Access with GitHub. Org members are Contributors (drafts only); the "Knowledge Stewardship" team are Editors (added 2026-11-22); the "Web Admins" team are Admins.
