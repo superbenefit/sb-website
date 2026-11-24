@@ -18,6 +18,8 @@ export interface EntryItem {
   excerpt?: string;
   cover?: ImageValue | null;
   project?: { title: string; href: string } | null;
+  /** The update's category, shown before its date. */
+  category?: { label: string; href: string } | null;
 }
 
 interface Props {
@@ -32,9 +34,11 @@ const formatDate = (date: Date) =>
 <div class="entries">
   {entries.map((entry) => (
     <article class="entry">
-      {entry.date && (
+      {(entry.date || entry.category) && (
         <p class="caps">
-          <time datetime={entry.date.toISOString()}>{formatDate(entry.date)}</time>
+          {entry.category && <a class="entry__cat" href={entry.category.href}>{entry.category.label}</a>}
+          {entry.category && entry.date && <span aria-hidden="true"> · </span>}
+          {entry.date && <time datetime={entry.date.toISOString()}>{formatDate(entry.date)}</time>}
         </p>
       )}
       <h3><a href={entry.href}>{entry.title}</a></h3>

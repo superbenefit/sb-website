@@ -1,0 +1,39 @@
+---
+/**
+ * Renders a page's sections in the order the editor set, with EmDash's
+ * <Blocks> (https://docs.emdashcms.com/guides/blocks/#render-the-composition).
+ * One component per block type in seed/seed.json; a new block type needs a
+ * component here before it is allowed on the `pages` Sections field.
+ */
+import { Blocks, defineBlockComponents } from 'emdash/ui';
+import type { PageLayoutBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import ContactForm from './ContactForm.astro';
+import Hero from './Hero.astro';
+import ItemList from './ItemList.astro';
+import LatestUpdates from './LatestUpdates.astro';
+import OfferPanel from './OfferPanel.astro';
+import ProjectShowcase from './ProjectShowcase.astro';
+import ServiceList from './ServiceList.astro';
+import SupportList from './SupportList.astro';
+import TextSection from './TextSection.astro';
+
+interface Props {
+  sections: Placed[];
+}
+
+const { sections } = Astro.props;
+const components = defineBlockComponents<PageLayoutBlock>({
+  hero: Hero,
+  text_section: TextSection,
+  offer_panel: OfferPanel,
+  project_showcase: ProjectShowcase,
+  latest_updates: LatestUpdates,
+  item_list: ItemList,
+  support_list: SupportList,
+  service_list: ServiceList,
+  contact_form: ContactForm,
+});
+---
+
+<Blocks value={sections} components={components} />

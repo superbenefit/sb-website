@@ -23,9 +23,7 @@
  * title for og:title. `pageNumber` above 1 (a later page of a list) adds
  * ", page n" to the title and "Page n." before the description, and keeps
  * the canonical on the page's own URL, since the entry's panel belongs to
- * page 1. `term` (home: "Nonprofit DAO Accelerator") must be in the title:
- * a resolved title without it (an SEO panel title, say) becomes
- * "{term} — {title}", so the panel title is used and the term stays. With
+ * page 1. With
  * no description at all, the full title stands in.
  * The panel's image is the share image (else `coverImage`, else the site
  * default) and its "Hide from search engines" writes `noindex, nofollow`
@@ -69,8 +67,6 @@ interface Props {
   siteFirst?: boolean;
   /** Page of a paginated list; above 1 the title and description name it. */
   pageNumber?: number;
-  /** Words the title must carry; put before a resolved title that lacks them (home). */
-  term?: string;
   ogImage?: string;
   bodyClass?: string;
   type?: 'website' | 'article';
@@ -105,7 +101,6 @@ const {
   seo,
   siteFirst = false,
   pageNumber = 1,
-  term,
   ogImage = '/images/brand-showcase.webp',
   bodyClass = '',
   type = 'website',
@@ -146,9 +141,7 @@ const meta = seo
   : undefined;
 const later = pageNumber > 1;
 const resolvedTitle = meta?.title || fallbackTitle;
-const termedTitle =
-  term && !resolvedTitle.toLowerCase().includes(term.toLowerCase()) ? `${term}${separator}${resolvedTitle}` : resolvedTitle;
-const title = `${termedTitle}${later ? `, page ${pageNumber}` : ''}`;
+const title = `${resolvedTitle}${later ? `, page ${pageNumber}` : ''}`;
 const fullTitle = title.includes(siteName)
   ? title
   : siteFirst

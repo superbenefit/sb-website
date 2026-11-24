@@ -176,7 +176,7 @@ export const contact = defineAction({
       throw new ActionError({
         code: actionCode,
         message:
-          'We could not send your message right now. Please try again or email us directly at contact@superbenefit.org.',
+          'We could not send your message right now. Please try again in a few minutes.',
       });
     }
   },
@@ -184,7 +184,7 @@ export const contact = defineAction({
 
 /** Shown to visitors for any fault on our side; the detail is logged. */
 const GENERIC_FAULT =
-  'Something went wrong on our side. Please try again later or email us directly at contact@superbenefit.org.';
+  'Something went wrong on our side. Please try again later.';
 
 /** Logs a server fault and returns the generic error for the visitor. */
 function serverFault(detail: string): ActionError {

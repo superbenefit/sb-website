@@ -1,26 +1,26 @@
 ---
 /**
  * The updates index, one page of it: docs/relaunch/mockups/pages/updates.html.
- * Gold hero with the `pages` entry `updates` (title, intro), the wave, then
+ * The sections of the `pages` entry `updates` (a gold hero), the wave, then
  * the `entries` list and the `pager` in a cream `sec`. Used by
  * src/pages/updates/index.astro (page 1) and
  * src/pages/updates/page/[page].astro (pages 2 and on).
  *
- * Content: the hero reads its `pages` entry with getEmDashEntry(), so a
- * preview link for that entry shows its draft (issues.md, B6 notes); the list
+ * Content: the sections come from getPageSections() (src/utils/sections.ts),
+ * so a preview link for that entry shows its draft; the list
  * comes from getUpdatesPage(). Every cache hint goes to Astro.cache.set(), on
  * top of the route rule in astro.config.mjs.
  *
  * Missing content (issues.md, C7 notes): with no `updates` page entry the
- * title is "Updates" and there is no intro. With no published updates the
+ * hero holds "Updates" and nothing else. With no published updates the
  * list is the mockup's `empty` box with a short message, and there is no
  * pager; with one page of updates there is no pager either.
  */
-import { getEmDashEntry } from 'emdash';
 import type { CacheHint } from 'emdash';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from './PageHero.astro';
-import WaveDivider from './WaveDivider.astro';
+import PageSections from './blocks/PageSections.astro';
+import SectionDivider from './blocks/SectionDivider.astro';
+import { getPageSections } from '../utils/sections';
 import EntryList from './EntryList.astro';
 import type { EntryItem } from './EntryList.astro';
 import { updatesQueryString } from '../utils/updates';
@@ -36,41 +36,46 @@ interface Props {
   total: number;
   /** Projects offered in the filter. */
   projects: { slug: string; title: string }[];
+  /** Categories offered in the filter. */
+  categories: { slug: string; label: string }[];
+  /** The tag the list is narrowed to, if any. */
+  tag: { slug: string; label: string } | null;
   query: UpdatesQuery;
   cacheHints: CacheHint[];
 }
 
-const { items, page, totalPages, total, projects, query, cacheHints } = Astro.props;
+const { items, page, totalPages, total, projects, categories, tag, query, cacheHints } = Astro.props;
 
-const { entry: pageEntry, cacheHint: pageHint } = await getEmDashEntry('pages', 'updates');
+const pageEntry = await getPageSections('updates', { hero: 'gold', fallback: 'Updates' });
+const pageHint = pageEntry.cacheHint;
 // A search can be any text, so its results are not stored in the cache; the
 // filter and sort have a fixed set of values and are cached like the plain list.
 if (Astro.cache?.enabled) {
   if (query.q) Astro.cache.set(false);
-  else for (const hint of [pageHint, ...cacheHints]) Astro.cache.set(hint);
+  else for (const hint of [pageHint, ...cacheHints]) if (hint) Astro.cache.set(hint);
 }
 
-const title = pageEntry?.data.title || 'Updates';
-const intro = pageEntry?.data.intro || undefined;
+const title = pageEntry.title;
 
 const search = updatesQueryString(query);
-const narrowed = Boolean(query.q || query.project);
+const narrowed = Boolean(query.q || query.project || query.category || query.tag);
 const pageHref = (n: number) => `${n <= 1 ? '/updates/' : `/updates/page/${n}/`}${search}`;
 const chosenProject = projects.find((project) => project.slug === query.project);
+const chosenCategory = categories.find((category) => category.slug === query.category);
 const newer = page > 1 ? pageHref(page - 1) : null;
 const older = page < totalPages ? pageHref(page + 1) : null;
 ---
 
 <BaseLayout
   title={title}
-  description={intro ?? ''}
-  seo={pageEntry ?? undefined}
+  description={pageEntry.description}
+  seo={pageEntry.entry ?? undefined}
   pageNumber={page}
   noindex={narrowed || query.sort === 'oldest'}
   bandFrom="cream"
 >
-  <PageHero title={title} intro={intro} variant="gold" />
-  <WaveDivider bg="gold" fill="cream" />
+  <PageSections sections={pageEntry.sections} />
+  <SectionDivider from={pageEntry.lastTone} to="cream" bands={pageEntry.lastBands} />
   <section class="sec sec--feed">
     <div class="wrap">
       <form class="tools" method="get" action="/updates/" role="search" aria-label="Updates">
@@ -93,6 +98,18 @@ const older = page < totalPages ? pageHref(page + 1) : null;
               </select>
             </div>
           )}
+          {categories.length > 0 && (
+            <div class="tools__field">
+              <label class="caps" for="updates-category">Category</label>
+              <select id="updates-category" name="category" data-submit-on-change>
+                <option value="">All categories</option>
+                {categories.map((category) => (
+                  <option value={category.slug} selected={category.slug === query.category}>{category.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {query.tag && <input type="hidden" name="tag" value={query.tag} />}
           <div class="tools__field">
             <label class="caps" for="updates-sort">Sort</label>
             <select id="updates-sort" name="sort" data-submit-on-change>
@@ -107,7 +124,9 @@ const older = page < totalPages ? pageHref(page + 1) : null;
         <p class="tools__status" role="status">
           {total === 1 ? '1 update' : `${total} updates`}
           {query.q && <> matching “{query.q}”</>}
-          {chosenProject && <> in {chosenProject.title}</>}.
+          {chosenCategory && <> in {chosenCategory.label}</>}
+          {tag && <> tagged {tag.label}</>}
+          {chosenProject && <> about {chosenProject.title}</>}.
           {' '}<a href={`/updates/${query.sort === 'oldest' ? '?sort=oldest' : ''}`}>Clear</a>
         </p>
       )}
@@ -116,7 +135,7 @@ const older = page < totalPages ? pageHref(page + 1) : null;
       ) : narrowed ? (
         <div class="empty">
           <h3>No updates match</h3>
-          <p>Try other words, or another project.</p>
+          <p>Try other words, or another project or category.</p>
         </div>
       ) : (
         <div class="empty">

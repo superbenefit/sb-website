@@ -84,9 +84,12 @@ export default defineConfig({
   // that calls Astro.cache.set(false). /support and /supports have none
   // either: they are the configured `redirects` above, answered before any
   // page renders.
-  // The home page also lists the titles of the services and supports entries.
+  // These tags are the baseline for each route's usual sections. A page
+  // section that reads a collection also passes its cache hint to
+  // Astro.cache.set() (src/components/blocks/), so a section an editor adds to
+  // another page still purges that page on publish.
   routeRules: {
-    '/': rule(['pages', 'projects', 'updates', 'services', 'supports']),
+    '/': rule(['pages', 'projects', 'updates']),
     '/about': rule(['pages']),
     '/accelerator': rule(['pages', 'supports']),
     '/contact': rule(['pages']),

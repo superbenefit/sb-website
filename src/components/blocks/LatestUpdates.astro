@@ -1,0 +1,66 @@
+---
+/**
+ * Latest updates: the three newest updates, each with its project. With no
+ * updates the section still shows, holding the editor's "no updates" text.
+ */
+import { getEmDashCollection, getEmDashReferences, sanitizeHref } from 'emdash';
+import type { CacheHint } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutLatestUpdatesBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import EntryList from '../EntryList.astro';
+import type { EntryItem } from '../EntryList.astro';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/more.css';
+import '../../styles/parts/empty.css';
+
+type Props = BlockComponentProps<PageLayoutLatestUpdatesBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutLatestUpdatesBlock>).__place;
+
+const latest = await getEmDashCollection('updates', { limit: 3, orderBy: { published_at: 'desc' } });
+const hints: (CacheHint | undefined)[] = [latest.cacheHint];
+// Each update's project: one page of its `project` reference field
+// (https://docs.emdashcms.com/guides/querying-content/#paginate-a-reference-field).
+const updates: EntryItem[] = await Promise.all(
+  latest.entries.map(async ({ data }) => {
+    const refs = await getEmDashReferences<{ title: string; slug: string | null }>('updates', data.id, 'project', { limit: 1 });
+    hints.push(refs.cacheHint);
+    const project = refs.entries[0]?.data;
+    const [category] = data.terms?.category ?? [];
+    return {
+      href: `/updates/${data.slug ?? data.id}/`,
+      title: data.title,
+      date: data.publishedAt,
+      excerpt: data.excerpt,
+      cover: data.cover,
+      project: project?.slug ? { title: project.title, href: `/projects/${project.slug}/` } : null,
+      category: category ? { label: category.label, href: `/updates/?category=${encodeURIComponent(category.slug)}` } : null,
+    };
+  }),
+);
+if (Astro.cache?.enabled) for (const hint of hints) if (hint) Astro.cache.set(hint);
+const link = value.link_label && value.link_url ? { label: value.link_label, href: sanitizeHref(value.link_url) } : null;
+const arrow = 'M5 12h14M13 6l6 6-6 6';
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+<section class="sec">
+  <div class="wrap">
+    {(value.heading || link) && (
+      <div class="sec__head">
+        {value.heading && <h2 class="display">{value.heading}</h2>}
+        {link && <a class="more" href={link.href}>{link.label} <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>}
+      </div>
+    )}
+    {updates.length > 0 ? (
+      <EntryList entries={updates} />
+    ) : (value.empty_heading || value.empty_text) && (
+      <div class="empty">
+        {value.empty_heading && <h3>{value.empty_heading}</h3>}
+        {value.empty_text && <p>{value.empty_text}</p>}
+      </div>
+    )}
+  </div>
+</section>

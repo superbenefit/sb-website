@@ -13,21 +13,21 @@
  * `projects` and `updates`).
  *
  * Related updates: an update names its project in its `project` reference
- * field (seed/seed.json). EmDash 1.5.0 resolves a reference field from the
- * entry that holds it (getEmDashEntry `references`, getEmDashReferences;
- * https://docs.emdashcms.com/guides/querying-content/), and the project has
- * no field on the other end of the relation, so the page walks the published
- * updates, newest first, reads each one's `project` with
- * getEmDashReferences() and keeps the first three that point at this
- * project. See docs/relaunch/issues.md, C6 notes.
+ * field, and the project's `updates` field is the other end of that relation
+ * (seed/seed.json `relations`), so the project is read with its updates in
+ * one call (getEmDashEntry `references`,
+ * https://docs.emdashcms.com/guides/relations/#read-links-in-a-template).
+ * The linking side carries no order, so the page sorts them newest first and
+ * keeps three. An editor sees and changes the same list on the project.
  *
  * Missing content: the logo, place, cover, body, partner and website are
  * left out when empty, and the facts column when both partner and website
  * are; the updates section is left out when no update names the project
  * (the mockups show neither case).
  */
-import { getEmDashCollection, getEmDashEntry, getEmDashReferences } from 'emdash';
+import { getEmDashEntry } from 'emdash';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import PageHero from '../../components/PageHero.astro';
 import WaveDivider from '../../components/WaveDivider.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
@@ -41,52 +41,43 @@ import '../../styles/parts/more.css';
 
 /** How many updates the section shows: one row of the mockup's grid. */
 const UPDATES_SHOWN = 3;
-/** Updates read per step of the walk. */
-const UPDATES_PER_STEP = 20;
-
 const slug = Astro.params.slug?.replace(/\/+$/, '');
 const { entry: project, cacheHint } = slug
-  ? await getEmDashEntry('projects', slug)
+  ? await getEmDashEntry('projects', slug, { references: { updates: { limit: 100 } } })
   : { entry: null, cacheHint: undefined };
 if (!project) {
   return Astro.rewrite('/404');
 }
 if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
 
-const updates: EntryItem[] = [];
-let cursor: string | undefined;
-do {
-  const page = await getEmDashCollection('updates', {
-    orderBy: { published_at: 'desc' },
-    limit: UPDATES_PER_STEP,
-    cursor,
-  });
-  if (Astro.cache?.enabled) Astro.cache.set(page.cacheHint);
-  const refs = await Promise.all(
-    page.entries.map((update) => getEmDashReferences('updates', update.data.id, 'project')),
-  );
-  page.entries.forEach((update, i) => {
-    const target = refs[i].entries[0];
-    const targetId = (target?.data as { id?: string } | undefined)?.id ?? target?.id;
-    if (targetId && targetId === project.data.id && updates.length < UPDATES_SHOWN) {
-      const { data } = update;
-      updates.push({
-        href: `/updates/${data.slug ?? update.id}/`,
-        title: data.title,
-        date: data.publishedAt ?? data.createdAt,
-        excerpt: data.excerpt ?? undefined,
-        cover: data.cover,
-      });
-    }
-  });
-  cursor = page.nextCursor;
-} while (cursor && updates.length < UPDATES_SHOWN);
+const stamp = (date: Date | null | undefined) => date?.getTime() ?? 0;
+const updates: EntryItem[] = [...(project.references?.updates.entries ?? [])]
+  .sort((a, b) => stamp(b.data.publishedAt ?? b.data.createdAt) - stamp(a.data.publishedAt ?? a.data.createdAt))
+  .slice(0, UPDATES_SHOWN)
+  .map(({ id, data }) => ({
+    href: `/updates/${data.slug ?? id}/`,
+    title: data.title,
+    date: data.publishedAt ?? data.createdAt,
+    excerpt: data.excerpt ?? undefined,
+    cover: data.cover,
+  }));
 
 const { title, summary, project_status, location, logo, cover, body, partner, website } = project.data;
 const hasFacts = Boolean(partner || website);
 ---
 
 <BaseLayout title={title} description={summary} seo={project} bandFrom={updates.length > 0 ? 'green' : 'cream'}>
+  {/* schema.org Project (https://schema.org/Project): the fields an editor fills on the project. */}
+  <JsonLd
+    build={(site) => ({
+      '@type': 'Project',
+      name: title,
+      description: summary,
+      url: `${site.url}${Astro.url.pathname}`,
+      sameAs: website,
+      location: location ? { '@type': 'Place', name: location } : undefined,
+    })}
+  />
   <PageHero title={title} intro={summary} variant="red" compact>
     <Fragment slot="meta">
       {logo && <ImageSlot image={logo} kind="logo" sizes="72px" priority />}

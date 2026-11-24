@@ -2,7 +2,7 @@
   "version": "1",
   "meta": {
     "name": "SuperBenefit",
-    "description": "Content model for superbenefit.org: site settings, five collections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
+    "description": "Content model for superbenefit.org: site settings, page section block types, five collections, two taxonomies, the project and update relation, reusable sections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
   },
   "settings": {
     "title": "SuperBenefit",
@@ -14,92 +14,719 @@
       "disallowAiTraining": true
     }
   },
+  "blockTypes": [
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "description": "The opening of a page: its heading, a short introduction and up to two buttons.",
+      "icon": "flag-banner",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Small line above the heading",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Introduction",
+              "type": "text"
+            },
+            {
+              "slug": "button_label",
+              "label": "Button text",
+              "type": "string"
+            },
+            {
+              "slug": "button_url",
+              "label": "Button link",
+              "type": "string"
+            },
+            {
+              "slug": "second_button_label",
+              "label": "Second button text",
+              "type": "string"
+            },
+            {
+              "slug": "second_button_url",
+              "label": "Second button link",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "text_section",
+      "label": "Text section",
+      "description": "A label and heading beside a column of text.",
+      "icon": "text-columns",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "section_label",
+              "label": "Small label above the heading",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link text",
+              "type": "string"
+            },
+            {
+              "slug": "link_url",
+              "label": "Link link",
+              "type": "string"
+            },
+            {
+              "slug": "background",
+              "label": "Background",
+              "type": "select",
+              "defaultValue": "Cream",
+              "validation": {
+                "options": [
+                  "Cream",
+                  "Charcoal"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "offer_panel",
+      "label": "Offer panel",
+      "description": "A coloured panel for one offer: who it is for, what they get and what it costs. Panels placed one after another sit side by side.",
+      "icon": "columns",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Who it is for",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "text",
+              "label": "Introduction",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "What you get",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "item",
+                    "label": "Item",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "cost",
+              "label": "What it costs",
+              "type": "string"
+            },
+            {
+              "slug": "button_label",
+              "label": "Button text",
+              "type": "string"
+            },
+            {
+              "slug": "button_url",
+              "label": "Button link",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "project_showcase",
+      "label": "Featured projects",
+      "description": "The projects marked \"Show on the home page\", with their covers.",
+      "icon": "star",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link text",
+              "type": "string"
+            },
+            {
+              "slug": "link_url",
+              "label": "Link link",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "latest_updates",
+      "label": "Latest updates",
+      "description": "The three newest updates.",
+      "icon": "newspaper",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link text",
+              "type": "string"
+            },
+            {
+              "slug": "link_url",
+              "label": "Link link",
+              "type": "string"
+            },
+            {
+              "slug": "empty_heading",
+              "label": "Heading when there are no updates",
+              "type": "string"
+            },
+            {
+              "slug": "empty_text",
+              "label": "Text when there are no updates",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "item_list",
+      "label": "List of items",
+      "description": "A heading and a list of named items, each with a short line and a longer one.",
+      "icon": "list-bullets",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "note",
+              "label": "Note beside the heading",
+              "type": "string"
+            },
+            {
+              "slug": "items",
+              "label": "Items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "label": "Name",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "summary",
+                    "label": "Short line",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "detail",
+                    "label": "More detail",
+                    "type": "text"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "support_list",
+      "label": "Supports list",
+      "description": "Every published entry in Supports, in its order.",
+      "icon": "lifebuoy",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "note",
+              "label": "Note beside the heading",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "service_list",
+      "label": "Services list",
+      "description": "Every published entry in Services, in its order.",
+      "icon": "handshake",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "contact_form",
+      "label": "Contact form",
+      "description": "The contact form, with a heading and text beside it.",
+      "icon": "envelope-simple",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link text",
+              "type": "string"
+            },
+            {
+              "slug": "link_url",
+              "label": "Link link",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "collections": [
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "urlPattern": "/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Page name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "layout",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "text_section",
+              "offer_panel",
+              "project_showcase",
+              "latest_updates",
+              "item_list",
+              "support_list",
+              "service_list",
+              "contact_form"
+            ],
+            "maxItems": 12
+          }
+        }
+      ],
+      "description": "The fixed pages of the site. Each page is a list of sections, shown in order.",
+      "icon": "files",
+      "sortOrder": 1,
+      "titleField": "title"
+    },
     {
       "slug": "projects",
       "label": "Projects",
       "labelSingular": "Project",
-      "supports": ["drafts", "revisions", "preview", "seo"],
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
       "urlPattern": "/projects/{slug}",
       "fields": [
-        { "slug": "title", "label": "Title", "type": "string", "required": true },
-        { "slug": "summary", "label": "Summary", "type": "text", "required": true, "validation": { "minLength": 60, "maxLength": 240 } },
-        { "slug": "project_status", "label": "Status", "type": "select", "required": true, "validation": { "options": ["active", "applicant", "past"] } },
-        { "slug": "partner", "label": "Partner", "type": "string" },
-        { "slug": "location", "label": "Location", "type": "string" },
-        { "slug": "website", "label": "Website", "type": "url" },
-        { "slug": "logo", "label": "Logo", "type": "image" },
-        { "slug": "cover", "label": "Cover", "type": "image", "required": true },
-        { "slug": "body", "label": "Body", "type": "portableText" },
-        { "slug": "featured", "label": "Featured", "type": "boolean" },
-        { "slug": "order", "label": "Order", "type": "integer" }
-      ]
-    },
-    {
-      "slug": "services",
-      "label": "Services",
-      "labelSingular": "Service",
-      "supports": ["drafts", "revisions", "preview", "seo"],
-      "routable": false,
-      "urlPattern": "/services",
-      "fields": [
-        { "slug": "title", "label": "Title", "type": "string", "required": true },
-        { "slug": "audience", "label": "Audience", "type": "text" },
         {
-          "slug": "deliverables",
-          "label": "Deliverables",
-          "type": "repeater",
-          "validation": { "subFields": [{ "slug": "item", "label": "Deliverable", "type": "string", "required": true }] }
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
         },
-        { "slug": "service_terms", "label": "Terms", "type": "string" },
-        { "slug": "body", "label": "Body", "type": "portableText" },
-        { "slug": "order", "label": "Order", "type": "integer" }
-      ]
-    },
-    {
-      "slug": "supports",
-      "label": "Supports",
-      "labelSingular": "Support",
-      "supports": ["drafts", "revisions", "preview", "seo"],
-      "routable": false,
-      "urlPattern": "/accelerator",
-      "fields": [
-        { "slug": "title", "label": "Title", "type": "string", "required": true },
-        { "slug": "summary", "label": "Summary", "type": "text" },
-        { "slug": "body", "label": "Body", "type": "portableText" },
-        { "slug": "order", "label": "Order", "type": "integer" }
-      ]
+        {
+          "slug": "summary",
+          "label": "Description",
+          "type": "text",
+          "required": true,
+          "validation": {
+            "minLength": 60,
+            "maxLength": 240
+          }
+        },
+        {
+          "slug": "project_status",
+          "label": "Status",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": [
+              "active",
+              "applicant",
+              "past"
+            ]
+          }
+        },
+        {
+          "slug": "cover",
+          "label": "Cover",
+          "type": "image",
+          "required": true
+        },
+        {
+          "slug": "logo",
+          "label": "Logo",
+          "type": "image"
+        },
+        {
+          "slug": "body",
+          "label": "About the project",
+          "type": "portableText"
+        },
+        {
+          "slug": "partner",
+          "label": "Partners",
+          "type": "string"
+        },
+        {
+          "slug": "location",
+          "label": "Location",
+          "type": "string"
+        },
+        {
+          "slug": "website",
+          "label": "Website",
+          "type": "url"
+        },
+        {
+          "slug": "updates",
+          "label": "Updates",
+          "type": "reference",
+          "validation": {
+            "relation": "updates_project"
+          }
+        },
+        {
+          "slug": "featured",
+          "label": "Show on the home page",
+          "type": "boolean"
+        },
+        {
+          "slug": "order",
+          "label": "Position",
+          "type": "integer"
+        }
+      ],
+      "description": "Projects in the network. Each has its own page under /projects/.",
+      "icon": "rocket-launch",
+      "sortOrder": 2,
+      "titleField": "title",
+      "admin": {
+        "listColumns": [
+          "project_status",
+          "featured",
+          "order"
+        ]
+      }
     },
     {
       "slug": "updates",
       "label": "Updates",
       "labelSingular": "Update",
-      "supports": ["drafts", "revisions", "preview", "seo"],
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
       "urlPattern": "/updates/{slug}",
       "fields": [
-        { "slug": "title", "label": "Title", "type": "string", "required": true },
-        { "slug": "excerpt", "label": "Excerpt", "type": "text" },
-        { "slug": "cover", "label": "Cover", "type": "image" },
-        { "slug": "body", "label": "Body", "type": "portableText" },
-        { "slug": "project", "label": "Project", "type": "reference", "validation": { "targetCollection": "projects" } }
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "excerpt",
+          "label": "Summary",
+          "type": "text"
+        },
+        {
+          "slug": "cover",
+          "label": "Cover",
+          "type": "image"
+        },
+        {
+          "slug": "body",
+          "label": "Text",
+          "type": "portableText"
+        },
+        {
+          "slug": "project",
+          "label": "Project",
+          "type": "reference",
+          "validation": {
+            "relation": "updates_project"
+          }
+        }
+      ],
+      "description": "Articles and news. Each has its own page under /updates/.",
+      "icon": "newspaper",
+      "sortOrder": 3,
+      "titleField": "title",
+      "dateField": "publishedAt"
+    },
+    {
+      "slug": "services",
+      "label": "Services",
+      "labelSingular": "Service",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "routable": false,
+      "urlPattern": "/services",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "summary",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "service_type",
+          "label": "Service type",
+          "type": "string"
+        },
+        {
+          "slug": "audience",
+          "label": "Audience",
+          "type": "text"
+        },
+        {
+          "slug": "deliverables",
+          "label": "Service output",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "item",
+                "label": "Output",
+                "type": "string",
+                "required": true
+              }
+            ]
+          }
+        },
+        {
+          "slug": "service_terms",
+          "label": "Terms of service",
+          "type": "string"
+        },
+        {
+          "slug": "body",
+          "label": "Details",
+          "type": "portableText"
+        },
+        {
+          "slug": "order",
+          "label": "Position",
+          "type": "integer"
+        }
+      ],
+      "description": "What SuperBenefit offers to communities and organizations, shown by the \"Services list\" section. Fields are named after schema.org Service: name, description, serviceType, audience, serviceOutput, termsOfService.",
+      "icon": "handshake",
+      "sortOrder": 4,
+      "titleField": "title",
+      "admin": {
+        "listColumns": [
+          "service_type",
+          "service_terms",
+          "order"
+        ]
+      }
+    },
+    {
+      "slug": "supports",
+      "label": "Supports",
+      "labelSingular": "Support",
+      "description": "What cells in the Peer to Peer Accelerator get, shown by the \"Supports list\" section.",
+      "icon": "lifebuoy",
+      "sortOrder": 5,
+      "titleField": "title",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "routable": false,
+      "urlPattern": "/accelerator",
+      "admin": {
+        "listColumns": [
+          "order"
+        ]
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "summary",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "body",
+          "label": "Details",
+          "type": "portableText"
+        },
+        {
+          "slug": "order",
+          "label": "Position",
+          "type": "integer"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "slug": "updates_project",
+      "parentCollection": "updates",
+      "childCollection": "projects",
+      "parentLabel": "Updates",
+      "parentLabelSingular": "Update",
+      "childLabel": "Project",
+      "childLabelSingular": "Project",
+      "maxChildrenPerParent": 1
+    }
+  ],
+  "taxonomies": [
+    {
+      "name": "category",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "hierarchical": true,
+      "collections": [
+        "updates"
       ]
     },
     {
-      "slug": "pages",
-      "label": "Pages",
-      "labelSingular": "Page",
-      "supports": ["drafts", "revisions", "preview", "seo"],
-      "urlPattern": "/{slug}",
-      "fields": [
-        { "slug": "eyebrow", "label": "Eyebrow", "type": "string" },
-        { "slug": "title", "label": "Title", "type": "string", "required": true },
-        { "slug": "intro", "label": "Intro", "type": "text" },
-        { "slug": "cta_label", "label": "Call to action label", "type": "string" },
-        { "slug": "cta_url", "label": "Call to action URL", "type": "url" },
-        { "slug": "section_label", "label": "Section label", "type": "string" },
-        { "slug": "section_heading", "label": "Section heading", "type": "string" },
-        { "slug": "body", "label": "Body", "type": "portableText" },
-        { "slug": "cost_summary", "label": "Cost summary (accelerator and services only)", "type": "string" }
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": [
+        "updates"
       ]
     }
   ],
@@ -108,33 +735,93 @@
       "name": "header",
       "label": "Header",
       "items": [
-        { "type": "custom", "label": "Accelerator", "url": "/accelerator/" },
-        { "type": "custom", "label": "Services", "url": "/services/" },
-        { "type": "custom", "label": "Projects", "url": "/projects/" },
-        { "type": "custom", "label": "Updates", "url": "/updates/" },
-        { "type": "custom", "label": "About", "url": "/about/" },
-        { "type": "custom", "label": "Contact", "url": "/contact/" }
+        {
+          "type": "custom",
+          "label": "Accelerator",
+          "url": "/accelerator/"
+        },
+        {
+          "type": "custom",
+          "label": "Services",
+          "url": "/services/"
+        },
+        {
+          "type": "custom",
+          "label": "Projects",
+          "url": "/projects/"
+        },
+        {
+          "type": "custom",
+          "label": "Updates",
+          "url": "/updates/"
+        },
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about/"
+        },
+        {
+          "type": "custom",
+          "label": "Contact",
+          "url": "/contact/"
+        }
       ]
     },
     {
       "name": "footer-site",
       "label": "Site",
       "items": [
-        { "type": "custom", "label": "Accelerator", "url": "/accelerator/" },
-        { "type": "custom", "label": "Services", "url": "/services/" },
-        { "type": "custom", "label": "Projects", "url": "/projects/" },
-        { "type": "custom", "label": "Updates", "url": "/updates/" },
-        { "type": "custom", "label": "About", "url": "/about/" },
-        { "type": "custom", "label": "Contact", "url": "/contact/" }
+        {
+          "type": "custom",
+          "label": "Accelerator",
+          "url": "/accelerator/"
+        },
+        {
+          "type": "custom",
+          "label": "Services",
+          "url": "/services/"
+        },
+        {
+          "type": "custom",
+          "label": "Projects",
+          "url": "/projects/"
+        },
+        {
+          "type": "custom",
+          "label": "Updates",
+          "url": "/updates/"
+        },
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about/"
+        },
+        {
+          "type": "custom",
+          "label": "Contact",
+          "url": "/contact/"
+        }
       ]
     },
     {
       "name": "footer-elsewhere",
       "label": "Elsewhere",
       "items": [
-        { "type": "custom", "label": "Discord", "url": "https://discord.gg/DMezXT7UAt" },
-        { "type": "custom", "label": "X", "url": "https://x.com/SuperBenefitDAO" },
-        { "type": "custom", "label": "GitHub", "url": "https://github.com/superbenefit" }
+        {
+          "type": "custom",
+          "label": "Discord",
+          "url": "https://discord.gg/DMezXT7UAt"
+        },
+        {
+          "type": "custom",
+          "label": "X",
+          "url": "https://x.com/SuperBenefitDAO"
+        },
+        {
+          "type": "custom",
+          "label": "GitHub",
+          "url": "https://github.com/superbenefit"
+        }
       ]
     }
   ],
@@ -154,16 +841,161 @@
               "style": "normal",
               "markDefs": [],
               "children": [
-                { "_type": "span", "_key": "text-span", "text": "We read every message. Write to us, or join the community on Discord.", "marks": [] }
+                {
+                  "_type": "span",
+                  "_key": "text-span",
+                  "text": "We read every message. Write to us, or join the community on Discord.",
+                  "marks": []
+                }
               ]
             },
             {
               "_type": "block",
               "_key": "button",
               "style": "normal",
-              "markDefs": [{ "_type": "link", "_key": "discord", "href": "https://discord.gg/DMezXT7UAt" }],
+              "markDefs": [
+                {
+                  "_type": "link",
+                  "_key": "discord",
+                  "href": "https://discord.gg/DMezXT7UAt"
+                }
+              ],
               "children": [
-                { "_type": "span", "_key": "button-span", "text": "Join the Discord", "marks": ["discord"] }
+                {
+                  "_type": "span",
+                  "_key": "button-span",
+                  "text": "Join the Discord",
+                  "marks": [
+                    "discord"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "slug": "contact-prompt",
+      "title": "Get in touch",
+      "description": "One line inviting the reader to write to us, with a link to the contact page.",
+      "keywords": [
+        "contact",
+        "call to action",
+        "cta"
+      ],
+      "source": "theme",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "s2",
+          "style": "normal",
+          "markDefs": [
+            {
+              "_type": "link",
+              "_key": "s1",
+              "href": "/contact/"
+            }
+          ],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "s3",
+              "text": "Tell us what you are working on. ",
+              "marks": []
+            },
+            {
+              "_type": "span",
+              "_key": "s4",
+              "text": "Get in touch",
+              "marks": [
+                "s1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "discord-prompt",
+      "title": "Join the Discord",
+      "description": "One line pointing to the SuperBenefit Discord.",
+      "keywords": [
+        "discord",
+        "community",
+        "call to action",
+        "cta"
+      ],
+      "source": "theme",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "s6",
+          "style": "normal",
+          "markDefs": [
+            {
+              "_type": "link",
+              "_key": "s5",
+              "href": "https://discord.gg/DMezXT7UAt"
+            }
+          ],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "s7",
+              "text": "Questions are welcome in the SuperBenefit Discord. ",
+              "marks": []
+            },
+            {
+              "_type": "span",
+              "_key": "s8",
+              "text": "Join the Discord",
+              "marks": [
+                "s5"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "accelerator-prompt",
+      "title": "Join as a cell",
+      "description": "One line pointing aligned teams to the Peer to Peer Accelerator.",
+      "keywords": [
+        "accelerator",
+        "cell",
+        "call to action",
+        "cta"
+      ],
+      "source": "theme",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "s10",
+          "style": "normal",
+          "markDefs": [
+            {
+              "_type": "link",
+              "_key": "s9",
+              "href": "/accelerator/"
+            }
+          ],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "s11",
+              "text": "Aligned teams can join SuperBenefit as cells through the Peer to Peer Accelerator. ",
+              "marks": []
+            },
+            {
+              "_type": "span",
+              "_key": "s12",
+              "text": "See the accelerator",
+              "marks": [
+                "s9"
               ]
             }
           ]

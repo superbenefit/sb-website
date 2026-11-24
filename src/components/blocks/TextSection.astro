@@ -1,0 +1,39 @@
+---
+/**
+ * Text section: a small label and heading on the left, text on the right, and
+ * an optional link under the text. Cream or charcoal (its Background setting).
+ */
+import { sanitizeHref } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutTextSectionBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import RichText from '../rich-text/RichText.astro';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/split.css';
+import '../../styles/parts/more.css';
+
+type Props = BlockComponentProps<PageLayoutTextSectionBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutTextSectionBlock>).__place;
+const ink = place.tone === 'charcoal';
+const hasBody = Boolean(value.body?.length);
+const link = value.link_label && value.link_url ? { label: value.link_label, href: sanitizeHref(value.link_url) } : null;
+const arrow = 'M5 12h14M13 6l6 6-6 6';
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+<section class:list={['sec', { 'sec--ink on-ink': ink }]}>
+  <div class="wrap split">
+    <div>
+      {value.section_label && <p class="caps">{value.section_label}</p>}
+      {value.heading && <h2 class="display">{value.heading}</h2>}
+    </div>
+    {(hasBody || link) && (
+      <div class="split__body">
+        <RichText value={value.body ?? undefined} inherit />
+        {link && <a class="more" href={link.href}>{link.label} <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>}
+      </div>
+    )}
+  </div>
+</section>

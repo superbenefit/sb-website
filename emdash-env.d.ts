@@ -5,19 +5,124 @@
 
 import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock, ReferencePage } from "emdash";
 
+export interface PageLayoutHeroV1Block {
+  _type: "hero";
+  _version: 1;
+  _key: string;
+  "eyebrow"?: string | null;
+  "heading": string;
+  "intro"?: string | null;
+  "button_label"?: string | null;
+  "button_url"?: string | null;
+  "second_button_label"?: string | null;
+  "second_button_url"?: string | null;
+}
+
+export type PageLayoutHeroBlock = PageLayoutHeroV1Block;
+
+export interface PageLayoutTextSectionV1Block {
+  _type: "text_section";
+  _version: 1;
+  _key: string;
+  "section_label"?: string | null;
+  "heading"?: string | null;
+  "body"?: PortableTextBlock[] | null;
+  "link_label"?: string | null;
+  "link_url"?: string | null;
+  "background"?: "Cream" | "Charcoal" | null;
+}
+
+export type PageLayoutTextSectionBlock = PageLayoutTextSectionV1Block;
+
+export interface PageLayoutOfferPanelV1Block {
+  _type: "offer_panel";
+  _version: 1;
+  _key: string;
+  "eyebrow"?: string | null;
+  "heading": string;
+  "text"?: string | null;
+  "items"?: { "item": string }[] | null;
+  "cost"?: string | null;
+  "button_label"?: string | null;
+  "button_url"?: string | null;
+}
+
+export type PageLayoutOfferPanelBlock = PageLayoutOfferPanelV1Block;
+
+export interface PageLayoutProjectShowcaseV1Block {
+  _type: "project_showcase";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+  "link_label"?: string | null;
+  "link_url"?: string | null;
+}
+
+export type PageLayoutProjectShowcaseBlock = PageLayoutProjectShowcaseV1Block;
+
+export interface PageLayoutLatestUpdatesV1Block {
+  _type: "latest_updates";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+  "link_label"?: string | null;
+  "link_url"?: string | null;
+  "empty_heading"?: string | null;
+  "empty_text"?: string | null;
+}
+
+export type PageLayoutLatestUpdatesBlock = PageLayoutLatestUpdatesV1Block;
+
+export interface PageLayoutItemListV1Block {
+  _type: "item_list";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+  "note"?: string | null;
+  "items"?: { "title": string; "summary"?: string | null; "detail"?: string | null }[] | null;
+}
+
+export type PageLayoutItemListBlock = PageLayoutItemListV1Block;
+
+export interface PageLayoutSupportListV1Block {
+  _type: "support_list";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+  "note"?: string | null;
+}
+
+export type PageLayoutSupportListBlock = PageLayoutSupportListV1Block;
+
+export interface PageLayoutServiceListV1Block {
+  _type: "service_list";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+}
+
+export type PageLayoutServiceListBlock = PageLayoutServiceListV1Block;
+
+export interface PageLayoutContactFormV1Block {
+  _type: "contact_form";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+  "body"?: PortableTextBlock[] | null;
+  "link_label"?: string | null;
+  "link_url"?: string | null;
+}
+
+export type PageLayoutContactFormBlock = PageLayoutContactFormV1Block;
+
+export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutTextSectionBlock | PageLayoutOfferPanelBlock | PageLayoutProjectShowcaseBlock | PageLayoutLatestUpdatesBlock | PageLayoutItemListBlock | PageLayoutSupportListBlock | PageLayoutServiceListBlock | PageLayoutContactFormBlock;
+
 export interface Page {
   id: string;
   slug: string | null;
   status: string;
-  eyebrow?: string;
   title: string;
-  intro?: string;
-  cta_label?: string;
-  cta_url?: string;
-  section_label?: string;
-  section_heading?: string;
-  body?: PortableTextBlock[];
-  cost_summary?: string;
+  layout?: PageLayoutBlock[];
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -33,14 +138,30 @@ export interface Project {
   title: string;
   summary: string;
   project_status: "active" | "applicant" | "past";
+  cover: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  logo?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  body?: PortableTextBlock[];
   partner?: string;
   location?: string;
   website?: string;
-  logo?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  cover: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  body?: PortableTextBlock[];
   featured?: boolean;
   order?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface Update {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  excerpt?: string;
+  cover?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  body?: PortableTextBlock[];
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -54,6 +175,8 @@ export interface Service {
   slug: string | null;
   status: string;
   title: string;
+  summary?: string;
+  service_type?: string;
   audience?: string;
   deliverables?: { "item": string }[];
   service_terms?: string;
@@ -83,20 +206,8 @@ export interface Support {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
-export interface Update {
-  id: string;
-  slug: string | null;
-  status: string;
-  title: string;
-  excerpt?: string;
-  cover?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  body?: PortableTextBlock[];
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  byline?: BylineSummary | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
+export interface ProjectReferences {
+  updates: ReferencePage<Update>;
 }
 
 export interface UpdateReferences {
@@ -107,11 +218,12 @@ declare module "emdash" {
   interface EmDashCollections {
     pages: Page;
     projects: Project;
+    updates: Update;
     services: Service;
     supports: Support;
-    updates: Update;
   }
   interface EmDashCollectionReferences {
+    projects: ProjectReferences;
     updates: UpdateReferences;
   }
 }

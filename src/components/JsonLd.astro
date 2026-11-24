@@ -1,0 +1,32 @@
+---
+/**
+ * One schema.org JSON-LD script. <EmDashHead> writes the page's own graph
+ * (WebSite or BlogPosting, https://docs.emdashcms.com/guides/seo/#structured-data);
+ * this adds one for content it does not cover: the services and a project.
+ * Empty values are dropped, and "<" is escaped so no field can close the tag.
+ */
+import { getSiteSettingsWithCacheHint } from 'emdash';
+import { envSiteUrl } from '../utils/sitemap';
+
+interface Props {
+  /** Builds the graph from the site's name and address. */
+  build: (site: { name: string; url: string }) => Record<string, unknown>;
+}
+
+const { data: settings } = await getSiteSettingsWithCacheHint();
+const site = {
+  name: settings.title || 'SuperBenefit',
+  url: (settings.url || envSiteUrl() || Astro.url.origin).replace(/\/$/, ''),
+};
+function prune(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(prune).filter((item) => item !== undefined);
+  if (value && typeof value === 'object') {
+    const kept = Object.entries(value).map(([key, item]) => [key, prune(item)] as const).filter(([, item]) => item !== undefined);
+    return kept.length ? Object.fromEntries(kept) : undefined;
+  }
+  return value === null || value === '' ? undefined : value;
+}
+const json = JSON.stringify(prune({ '@context': 'https://schema.org', ...Astro.props.build(site) })).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" is:inline set:html={json} />

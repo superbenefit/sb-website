@@ -54,3 +54,7 @@
       grid-template-columns: repeat(3, minmax(0px, 1fr));
   }
 }
+.entry__cat  {
+    text-decoration: underline 2px var(--color-orange);
+    text-underline-offset: 0.3em;
+}
