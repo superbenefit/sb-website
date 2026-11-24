@@ -1,81 +1,28 @@
 ---
 /**
- * About page, /about/: docs/relaunch/mockups/pages/about.html.
+ * About page, /about/: docs/relaunch/mockups/pages/about.html. The wordmark sits beside the hero text.
  *
- * Content comes from EmDash on each request (docs/relaunch/architecture.md,
- * Rendering per route): the `pages` entry `about`, read with
- * getEmDashEntry(), so a draft preview link (`?_preview=`) shows the draft
- * here (https://docs.emdashcms.com/guides/preview/). Its cache hint tags the
- * response for EmDash's purge on publish; the route rule in astro.config.mjs
- * sets the lifetime (https://docs.emdashcms.com/deployment/route-caching/).
- *
- * Fields (seed/seed.json): hero title `title`, kicker `eyebrow`, intro
- * `intro`; the split from `section_label`, `section_heading` and `body`
- * (rich text, RichText); the closing band's first button from `cta_label`
- * and `cta_url` (the mockup's "Call to action label"), else the layout's
- * default. The hero image is the SuperBenefit wordmark logo (owner, 2026-11-23; the
- * mockup shows the icon).
- *
- * Missing content: an absent entry or field is not rendered; the title falls
- * back to "About" so the page always has one h1. The split is left out when
- * it has no label, heading or body, and the hero's wave then runs into the
- * closing band.
- *
- * Not built: the mockup's gold quote section. The content model has no field
- * for it (the mockup's own note: "Anything else shown here would need a
- * field"); a quote in the body renders inside the body (docs/relaunch/issues.md,
- * C8 notes).
+ * Content: the `pages` entry `about`. The page is its sections (the Sections
+ * field, seed/seed.json `blockTypes`), rendered in the editor's order; with
+ * no entry the page is a hero holding its name. The closing band's first
+ * button repeats the hero's button when it has one.
  */
-import { Image } from 'astro:assets';
-import { getEmDashEntry } from 'emdash';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import WaveDivider from '../components/WaveDivider.astro';
-import RichText from '../components/rich-text/RichText.astro';
-import logo from '../assets/sb-logo.png';
-import '../styles/parts/sec.css';
-import '../styles/parts/split.css';
+import PageSections from '../components/blocks/PageSections.astro';
+import { getPageSections } from '../utils/sections';
 
-const { entry: page, cacheHint } = await getEmDashEntry('pages', 'about');
-if (page && Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const data = page?.data;
-const title = data?.title || 'About';
-const hasBody = Boolean(data?.body?.length);
-const hasSplit = Boolean(data?.section_label || data?.section_heading || hasBody);
-const bandHref = data?.cta_label && data?.cta_url ? data.cta_url : undefined;
-const bandLabel = bandHref ? data?.cta_label : undefined;
+const page = await getPageSections('about', { hero: 'black', fallback: 'About', heroArt: true });
+if (Astro.cache?.enabled && page.cacheHint) Astro.cache.set(page.cacheHint);
+const button = page.hero?.button_label && page.hero.button_url ? page.hero : undefined;
 ---
 
 <BaseLayout
-  title={title}
-  description={data?.intro || title}
-  seo={page ?? undefined}
-  bandFrom={hasSplit ? 'cream' : 'black'}
-  bandLabel={bandLabel}
-  bandHref={bandHref}
+  title={page.title}
+  description={page.description || page.title}
+  seo={page.entry ?? undefined}
+  bandFrom={page.lastTone}
+  bandLabel={button?.button_label ?? undefined}
+  bandHref={button?.button_url ?? undefined}
 >
-  <PageHero title={title} kicker={data?.eyebrow} intro={data?.intro} variant="black">
-    <Image slot="art" class="ph__art" src={logo} alt="SuperBenefit" width={720} sizes="(min-width: 900px) 360px, 280px" />
-  </PageHero>
-
-  {hasSplit && (
-    <>
-      <WaveDivider bg="black" fill="cream" bands />
-      <section class="sec">
-        <div class="wrap split">
-          <div>
-            {data?.section_label && <p class="caps">{data.section_label}</p>}
-            {data?.section_heading && <h2 class="display">{data.section_heading}</h2>}
-          </div>
-          {hasBody && (
-            <div class="split__body">
-              <RichText value={data?.body} inherit />
-            </div>
-          )}
-        </div>
-      </section>
-    </>
-  )}
+  <PageSections sections={page.sections} />
 </BaseLayout>
-

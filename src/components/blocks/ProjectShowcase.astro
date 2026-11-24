@@ -1,0 +1,48 @@
+---
+/**
+ * Featured projects: the projects whose "Show on the home page" box is
+ * ticked, in their list position, with the project selector.
+ */
+import { getEmDashCollection, sanitizeHref } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutProjectShowcaseBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import ProjectSelector from '../ProjectSelector.astro';
+import type { SelectorProject } from '../ProjectSelector.astro';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/more.css';
+
+type Props = BlockComponentProps<PageLayoutProjectShowcaseBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutProjectShowcaseBlock>).__place;
+
+const { entries, cacheHint } = await getEmDashCollection('projects', { orderBy: { order: 'asc', title: 'asc' } });
+if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
+const projects: SelectorProject[] = entries
+  .filter(({ data }) => data.featured === true)
+  .map(({ data }) => ({
+    href: `/projects/${data.slug ?? data.id}/`,
+    title: data.title,
+    summary: data.summary,
+    status: data.project_status,
+    location: data.location,
+    cover: data.cover,
+    logo: data.logo,
+  }));
+const link = value.link_label && value.link_url ? { label: value.link_label, href: sanitizeHref(value.link_url) } : null;
+const arrow = 'M5 12h14M13 6l6 6-6 6';
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+<section class="sec sec--ink on-ink" id="projects">
+  <div class="wrap">
+    {(value.heading || link) && (
+      <div class="sec__head">
+        {value.heading && <h2 class="display">{value.heading}</h2>}
+        {link && <a class="more" href={link.href}>{link.label} <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg></a>}
+      </div>
+    )}
+    <ProjectSelector projects={projects} />
+  </div>
+</section>

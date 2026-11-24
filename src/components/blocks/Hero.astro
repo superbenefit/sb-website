@@ -1,0 +1,66 @@
+---
+/**
+ * Hero section: the opening of a page. The home page has its own large hero
+ * (home.css); every other page uses PageHero in the colour its route sets.
+ * Buttons appear only when both their text and link are filled in.
+ */
+import { Image } from 'astro:assets';
+import { sanitizeHref } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutHeroBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import Button from '../Button.astro';
+import PageHero from '../PageHero.astro';
+import SectionDivider from './SectionDivider.astro';
+import logo from '../../assets/sb-logo.png';
+
+type Props = BlockComponentProps<PageLayoutHeroBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutHeroBlock>).__place;
+const buttons = [
+  { label: value.button_label, href: value.button_url },
+  { label: value.second_button_label, href: value.second_button_url },
+].filter((button): button is { label: string; href: string } => Boolean(button.label && button.href));
+const [first, second] = buttons;
+const dark = place.hero === 'black' || place.hero === 'charcoal' || place.hero === 'red';
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+{place.hero === 'home' ? (
+  <section class="hero on-ink">
+    <div class="wrap hero__grid">
+      <div>
+        {value.eyebrow && <p class="hero__kicker">{value.eyebrow}</p>}
+        <h1 class="display">{value.heading}</h1>
+        {value.intro && <p class="hero__intro">{value.intro}</p>}
+        {first && (
+          <div class="hero__actions">
+            <Button href={sanitizeHref(first.href)} variant="accent" arrow>{first.label}</Button>
+            {second && <Button href={sanitizeHref(second.href)} variant="line">{second.label}</Button>}
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+) : first && place.heroArt ? (
+  <PageHero title={value.heading} kicker={value.eyebrow ?? undefined} intro={value.intro ?? undefined} variant={place.hero}>
+    <Fragment slot="actions">
+      <Button href={sanitizeHref(first.href)} variant={dark ? 'accent' : 'ink'} arrow>{first.label}</Button>
+      {second && <Button href={sanitizeHref(second.href)} variant="line">{second.label}</Button>}
+    </Fragment>
+    <Image slot="art" class="ph__art" src={logo} alt="SuperBenefit" width={720} sizes="(min-width: 900px) 360px, 280px" />
+  </PageHero>
+) : first ? (
+  <PageHero title={value.heading} kicker={value.eyebrow ?? undefined} intro={value.intro ?? undefined} variant={place.hero}>
+    <Fragment slot="actions">
+      <Button href={sanitizeHref(first.href)} variant={dark ? 'accent' : 'ink'} arrow>{first.label}</Button>
+      {second && <Button href={sanitizeHref(second.href)} variant="line">{second.label}</Button>}
+    </Fragment>
+  </PageHero>
+) : place.heroArt ? (
+  <PageHero title={value.heading} kicker={value.eyebrow ?? undefined} intro={value.intro ?? undefined} variant={place.hero}>
+    <Image slot="art" class="ph__art" src={logo} alt="SuperBenefit" width={720} sizes="(min-width: 900px) 360px, 280px" />
+  </PageHero>
+) : (
+  <PageHero title={value.heading} kicker={value.eyebrow ?? undefined} intro={value.intro ?? undefined} variant={place.hero} />
+)}

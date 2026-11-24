@@ -1,26 +1,26 @@
 ---
 /**
  * The updates index, one page of it: docs/relaunch/mockups/pages/updates.html.
- * Gold hero with the `pages` entry `updates` (title, intro), the wave, then
+ * The sections of the `pages` entry `updates` (a gold hero), the wave, then
  * the `entries` list and the `pager` in a cream `sec`. Used by
  * src/pages/updates/index.astro (page 1) and
  * src/pages/updates/page/[page].astro (pages 2 and on).
  *
- * Content: the hero reads its `pages` entry with getEmDashEntry(), so a
- * preview link for that entry shows its draft (issues.md, B6 notes); the list
+ * Content: the sections come from getPageSections() (src/utils/sections.ts),
+ * so a preview link for that entry shows its draft; the list
  * comes from getUpdatesPage(). Every cache hint goes to Astro.cache.set(), on
  * top of the route rule in astro.config.mjs.
  *
  * Missing content (issues.md, C7 notes): with no `updates` page entry the
- * title is "Updates" and there is no intro. With no published updates the
+ * hero holds "Updates" and nothing else. With no published updates the
  * list is the mockup's `empty` box with a short message, and there is no
  * pager; with one page of updates there is no pager either.
  */
-import { getEmDashEntry } from 'emdash';
 import type { CacheHint } from 'emdash';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from './PageHero.astro';
-import WaveDivider from './WaveDivider.astro';
+import PageSections from './blocks/PageSections.astro';
+import SectionDivider from './blocks/SectionDivider.astro';
+import { getPageSections } from '../utils/sections';
 import EntryList from './EntryList.astro';
 import type { EntryItem } from './EntryList.astro';
 import { updatesQueryString } from '../utils/updates';
@@ -42,16 +42,16 @@ interface Props {
 
 const { items, page, totalPages, total, projects, query, cacheHints } = Astro.props;
 
-const { entry: pageEntry, cacheHint: pageHint } = await getEmDashEntry('pages', 'updates');
+const pageEntry = await getPageSections('updates', { hero: 'gold', fallback: 'Updates' });
+const pageHint = pageEntry.cacheHint;
 // A search can be any text, so its results are not stored in the cache; the
 // filter and sort have a fixed set of values and are cached like the plain list.
 if (Astro.cache?.enabled) {
   if (query.q) Astro.cache.set(false);
-  else for (const hint of [pageHint, ...cacheHints]) Astro.cache.set(hint);
+  else for (const hint of [pageHint, ...cacheHints]) if (hint) Astro.cache.set(hint);
 }
 
-const title = pageEntry?.data.title || 'Updates';
-const intro = pageEntry?.data.intro || undefined;
+const title = pageEntry.title;
 
 const search = updatesQueryString(query);
 const narrowed = Boolean(query.q || query.project);
@@ -63,14 +63,14 @@ const older = page < totalPages ? pageHref(page + 1) : null;
 
 <BaseLayout
   title={title}
-  description={intro ?? ''}
-  seo={pageEntry ?? undefined}
+  description={pageEntry.description}
+  seo={pageEntry.entry ?? undefined}
   pageNumber={page}
   noindex={narrowed || query.sort === 'oldest'}
   bandFrom="cream"
 >
-  <PageHero title={title} intro={intro} variant="gold" />
-  <WaveDivider bg="gold" fill="cream" />
+  <PageSections sections={pageEntry.sections} />
+  <SectionDivider from={pageEntry.lastTone} to="cream" bands={pageEntry.lastBands} />
   <section class="sec sec--feed">
     <div class="wrap">
       <form class="tools" method="get" action="/updates/" role="search" aria-label="Updates">

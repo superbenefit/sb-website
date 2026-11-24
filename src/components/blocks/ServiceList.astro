@@ -1,0 +1,52 @@
+---
+/**
+ * Services list: every published `services` entry in its list position, each
+ * with who it is for, what you get and its terms.
+ */
+import { getEmDashCollection } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutServiceListBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import Ledger from '../Ledger.astro';
+import RichText from '../rich-text/RichText.astro';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/blocks.css';
+
+type Props = BlockComponentProps<PageLayoutServiceListBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutServiceListBlock>).__place;
+const { entries: services, cacheHint } = await getEmDashCollection('services', {
+  orderBy: { order: 'asc', created_at: 'asc' },
+});
+if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+<section class="sec">
+  <div class="wrap">
+    {value.heading && (
+      <div class="sec__head">
+        <h2 class="display">{value.heading}</h2>
+      </div>
+    )}
+    <div class="blocks">
+      {services.map(({ data }) => (
+        <article class="block" id={data.slug ?? undefined}>
+          <h3>{data.title}</h3>
+          <div class="block__main">
+            {data.summary && <p class="block__sum">{data.summary}</p>}
+            <Ledger
+              rows={[
+                { label: 'Who it is for', text: data.audience },
+                { label: 'What you get', items: (data.deliverables ?? []).map((row) => row.item ?? '') },
+                { label: 'Terms', text: data.service_terms },
+              ]}
+            />
+            <RichText value={data.body} inherit />
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

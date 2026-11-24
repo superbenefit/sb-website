@@ -1,0 +1,40 @@
+---
+/**
+ * List of items: a heading with an optional note beside it, then named items,
+ * each with a short line and a longer one (the accelerator's supports).
+ */
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutItemListBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/blocks.css';
+
+type Props = BlockComponentProps<PageLayoutItemListBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutItemListBlock>).__place;
+const items = (value.items ?? []).filter((item) => item.title);
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+<section class="sec">
+  <div class="wrap">
+    {(value.heading || value.note) && (
+      <div class="sec__head">
+        {value.heading && <h2 class="display">{value.heading}</h2>}
+        {value.note && <p class="caps sec__note">{value.note}</p>}
+      </div>
+    )}
+    <div class="blocks">
+      {items.map((item) => (
+        <article class="block">
+          <h3>{item.title}</h3>
+          <div class="block__main">
+            {item.summary && <p class="block__sum">{item.summary}</p>}
+            {item.detail && <div class="prose prose--inherit"><p>{item.detail}</p></div>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+/**
+ * The wave between a page section and the one above it. `from` is the colour
+ * above (null for the first section, which has no divider), `to` the colour of
+ * this section. Two sections of one colour meet without a wave. The offer
+ * panels have their own split wave above, and draw the wave below themselves
+ * (OfferPanel.astro), so a section under the panels adds none.
+ */
+import WaveDivider from '../WaveDivider.astro';
+import type { Tone } from '../../utils/sections';
+
+interface Props {
+  from: Tone | null;
+  to: Tone;
+  bands?: boolean;
+}
+
+const { from, to, bands = false } = Astro.props;
+const wave = 'M0,0 C360,80 1080,0 1440,60 L1440,400 L0,400 Z';
+const edge = 'M0,0 C360,80 1080,0 1440,60';
+type Bg = 'black' | 'charcoal' | 'cream' | 'green' | 'orange' | 'gold' | 'red';
+type Fill = 'charcoal' | 'cream' | 'green' | 'gold' | 'black';
+---
+
+{from && from !== 'doors' && to === 'doors' ? (
+  <div class={`dv bg-${from}`} aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <svg class="f-green" x="0" width="50%" height="100%" viewBox="0 0 720 80" preserveAspectRatio="none"><path transform="translate(0,3)" d={wave} /></svg>
+      <svg class="f-orange dv__r" x="50%" width="50%" height="100%" viewBox="720 0 720 80" preserveAspectRatio="none"><path transform="translate(0,3)" d={wave} /></svg>
+      <path class="dv__ink" transform="translate(0,3)" d={edge} />
+    </svg>
+  </div>
+) : from && from !== 'doors' && to !== 'doors' && from !== to ? (
+  <WaveDivider bg={from as Bg} fill={to as Fill} bands={bands} />
+) : null}

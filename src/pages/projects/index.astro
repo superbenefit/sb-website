@@ -1,10 +1,10 @@
 ---
 /**
  * Projects index, built to docs/relaunch/mockups/pages/projects.html: the
- * red page hero, then every published project as a card.
+ * page's sections (a red hero), then every published project as a card.
  *
  * Content comes from EmDash (docs/relaunch/architecture.md, Rendering per
- * route): the hero from the `pages` entry `projects`, the cards from the
+ * route): the sections from the `pages` entry `projects`, the cards from the
  * `projects` collection, ordered by their `order` field and then by title.
  * Both are read with EmDash's query helpers, so a draft preview link shows
  * the draft (https://docs.emdashcms.com/guides/preview/), and each passes
@@ -12,22 +12,23 @@
  * page (https://docs.emdashcms.com/deployment/route-caching/; the route rule
  * is `/projects` in astro.config.mjs).
  *
- * Missing content: without the `pages` entry the title is "Projects" and no
- * intro is shown. With no projects, a dashed `empty` box (mockups.css, the
+ * Missing content: without the `pages` entry the hero holds "Projects" and
+ * nothing else. With no projects, a dashed `empty` box (mockups.css, the
  * shared src/styles/parts/empty.css) says so; the mockups show no empty state.
  */
-import { getEmDashCollection, getEmDashEntry } from 'emdash';
+import { getEmDashCollection } from 'emdash';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
-import WaveDivider from '../../components/WaveDivider.astro';
+import PageSections from '../../components/blocks/PageSections.astro';
+import SectionDivider from '../../components/blocks/SectionDivider.astro';
+import { getPageSections } from '../../utils/sections';
 import ProjectCard from '../../components/ProjectCard.astro';
 import '../../styles/parts/sec.css';
 import '../../styles/parts/empty.css';
 
-const { entry: page, cacheHint: pageHint } = await getEmDashEntry('pages', 'projects');
+const page = await getPageSections('projects', { hero: 'red', fallback: 'Projects' });
 const { entries, cacheHint: listHint } = await getEmDashCollection('projects');
 if (Astro.cache?.enabled) {
-  Astro.cache.set(pageHint);
+  if (page.cacheHint) Astro.cache.set(page.cacheHint);
   Astro.cache.set(listHint);
 }
 
@@ -37,13 +38,11 @@ const projects = [...entries].sort(
     a.data.title.localeCompare(b.data.title),
 );
 
-const title = page?.data.title || 'Projects';
-const intro = page?.data.intro;
 ---
 
-<BaseLayout title={title} description={intro ?? ''} seo={page ?? undefined} bandFrom="cream">
-  <PageHero title={title} intro={intro} kicker={page?.data.eyebrow} variant="red" />
-  <WaveDivider bg="red" fill="cream" />
+<BaseLayout title={page.title} description={page.description} seo={page.entry ?? undefined} bandFrom="cream">
+  <PageSections sections={page.sections} />
+  <SectionDivider from={page.lastTone} to="cream" bands={page.lastBands} />
   <section class="sec">
     <div class="wrap">
       {projects.length > 0 ? (

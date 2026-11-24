@@ -1,0 +1,55 @@
+---
+/**
+ * Offer panels: the coloured panels on the home page, one per offer. Panels
+ * that follow one another in the page's sections render side by side, the
+ * first green and the second orange (home.css `.doors`).
+ */
+import { sanitizeHref } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutOfferPanelBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import Button from '../Button.astro';
+import Ledger from '../Ledger.astro';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/home.css';
+
+type Props = BlockComponentProps<PageLayoutOfferPanelBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutOfferPanelBlock>).__place;
+const panels = [value, ...(place.group ?? [])];
+const variants = ['teams', 'orgs'];
+// The wave under the panels, filled with the colour of the section below.
+const below = place.after && place.after !== 'doors' ? place.after : 'cream';
+const wave = 'M0,0 C360,80 1080,0 1440,60 L1440,400 L0,400 Z';
+const edge = 'M0,0 C360,80 1080,0 1440,60';
+---
+
+<div class="doors-wrap">
+  <SectionDivider from={place.before} to="doors" />
+  <section class="doors" aria-label="Ways to work with SuperBenefit">
+    {panels.map((panel, i) => (
+      <div class={`door door--${variants[i % variants.length]}`}>
+        <div class="door__in">
+          {panel.eyebrow && <p class="caps">{panel.eyebrow}</p>}
+          <h2 class="display">{panel.heading}</h2>
+          {panel.text && <p class="door__lede">{panel.text}</p>}
+          <Ledger
+            rows={[
+              { label: 'What you get', items: (panel.items ?? []).map((row) => row.item ?? '').filter(Boolean) },
+              { label: 'What it costs', text: panel.cost ?? undefined },
+            ]}
+          />
+          {panel.button_label && panel.button_url && (
+            <Button href={sanitizeHref(panel.button_url)} variant="ink" arrow>{panel.button_label}</Button>
+          )}
+        </div>
+      </div>
+    ))}
+  </section>
+  <div class="dv bg-doors" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path class={`f-${below}`} transform="translate(0,3)" d={wave} />
+      <path class="dv__ink" transform="translate(0,3)" d={edge} />
+    </svg>
+  </div>
+</div>
