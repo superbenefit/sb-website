@@ -28,6 +28,7 @@ const updates: EntryItem[] = await Promise.all(
     const refs = await getEmDashReferences<{ title: string; slug: string | null }>('updates', data.id, 'project', { limit: 1 });
     hints.push(refs.cacheHint);
     const project = refs.entries[0]?.data;
+    const [category] = data.terms?.category ?? [];
     return {
       href: `/updates/${data.slug ?? data.id}/`,
       title: data.title,
@@ -35,6 +36,7 @@ const updates: EntryItem[] = await Promise.all(
       excerpt: data.excerpt,
       cover: data.cover,
       project: project?.slug ? { title: project.title, href: `/projects/${project.slug}/` } : null,
+      category: category ? { label: category.label, href: `/updates/?category=${encodeURIComponent(category.slug)}` } : null,
     };
   }),
 );
