@@ -361,7 +361,7 @@ Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (
 
 ## services entries (D4)
 
-Three offerings, drafted 2026-11-24 from the owner's direction: each carries over one of the three on the current superbenefit.org (`origin/main:src/components/ExternalServices.astro`) and restates it for what organizations are dealing with in 2026. No price is given: new prices are the owner's to set (issue 46). Fields are the seed's (collection `services`: `title`, `audience`, `deliverables`, `service_terms`, `body`, `order`).
+Three offerings, drafted 2026-11-24 from the owner's direction: each carries over one of the three on the current superbenefit.org (`origin/main:src/components/ExternalServices.astro`) and restates it for what organizations are dealing with in 2026, in plain and general words (owner, 2026-11-24: simpler, more accessible, and no boasting about SuperBenefit's own assets). No price is given: new prices are the owner's to set (issue 46). Fields are the seed's (collection `services`: `title`, `audience`, `deliverables`, `service_terms`, `body`, `order`).
 
 What the wording responds to (read 2026-11-24):
 - AI: most nonprofits now use AI and most have no strategy for it, and what vendors do with their data is the leading worry ([Nonprofit Quarterly](https://nonprofitquarterly.org/how-nonprofits-adopt-and-govern-ai-insights-from-a-new-report/), [Candid](https://candid.org/blogs/ai-at-nonprofits-impact-trust/)); open-weight models can be run on an organization's own machines ([Tech To The Rescue](https://techtotherescue.org/news/how-social-impact-organizations-use-open-source-ai-to-protect-data-and-reduce-costs)).
@@ -376,10 +376,10 @@ Carries over "Project co-stewardship".
 | Field | Draft |
 | --- | --- |
 | `title` | Nonprofit DAO Accelerator |
-| `audience` | For new projects, and for groups whose fiscal sponsor is closing or has no room. |
-| `deliverables` | A legal and financial home inside SuperBenefit, with no new entity to incorporate; A shared treasury that can take grants, donations and stablecoins; Roles and decision rules your group can run; A SuperBenefit steward who works on the project with you; A clean exit: the project leaves with what it built |
-| `service_terms` | By the quarter, renewable |
-| `body` | Grants are harder to win and fiscal sponsors are closing their programs. A new project should not spend its first year on incorporation. You set the direction and we carry the organization: the entity and the treasury. When the project can stand alone, it leaves. |
+| `audience` | For people starting a community project who need an organization to run it through. |
+| `deliverables` | A place to hold and manage the project's funds; Help setting up how your group makes decisions; Someone working alongside you on the project; A simple way to move on when you are ready |
+| `service_terms` | By the quarter |
+| `body` | Starting a project should not mean starting an organization first. We give the project a home and help with the admin, so your group can get on with the work. You stay in charge. |
 | `order` | 1 |
 
 ### Training and unblocking
@@ -389,10 +389,10 @@ Carries over the old "Sensemaking" offering.
 | Field | Draft |
 | --- | --- |
 | `title` | Training and unblocking |
-| `audience` | For teams under pressure to adopt AI or cut software costs without giving up their data. |
-| `deliverables` | Training on running AI with models and machines you control; Training on moving a team from rented platforms to open-source tools; A working session on one blocked decision, ending with a written next step; Consulting on governance and shared treasuries; Follow-up support while you carry it out |
-| `service_terms` | Per session, or a retainer |
-| `body` | Most organizations now use AI, and few have decided how. We help you decide what to hand to a model and what stays on your own machines. Each engagement starts from an outcome you name and ends when it is met. |
+| `audience` | For teams that are stuck on something, or learning something new. |
+| `deliverables` | Training on a topic you choose; A working session on one problem, with a clear next step; Advice on tools, data and how your group is organized; Support while you put it into practice |
+| `service_terms` | Per session, or ongoing |
+| `body` | Many teams are working out how to use AI and other new tools without losing control of their data. We help you think it through and decide. You name the result you want, and we work towards that. |
 | `order` | 2 |
 
 ### Knowledge base and landscapes
@@ -402,10 +402,10 @@ Carries over "Digital commons development", as knowledge capacity building.
 | Field | Draft |
 | --- | --- |
 | `title` | Knowledge base and landscapes |
-| `audience` | For communities and organizations that want their own knowledge in order before they point AI at it. |
-| `deliverables` | One idea or question, chosen with you, to map first; A process for mapping the landscape around it that you can repeat; A schema for your knowledge base that people and AI tools can both read |
+| `audience` | For groups that want to organize what they know. |
+| `deliverables` | One idea or question to start with; A way to map what is known about it; A simple structure for a knowledge base you own |
 | `service_terms` | Four two-hour sessions |
-| `body` | An AI tool is only as useful as what you can show it, and most of what an organization knows sits in people's heads and old chat threads. In four sessions we map one idea with you and set up a knowledge base in plain files you own. It is how we run our own [Knowledge Garden](https://knowledge.superbenefit.org/). |
+| `body` | Most of what a group knows is in people's heads and old messages. Over four sessions we pick one idea, map what you know about it, and set up a knowledge base you own. People can use it, and so can AI tools if you choose. |
 | `order` | 3 |
 
 ## Sources
