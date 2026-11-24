@@ -382,30 +382,30 @@ Carries over "Project co-stewardship".
 | `body` | Starting a project should not mean starting an organization first. We give the project a home and help with the admin, so your group can get on with the work. You stay in charge. |
 | `order` | 1 |
 
-### Training and unblocking
+### Training and consulting
 
 Carries over the old "Sensemaking" offering.
 
 | Field | Draft |
 | --- | --- |
-| `title` | Training and unblocking |
-| `audience` | For teams that are stuck on something, or learning something new. |
-| `deliverables` | Training on a topic you choose; A working session on one problem, with a clear next step; Advice on tools, data and how your group is organized; Support while you put it into practice |
+| `title` | Training and consulting |
+| `audience` | For teams that want to learn a new skill or solve a specific problem. |
+| `deliverables` | Workshops on a topic you choose; A session to work through one problem and agree what to do next; Advice on technology, data and how your team works together; Help putting the plan into practice |
 | `service_terms` | Per session, or ongoing |
-| `body` | Many teams are working out how to use AI and other new tools without losing control of their data. We help you think it through and decide. You name the result you want, and we work towards that. |
+| `body` | Many teams are working out how to use AI and other new tools while keeping control of their own data. We help you learn what you need and make a decision you are comfortable with. You tell us the result you want, and we work towards it. |
 | `order` | 2 |
 
-### Knowledge base and landscapes
+### Shared knowledge base
 
-Carries over "Digital commons development", as knowledge capacity building.
+Carries over "Digital commons development", as knowledge capacity building. The owner's working name was "knowledge base and landscapes"; the page uses words an outside reader already knows.
 
 | Field | Draft |
 | --- | --- |
-| `title` | Knowledge base and landscapes |
-| `audience` | For groups that want to organize what they know. |
-| `deliverables` | One idea or question to start with; A way to map what is known about it; A simple structure for a knowledge base you own |
+| `title` | Shared knowledge base |
+| `audience` | For groups whose information is scattered across people, documents and chats. |
+| `deliverables` | A topic to start with, chosen together; A map of what is already known about it and where it lives; A simple, shared way to organize it that your group can keep using |
 | `service_terms` | Four two-hour sessions |
-| `body` | Most of what a group knows is in people's heads and old messages. Over four sessions we pick one idea, map what you know about it, and set up a knowledge base you own. People can use it, and so can AI tools if you choose. |
+| `body` | Over four sessions we pick one topic, gather what your group already knows about it, and set up a shared place to keep it. You own it and can keep adding to it. It also gives AI tools something reliable to work from, if you use them. |
 | `order` | 3 |
 
 ## Sources
