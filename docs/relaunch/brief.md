@@ -9,7 +9,7 @@ Get SuperBenefit's Cloudflare web properties complete, consistent and launched u
 
 ## Messaging (owner's direction)
 Two focus areas:
-1. **Nonprofit DAO Accelerator**: for aligned teams who want to join as cells. "Nonprofit DAO accelerator" is the chosen SEO term.
+1. **Peer to Peer Accelerator**: for aligned teams who want to join as cells. Renamed by the owner on 2026-11-24; "Nonprofit DAO Accelerator" is now the name of a service (project co-stewardship), and the home head title is "SuperBenefit — Make Better Faster".
 2. **Local Capacity Building**: for external communities and organizations who need help stewarding their data and infrastructure and using emerging technologies for local resilience and social change. Keywords and framing still to be researched (candidates: digital resilience, data stewardship, community tech capacity, community-owned AI).
 
 Current themes: local impact, local data, local AI, sovereign tech, worker cooperatives, community infrastructure.
@@ -67,7 +67,7 @@ Astro 7.4.13, @astrojs/cloudflare 14.4.9, Tailwind 4.3, Wrangler 4.166, TypeScri
 - The Cloudflare account is on Workers Paid.
 - Accelerator page URL is `/accelerator/`. Updates are written in EmDash. `/about/` stays.
 - Editors sign in with GitHub through Cloudflare Access: org members as Contributors (drafts only), the "Knowledge Stewardship" team as Editors, the "Web Admins" team as Admins. Until EmDash reads GitHub teams, an Admin sets the Editor and Admin roles in the CMS (2026-11-22). Editors use the EmDash admin, so no developer is needed to publish.
-- Branch previews are Worker Previews at `<branch-name>.superbenefit.dev`, bound to one shared staging database, bucket and session namespace. See `architecture.md`, Environments and CI.
+- Branch previews are Worker Previews at `<branch-name>.home.superbenefit.dev`, bound to one shared staging database, bucket and session namespace. See `architecture.md`, Environments and CI.
 - Discord invite everywhere: `https://discord.gg/DMezXT7UAt`.
 - AI crawlers: block training, allow all other bots.
 - The three services on the old site are real; the owner is redoing the offerings.

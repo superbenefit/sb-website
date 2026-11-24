@@ -340,6 +340,8 @@ h4 { font-size: var(--text-lg); }
 .prose {
   font-size: var(--text-base);
   line-height: 1.7;
+  /* A long bare URL in a post would otherwise push the page wider than a phone. */
+  overflow-wrap: anywhere;
 }
 
 .prose > * + * {
