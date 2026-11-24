@@ -1,5 +1,7 @@
 # Copy drafts: pages (D3, issue #48) and entries (D4, issue #49)
 
+> 2026-11-24: the content model changed after these drafts were entered (`architecture.md`, Content model). The field names below are the old ones; the text now lives in each page's Sections on staging, which is where the copy is edited. This file is kept as the record of the first drafts.
+
 Agent-drafted copy for a human edit before anything is entered or published in EmDash.
 
 Drafted 2026-11-23 for the `pages` entries the site reads (`home`, `accelerator`, `services`, `projects`, `updates`, `about`, `contact`), their SEO panel titles and descriptions, and the closing band. Field names are those in `seed/seed.json`. The D4 entries (the five `projects` and the four `supports`) follow the pages; the `services` entries wait on issue 46. Rules: the content standard in `brief.md`.

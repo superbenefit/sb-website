@@ -36,11 +36,15 @@ interface Props {
   total: number;
   /** Projects offered in the filter. */
   projects: { slug: string; title: string }[];
+  /** Categories offered in the filter. */
+  categories: { slug: string; label: string }[];
+  /** The tag the list is narrowed to, if any. */
+  tag: { slug: string; label: string } | null;
   query: UpdatesQuery;
   cacheHints: CacheHint[];
 }
 
-const { items, page, totalPages, total, projects, query, cacheHints } = Astro.props;
+const { items, page, totalPages, total, projects, categories, tag, query, cacheHints } = Astro.props;
 
 const pageEntry = await getPageSections('updates', { hero: 'gold', fallback: 'Updates' });
 const pageHint = pageEntry.cacheHint;
@@ -54,9 +58,10 @@ if (Astro.cache?.enabled) {
 const title = pageEntry.title;
 
 const search = updatesQueryString(query);
-const narrowed = Boolean(query.q || query.project);
+const narrowed = Boolean(query.q || query.project || query.category || query.tag);
 const pageHref = (n: number) => `${n <= 1 ? '/updates/' : `/updates/page/${n}/`}${search}`;
 const chosenProject = projects.find((project) => project.slug === query.project);
+const chosenCategory = categories.find((category) => category.slug === query.category);
 const newer = page > 1 ? pageHref(page - 1) : null;
 const older = page < totalPages ? pageHref(page + 1) : null;
 ---
@@ -93,6 +98,18 @@ const older = page < totalPages ? pageHref(page + 1) : null;
               </select>
             </div>
           )}
+          {categories.length > 0 && (
+            <div class="tools__field">
+              <label class="caps" for="updates-category">Category</label>
+              <select id="updates-category" name="category" data-submit-on-change>
+                <option value="">All categories</option>
+                {categories.map((category) => (
+                  <option value={category.slug} selected={category.slug === query.category}>{category.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {query.tag && <input type="hidden" name="tag" value={query.tag} />}
           <div class="tools__field">
             <label class="caps" for="updates-sort">Sort</label>
             <select id="updates-sort" name="sort" data-submit-on-change>
@@ -107,7 +124,9 @@ const older = page < totalPages ? pageHref(page + 1) : null;
         <p class="tools__status" role="status">
           {total === 1 ? '1 update' : `${total} updates`}
           {query.q && <> matching “{query.q}”</>}
-          {chosenProject && <> in {chosenProject.title}</>}.
+          {chosenCategory && <> in {chosenCategory.label}</>}
+          {tag && <> tagged {tag.label}</>}
+          {chosenProject && <> about {chosenProject.title}</>}.
           {' '}<a href={`/updates/${query.sort === 'oldest' ? '?sort=oldest' : ''}`}>Clear</a>
         </p>
       )}
@@ -116,7 +135,7 @@ const older = page < totalPages ? pageHref(page + 1) : null;
       ) : narrowed ? (
         <div class="empty">
           <h3>No updates match</h3>
-          <p>Try other words, or another project.</p>
+          <p>Try other words, or another project or category.</p>
         </div>
       ) : (
         <div class="empty">

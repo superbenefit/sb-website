@@ -49,6 +49,10 @@ const title = data.title || 'Update';
 const date = data.publishedAt;
 const author = bylineNames(data.bylines);
 const project = update.references?.project.entries[0] ?? null;
+// Categories and tags come with the entry (`data.terms`,
+// https://docs.emdashcms.com/guides/taxonomies/#display-an-entrys-terms).
+const [category] = data.terms?.category ?? [];
+const tags = data.terms?.tag ?? [];
 ---
 
 <BaseLayout
@@ -63,7 +67,11 @@ const project = update.references?.project.entries[0] ?? null;
 >
   <PageHero title={title} variant="gold" compact>
     <Fragment slot="meta">
-      <span class="caps">Update</span>
+      {category ? (
+        <a class="caps article__cat" href={`/updates/?category=${encodeURIComponent(category.slug)}`}>{category.label}</a>
+      ) : (
+        <span class="caps">Update</span>
+      )}
       {date && <span class="caps"><time datetime={date.toISOString()}>{formatUpdateDate(date)}</time></span>}
       {author && <span class="caps">By {author}</span>}
     </Fragment>
@@ -80,6 +88,13 @@ const project = update.references?.project.entries[0] ?? null;
         )}
         <RichText value={data.body} />
         <div class="article__end">
+          {tags.length > 0 && (
+            <ul class="article__tags caps" aria-label="Tags">
+              {tags.map((tag) => (
+                <li><a href={`/updates/?tag=${encodeURIComponent(tag.slug)}`}>{tag.label}</a></li>
+              ))}
+            </ul>
+          )}
           {project && (
             <>
               <p class="caps">About the project</p>
@@ -127,6 +142,19 @@ const project = update.references?.project.entries[0] ?? null;
     contain: size;
   }
 
+  .article__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .article__tags a,
+  .article__cat {
+    text-decoration: underline 2px var(--color-orange);
+    text-underline-offset: 0.3em;
+  }
   .article__end {
     display: grid;
     gap: var(--space-lg);

@@ -1,12 +1,15 @@
 ---
 /**
  * Services list: every published `services` entry in its list position, each
- * with who it is for, what you get and its terms.
+ * with who it is for, what you get and its terms. The same fields go out as
+ * schema.org Service data (https://schema.org/Service): name, description,
+ * serviceType, audience, termsOfService and the provider.
  */
 import { getEmDashCollection } from 'emdash';
 import type { BlockComponentProps } from 'emdash/ui';
 import type { PageLayoutServiceListBlock } from '../../../emdash-env';
 import type { Placed } from '../../utils/sections';
+import JsonLd from '../JsonLd.astro';
 import Ledger from '../Ledger.astro';
 import RichText from '../rich-text/RichText.astro';
 import SectionDivider from './SectionDivider.astro';
@@ -22,6 +25,27 @@ const { entries: services, cacheHint } = await getEmDashCollection('services', {
 if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
 ---
 
+{services.length > 0 && (
+  <JsonLd
+    build={(site) => ({
+      '@type': 'ItemList',
+      itemListElement: services.map(({ data }, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'Service',
+          name: data.title,
+          description: data.summary,
+          serviceType: data.service_type,
+          audience: data.audience ? { '@type': 'Audience', audienceType: data.audience } : undefined,
+          termsOfService: data.service_terms,
+          url: data.slug ? `${site.url}${Astro.url.pathname}#${data.slug}` : undefined,
+          provider: { '@type': 'Organization', name: site.name, url: site.url },
+        },
+      })),
+    })}
+  />
+)}
 <SectionDivider from={place.before} to={place.tone} bands={place.bands} />
 <section class="sec">
   <div class="wrap">
