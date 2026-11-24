@@ -5,7 +5,7 @@
  * `<url>` has the entry's canonical URL, its `lastmod` and its SEO image as
  * an `<image:image>`, as EmDash's built-in (emdash 1.5.0
  * src/astro/routes/sitemap-[collection].xml.ts), which this file replaces.
- * Unknown names, collections not listed (services) and empty
+ * Unknown names, collections not listed (services, supports) and empty
  * collections or pages answer 404, as there. What is listed and why:
  * src/utils/sitemap.ts.
  *

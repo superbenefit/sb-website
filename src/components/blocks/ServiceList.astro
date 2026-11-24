@@ -3,7 +3,7 @@
  * Services list: every published `services` entry in its list position, each
  * with who it is for, what you get and its terms. The same fields go out as
  * schema.org Service data (https://schema.org/Service): name, description,
- * serviceType, audience, termsOfService and the provider.
+ * serviceType, audience, serviceOutput, termsOfService and the provider.
  */
 import { getEmDashCollection } from 'emdash';
 import type { BlockComponentProps } from 'emdash/ui';
@@ -38,6 +38,7 @@ if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
           description: data.summary,
           serviceType: data.service_type,
           audience: data.audience ? { '@type': 'Audience', audienceType: data.audience } : undefined,
+          serviceOutput: (data.deliverables ?? []).map((row) => (row.item ? { '@type': 'Thing', name: row.item } : undefined)),
           termsOfService: data.service_terms,
           url: data.slug ? `${site.url}${Astro.url.pathname}#${data.slug}` : undefined,
           provider: { '@type': 'Organization', name: site.name, url: site.url },

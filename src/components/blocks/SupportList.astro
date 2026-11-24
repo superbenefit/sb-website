@@ -1,0 +1,45 @@
+---
+/**
+ * Supports list: every published `supports` entry in its list position, with
+ * its description and details (the accelerator page).
+ */
+import { getEmDashCollection } from 'emdash';
+import type { BlockComponentProps } from 'emdash/ui';
+import type { PageLayoutSupportListBlock } from '../../../emdash-env';
+import type { Placed } from '../../utils/sections';
+import RichText from '../rich-text/RichText.astro';
+import SectionDivider from './SectionDivider.astro';
+import '../../styles/parts/sec.css';
+import '../../styles/parts/blocks.css';
+
+type Props = BlockComponentProps<PageLayoutSupportListBlock>;
+const { value } = Astro.props;
+const place = (value as Placed<PageLayoutSupportListBlock>).__place;
+const { entries: supports, cacheHint } = await getEmDashCollection('supports', {
+  orderBy: { order: 'asc', created_at: 'asc' },
+});
+if (Astro.cache?.enabled && cacheHint) Astro.cache.set(cacheHint);
+---
+
+<SectionDivider from={place.before} to={place.tone} bands={place.bands} />
+<section class="sec">
+  <div class="wrap">
+    {(value.heading || value.note) && (
+      <div class="sec__head">
+        {value.heading && <h2 class="display">{value.heading}</h2>}
+        {value.note && <p class="caps sec__note">{value.note}</p>}
+      </div>
+    )}
+    <div class="blocks">
+      {supports.map(({ data }) => (
+        <article class="block">
+          <h3>{data.title}</h3>
+          <div class="block__main">
+            {data.summary && <p class="block__sum">{data.summary}</p>}
+            <RichText value={data.body} inherit />
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -84,6 +84,16 @@ export interface PageLayoutItemListV1Block {
 
 export type PageLayoutItemListBlock = PageLayoutItemListV1Block;
 
+export interface PageLayoutSupportListV1Block {
+  _type: "support_list";
+  _version: 1;
+  _key: string;
+  "heading"?: string | null;
+  "note"?: string | null;
+}
+
+export type PageLayoutSupportListBlock = PageLayoutSupportListV1Block;
+
 export interface PageLayoutServiceListV1Block {
   _type: "service_list";
   _version: 1;
@@ -105,7 +115,7 @@ export interface PageLayoutContactFormV1Block {
 
 export type PageLayoutContactFormBlock = PageLayoutContactFormV1Block;
 
-export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutTextSectionBlock | PageLayoutOfferPanelBlock | PageLayoutProjectShowcaseBlock | PageLayoutLatestUpdatesBlock | PageLayoutItemListBlock | PageLayoutServiceListBlock | PageLayoutContactFormBlock;
+export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutTextSectionBlock | PageLayoutOfferPanelBlock | PageLayoutProjectShowcaseBlock | PageLayoutLatestUpdatesBlock | PageLayoutItemListBlock | PageLayoutSupportListBlock | PageLayoutServiceListBlock | PageLayoutContactFormBlock;
 
 export interface Page {
   id: string;
@@ -180,6 +190,22 @@ export interface Service {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Support {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  summary?: string;
+  body?: PortableTextBlock[];
+  order?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 export interface ProjectReferences {
   updates: ReferencePage<Update>;
 }
@@ -194,6 +220,7 @@ declare module "emdash" {
     projects: Project;
     updates: Update;
     services: Service;
+    supports: Support;
   }
   interface EmDashCollectionReferences {
     projects: ProjectReferences;

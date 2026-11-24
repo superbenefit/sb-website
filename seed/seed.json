@@ -2,7 +2,7 @@
   "version": "1",
   "meta": {
     "name": "SuperBenefit",
-    "description": "Content model for superbenefit.org: site settings, page section block types, four collections, two taxonomies, the project and update relation, reusable sections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
+    "description": "Content model for superbenefit.org: site settings, page section block types, five collections, two taxonomies, the project and update relation, reusable sections, the closing band and three menus (docs/relaunch/architecture.md, Content model)."
   },
   "settings": {
     "title": "SuperBenefit",
@@ -300,6 +300,31 @@
       ]
     },
     {
+      "slug": "support_list",
+      "label": "Supports list",
+      "description": "Every published entry in Supports, in its order.",
+      "icon": "lifebuoy",
+      "category": "Page sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "note",
+              "label": "Note beside the heading",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "slug": "service_list",
       "label": "Services list",
       "description": "Every published entry in Services, in its order.",
@@ -386,6 +411,7 @@
               "project_showcase",
               "latest_updates",
               "item_list",
+              "support_list",
               "service_list",
               "contact_form"
             ],
@@ -485,7 +511,7 @@
         },
         {
           "slug": "order",
-          "label": "Position in lists (lowest first)",
+          "label": "Position",
           "type": "integer"
         }
       ],
@@ -575,23 +601,23 @@
         },
         {
           "slug": "service_type",
-          "label": "Type of service",
+          "label": "Service type",
           "type": "string"
         },
         {
           "slug": "audience",
-          "label": "Who it is for",
+          "label": "Audience",
           "type": "text"
         },
         {
           "slug": "deliverables",
-          "label": "What you get",
+          "label": "Service output",
           "type": "repeater",
           "validation": {
             "subFields": [
               {
                 "slug": "item",
-                "label": "Deliverable",
+                "label": "Output",
                 "type": "string",
                 "required": true
               }
@@ -600,7 +626,7 @@
         },
         {
           "slug": "service_terms",
-          "label": "Terms",
+          "label": "Terms of service",
           "type": "string"
         },
         {
@@ -610,11 +636,11 @@
         },
         {
           "slug": "order",
-          "label": "Position in the list (lowest first)",
+          "label": "Position",
           "type": "integer"
         }
       ],
-      "description": "What SuperBenefit offers to communities and organizations. Shown by the \"Services list\" section; fields follow schema.org Service where that is practical.",
+      "description": "What SuperBenefit offers to communities and organizations, shown by the \"Services list\" section. Fields are named after schema.org Service: name, description, serviceType, audience, serviceOutput, termsOfService.",
       "icon": "handshake",
       "sortOrder": 4,
       "titleField": "title",
@@ -625,6 +651,51 @@
           "order"
         ]
       }
+    },
+    {
+      "slug": "supports",
+      "label": "Supports",
+      "labelSingular": "Support",
+      "description": "What cells in the Peer to Peer Accelerator get, shown by the \"Supports list\" section.",
+      "icon": "lifebuoy",
+      "sortOrder": 5,
+      "titleField": "title",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "seo"
+      ],
+      "routable": false,
+      "urlPattern": "/accelerator",
+      "admin": {
+        "listColumns": [
+          "order"
+        ]
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "summary",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "body",
+          "label": "Details",
+          "type": "portableText"
+        },
+        {
+          "slug": "order",
+          "label": "Position",
+          "type": "integer"
+        }
+      ]
     }
   ],
   "relations": [

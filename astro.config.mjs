@@ -91,7 +91,7 @@ export default defineConfig({
   routeRules: {
     '/': rule(['pages', 'projects', 'updates']),
     '/about': rule(['pages']),
-    '/accelerator': rule(['pages']),
+    '/accelerator': rule(['pages', 'supports']),
     '/contact': rule(['pages']),
     '/projects': rule(['pages', 'projects']),
     '/projects/[slug]': rule(['projects', 'updates']),
@@ -102,8 +102,8 @@ export default defineConfig({
     '/updates/page/[page]': rule(['pages', 'updates', 'projects']),
     '/updates/[...slug]': rule(['updates', 'projects']),
     // The site's own sitemap routes (src/pages/sitemap*.xml.ts), which list
-    // the routable collections with SEO (src/utils/sitemap.ts). services is
-    // not routable (seed/seed.json), so not listed.
+    // the routable collections with SEO (src/utils/sitemap.ts). services and
+    // supports are not routable (seed/seed.json), so not listed.
     '/sitemap.xml': rule(['pages', 'projects', 'updates']),
     '/sitemap-[collection].xml': rule(['pages', 'projects', 'updates']),
   },
