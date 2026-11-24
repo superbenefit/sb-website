@@ -361,7 +361,13 @@ Standard check (all four): who (cells; `accelerator` `eyebrow`), what they get (
 
 ## services entries (D4)
 
-Three offerings, drafted 2026-11-24 from the owner's direction: each carries over one of the three on the current superbenefit.org (`origin/main:src/components/ExternalServices.astro`) and restates it. Fields are the seed's (collection `services`: `title`, `audience`, `deliverables`, `service_terms`, `body`, `order`). No price is given: the old prices belonged to the old offerings, and new ones are the owner's to set (issue 46). Wording draws on SuperBenefit's own terms in the Knowledge Garden (cells, patterns, playbooks, knowledge gardens, DAO Primitives) and on how the Reimagining Power Project engagements ran (its case studies).
+Three offerings, drafted 2026-11-24 from the owner's direction: each carries over one of the three on the current superbenefit.org (`origin/main:src/components/ExternalServices.astro`) and restates it for what organizations are dealing with in 2026. No price is given: new prices are the owner's to set (issue 46). Fields are the seed's (collection `services`: `title`, `audience`, `deliverables`, `service_terms`, `body`, `order`).
+
+What the wording responds to (read 2026-11-24):
+- AI: most nonprofits now use AI and most have no strategy for it, and what vendors do with their data is the leading worry ([Nonprofit Quarterly](https://nonprofitquarterly.org/how-nonprofits-adopt-and-govern-ai-insights-from-a-new-report/), [Candid](https://candid.org/blogs/ai-at-nonprofits-impact-trust/)); open-weight models can be run on an organization's own machines ([Tech To The Rescue](https://techtotherescue.org/news/how-social-impact-organizations-use-open-source-ai-to-protect-data-and-reduce-costs)).
+- Sovereign tech: public bodies in France and Germany are moving off Microsoft to open-source tools ([TechCrunch](https://techcrunch.com/2026/04/27/whats-behind-europes-efforts-to-ditch-u-s-software-in-favor-of-sovereign-tech/)).
+- Knowledge: AI tools depend on the context an organization can give them, and a small shared base of vocabulary and canonical documents should be owned before assistants are rolled out ([Xebia](https://xebia.com/blog/one-base-context-for-every-team-and-agent/), [Atlassian](https://www.atlassian.com/blog/context/ai-strategy-context-graph)).
+- Organizations: grants are harder to win, demand for fiscal hosting is rising and some fiscal sponsors are closing programs ([CEP](https://cep.org/blog/as-fiscal-hosting-expands-what-philanthropy-should-know/), [Nonprofit Quarterly](https://nonprofitquarterly.org/what-happens-when-a-fiscal-sponsor-shuts-down/), [Candid](https://candid.org/blogs/nonprofit-financial-instability/)); stablecoin giving is growing ([The Giving Block](https://thegivingblock.com/)).
 
 ### Nonprofit DAO Accelerator
 
@@ -370,10 +376,10 @@ Carries over "Project co-stewardship".
 | Field | Draft |
 | --- | --- |
 | `title` | Nonprofit DAO Accelerator |
-| `audience` | For groups starting a purpose-led project who do not want to set up their own organization first. |
-| `deliverables` | A home for the project inside SuperBenefit: our DAO, entity and treasury tools; A governance setup built with you: roles, shared control of funds, a way to decide; A SuperBenefit steward who works on the project alongside you; A clean exit: the project leaves with everything it built |
+| `audience` | For new projects, and for groups whose fiscal sponsor is closing or has no room. |
+| `deliverables` | A legal and financial home inside SuperBenefit, with no new entity to incorporate; A shared treasury that can take grants, donations and stablecoins; Roles and decision rules your group can run; A SuperBenefit steward who works on the project with you; A clean exit: the project leaves with what it built |
 | `service_terms` | By the quarter, renewable |
-| `body` | You set the direction. We carry the organizational work: an entity that can sign and hold funds, a treasury no one person controls, and roles your group can actually run. When the project is ready to stand alone, it does. |
+| `body` | Grants are harder to win and fiscal sponsors are closing their programs. A new project should not spend its first year on incorporation. You set the direction and we carry the organization: the entity and the treasury. When the project can stand alone, it leaves. |
 | `order` | 1 |
 
 ### Training and unblocking
@@ -383,23 +389,23 @@ Carries over the old "Sensemaking" offering.
 | Field | Draft |
 | --- | --- |
 | `title` | Training and unblocking |
-| `audience` | For teams and organizations stuck on a question about governance, funding, data or the tools they run on. |
-| `deliverables` | Training for your team on a topic you name; A working session on one blocked decision, ending with a written next step; Consulting on governance, treasury and community-run infrastructure; Follow-up support while you carry it out |
+| `audience` | For teams under pressure to adopt AI or cut software costs without giving up their data. |
+| `deliverables` | Training on running AI with models and machines you control; Training on moving a team from rented platforms to open-source tools; A working session on one blocked decision, ending with a written next step; Consulting on governance and shared treasuries; Follow-up support while you carry it out |
 | `service_terms` | Per session, or a retainer |
-| `body` | Every engagement starts from an outcome you name: a decision made, a team trained, a system running. We bring people from our network who have done that work before, and we stop when the outcome is met. |
+| `body` | Most organizations now use AI, and few have decided how. We help you decide what to hand to a model and what stays on your own machines. Each engagement starts from an outcome you name and ends when it is met. |
 | `order` | 2 |
 
-### Knowledge landscapes
+### Knowledge base and landscapes
 
 Carries over "Digital commons development", as knowledge capacity building.
 
 | Field | Draft |
 | --- | --- |
-| `title` | Knowledge landscapes |
-| `audience` | For communities and organizations whose knowledge lives in people's heads, chat threads and scattered documents. |
-| `deliverables` | One idea or question, chosen with you, to map first; A process for mapping the landscape around it that you can repeat; A schema for your knowledge base: its types, tags and links |
+| `title` | Knowledge base and landscapes |
+| `audience` | For communities and organizations that want their own knowledge in order before they point AI at it. |
+| `deliverables` | One idea or question, chosen with you, to map first; A process for mapping the landscape around it that you can repeat; A schema for your knowledge base that people and AI tools can both read |
 | `service_terms` | Four two-hour sessions |
-| `body` | We keep our own shared knowledge in the [Knowledge Garden](https://knowledge.superbenefit.org/), and this is how we would start yours. You leave with one idea mapped, a way to map the next one, and a structure that keeps the knowledge in files and tools you control. |
+| `body` | An AI tool is only as useful as what you can show it, and most of what an organization knows sits in people's heads and old chat threads. In four sessions we map one idea with you and set up a knowledge base in plain files you own. It is how we run our own [Knowledge Garden](https://knowledge.superbenefit.org/). |
 | `order` | 3 |
 
 ## Sources
