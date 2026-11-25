@@ -5,7 +5,7 @@ Public website for [SuperBenefit](https://superbenefit.org) — a community expl
 ## Stack
 
 - [Astro 7](https://astro.build) — server output, every page rendered on demand
-- [EmDash](https://docs.emdashcms.com) 1.5.0 — CMS, installed per its [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) guide (admin at `/_emdash/admin/`)
+- [EmDash](https://docs.emdashcms.com) 1.6.0 — CMS, installed per its [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) guide (admin at `/_emdash/admin/`)
 - [@astrojs/cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/) — Cloudflare Workers adapter
 - [Wrangler 4](https://developers.cloudflare.com/workers/wrangler/) — local dev and deployment
 - TypeScript (strict)
