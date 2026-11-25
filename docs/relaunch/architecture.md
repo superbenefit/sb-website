@@ -4,7 +4,7 @@ The design the relaunch builds. Every choice follows the official docs linked. O
 
 ## Stack
 Astro 7.4 + `@astrojs/cloudflare` 14.4 on Workers Paid, with EmDash on D1 (`DB`), R2 (`MEDIA`) and KV (`SESSION`). Set up exactly as [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) describes:
-Installed in B2 (#29) with `emdash` and `@emdash-cms/cloudflare` 1.5.0, `@astrojs/react`, `react` and `react-dom`:
+Installed in B2 (#29) with `emdash` and `@emdash-cms/cloudflare` 1.5.0 (upgraded to 1.6.0 on 2026-11-25; notes below that name 1.5.0 record what was checked on that version), `@astrojs/react`, `react` and `react-dom`:
 - `astro.config.mjs`: `output: "server"`, `adapter: cloudflare()` with no options, `react()`, `emdash({ database: d1({ binding: "DB" }), storage: r2({ binding: "MEDIA" }) })`. No `sandboxRunner`: the guide drops it, with the `LOADER` binding, for a site with no marketplace, registry or sandboxed plugins.
 - `wrangler.jsonc`: `main: ./src/worker.ts`, the `DB` (`sb-website`) and `MEDIA` (`sb-website-media`) bindings by name (Wrangler creates both on first deploy), the `EMDASH_ROOMS` Durable Object binding with the `exports` entry for `EmDashRoom` (co-editing rooms; co-editing stays off until `coEditing: true`), `triggers.crons: ["* * * * *"]`, and `EMDASH_SITE_URL` in `vars`. The adapter adds the `SESSION` KV and `IMAGES` bindings to the config it generates (`dist/server/wrangler.json`), at the top level and in `previews`.
 - `src/worker.ts`: the documented entry from `@emdash-cms/cloudflare/worker`: the spread default handler with `createScheduledHandler()`, and the `EmDashRoom`, `EmDashRoomSite` and `PluginBridge` exports. `emdash doctor` reports the scheduler wiring as found.
